@@ -1,0 +1,10 @@
+# Starship prompt configuration managed by TL40-Dots
+
+add_newline = false
+
+[character]
+symbol = "➜"
+success_symbol = "✔"
+
+[username]
+style = "yellow"

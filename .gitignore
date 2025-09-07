@@ -1,0 +1,7 @@
+# Ignore OS and editor temp files
+.DS_Store
+*.swp
+*.swo
+
+# Ignore local secrets
+.env

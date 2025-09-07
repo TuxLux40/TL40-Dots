@@ -1,0 +1,11 @@
+[user]
+  name = Your Name
+  email = you@example.com
+
+[core]
+  editor = vim
+
+[alias]
+  st = status
+  co = checkout
+  br = branch
