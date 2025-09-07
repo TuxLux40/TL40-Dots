@@ -1,6 +1,5 @@
 # TL40-Dots — Dotfiles mit GNU Stow
 
-
 Dieses Repository enthält deine Dotfiles, organisiert als Stow-Pakete.
 
 Aktueller Inhalt:
