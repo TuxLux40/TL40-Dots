@@ -1,0 +1,24 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+
+model: Ollama:qwen3:0.6b
+
+# Optional: default to a Grok model (uncomment and adjust if desired)
+# model: xai:grok-1
+
+clients:
+  - type: openai-compatible
+    name: Ollama
+    api_base: 127.0.0.1:11434
+    models:
+      - name: qwen3:0.6b
+
+  # === Grok (xAI) model entries ===
+  # Beispiel-Client für grok-Modelle. Passe `api_base` an deinen Proxy/Provider an.
+  - type: openai-compatible
+    name: xAI-Grok
+    # Verwende die passende API-Base (z.B. https://api.x.ai) oder eine lokale Proxy-Adresse
+    api_base: https://api.x.ai
+    models:
+      - name: grok-1
+      - name: grok-1.5
+      - name: grok-2
