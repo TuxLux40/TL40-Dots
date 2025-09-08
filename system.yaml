@@ -1,5 +1,5 @@
 # TuxLux40's blendOS system config
-# Packages that are commented out were not found by akshara but listed on https://archlinux.org/packages/ so I don't know why they failed to build/download and are excluded for now.
+# Packages that are commented out failed to build or were not found and thus are temporarily disabled
 arch-repo: https://geo.mirror.pkgbuild.com
 impl: https://github.com/blend-os/tracks/raw/main
 repo: https://pkg-repo.blendos.co
