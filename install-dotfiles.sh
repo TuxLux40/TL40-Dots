@@ -109,8 +109,6 @@ declare -A SYMLINKS=(
   ["$REPO_DIR/.config/burn-my-windows/profiles/1755598388870831.conf"]="$HOME/.config/burn-my-windows/profiles/1755598388870831.conf"
   ["$REPO_DIR/.config/gSnap/layouts.json"]="$HOME/.config/gSnap/layouts.json"
   ["$REPO_DIR/.config/user-dirs.dirs"]="$HOME/.config/user-dirs.dirs"
-  ["$REPO_DIR/fav_themes"]="$HOME/fav_themes"
-  ["$REPO_DIR/README.md"]="$HOME/README.md"
 )
 
 for src in "${!SYMLINKS[@]}"; do
