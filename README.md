@@ -10,3 +10,4 @@ My dotfiles to be linked into the home folder with GNU Stow.
 - `starship`
 - `.bash.rc`
 - `BlendOS system.yaml`
+
