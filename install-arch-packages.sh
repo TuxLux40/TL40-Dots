@@ -116,16 +116,143 @@ check_requirements() {
     print_success "All requirements met"
 }
 
-check_aur_helper() {
+setup_mirrors() {
+    print_info "Checking and optimizing package mirrors..."
+    
+    # Check if we're in an environment where we can modify mirrors
+    if ! command -v pacman &> /dev/null; then
+        print_warning "pacman not available - cannot setup mirrors"
+        return 1
+    fi
+    
+    # Check if reflector is available
+    if command -v reflector &> /dev/null; then
+        print_info "Using reflector to select fastest mirrors..."
+        sudo reflector --country Germany,Austria,Switzerland --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+        print_success "Mirrors optimized with reflector"
+    else
+        # Install reflector if not available
+        print_info "Installing reflector for mirror optimization..."
+        if sudo pacman -S --needed --noconfirm reflector; then
+            print_info "Selecting fastest mirrors..."
+            sudo reflector --country Germany,Austria,Switzerland --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+            print_success "Mirrors optimized with reflector"
+        else
+            print_warning "Could not install reflector. Using default mirrors."
+        fi
+    fi
+    
+    # Update package databases with new mirrors
+    print_info "Updating package databases..."
+    if sudo pacman -Sy; then
+        print_success "Package databases updated"
+    else
+        print_warning "Failed to update package databases"
+    fi
+}
+
+check_and_setup_repositories() {
+    print_info "Checking repository configuration..."
+    
+    # Check if we're in an environment where we can modify repositories
+    if ! command -v pacman &> /dev/null; then
+        print_warning "pacman not available - cannot setup repositories"
+        return 1
+    fi
+    
+    # Check if multilib is enabled
+    if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
+        print_info "Enabling multilib repository..."
+        sudo sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
+        print_success "Multilib repository enabled"
+        
+        # Update package databases after enabling multilib
+        sudo pacman -Sy
+    else
+        print_info "Multilib repository already enabled"
+    fi
+    
+    # Check and setup Chaotic-AUR
+    if ! grep -q "^\[chaotic-aur\]" /etc/pacman.conf; then
+        print_info "Setting up Chaotic-AUR repository..."
+        
+        # Install chaotic keyring and mirrorlist
+        if ! pacman -Qi chaotic-keyring &> /dev/null; then
+            print_info "Installing Chaotic-AUR keyring..."
+            sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+            sudo pacman-key --lsign-key 3056513887B78AEB
+            sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.xz'
+        fi
+        
+        if ! pacman -Qi chaotic-mirrorlist &> /dev/null; then
+            print_info "Installing Chaotic-AUR mirrorlist..."
+            sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.xz'
+        fi
+        
+        # Add Chaotic-AUR to pacman.conf
+        echo -e "\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist" | sudo tee -a /etc/pacman.conf
+        print_success "Chaotic-AUR repository configured"
+        
+        # Update package databases
+        sudo pacman -Sy
+    else
+        print_info "Chaotic-AUR repository already configured"
+    fi
+}
+
+check_and_install_aur_helper() {
+    # Check for existing AUR helpers
     if command -v yay &> /dev/null; then
-        print_info "Found AUR helper: yay"
+        print_success "Found AUR helper: yay"
         return 0
     elif command -v paru &> /dev/null; then
-        print_info "Found AUR helper: paru"
+        print_success "Found AUR helper: paru"
         return 0
     else
-        print_warning "No AUR helper (yay/paru) found. AUR packages will be skipped."
-        return 1
+        print_warning "No AUR helper found."
+        
+        # Check if we're in an environment where we can install packages
+        if ! command -v pacman &> /dev/null; then
+            print_warning "pacman not available - cannot auto-install AUR helper"
+            print_info "Please install yay or paru manually in your Arch environment"
+            return 1
+        fi
+        
+        print_info "Installing paru..."
+        
+        # Check if we have the necessary tools to build AUR packages
+        if ! command -v git &> /dev/null || ! pacman -Qi base-devel &> /dev/null; then
+            print_info "Installing build dependencies..."
+            if ! sudo pacman -S --needed --noconfirm git base-devel; then
+                print_error "Failed to install build dependencies"
+                return 1
+            fi
+        fi
+        
+        # Install paru
+        print_info "Cloning and building paru..."
+        local temp_dir=$(mktemp -d)
+        cd "$temp_dir"
+        
+        if git clone https://aur.archlinux.org/paru.git; then
+            cd paru
+            if makepkg -si --noconfirm; then
+                print_success "Successfully installed paru"
+                cd "$SCRIPT_DIR"
+                rm -rf "$temp_dir"
+                return 0
+            else
+                print_error "Failed to build paru"
+                cd "$SCRIPT_DIR"
+                rm -rf "$temp_dir"
+                return 1
+            fi
+        else
+            print_error "Failed to clone paru repository"
+            cd "$SCRIPT_DIR"
+            rm -rf "$temp_dir"
+            return 1
+        fi
     fi
 }
 
@@ -161,6 +288,22 @@ main() {
                 python_args+=(--yaml "$2")
                 shift 2
                 ;;
+            --skip-aur)
+                python_args+=(--skip-aur)
+                shift
+                ;;
+            --skip-chaotic)
+                python_args+=(--skip-chaotic)
+                shift
+                ;;
+            --only-aur)
+                python_args+=(--only-aur)
+                shift
+                ;;
+            --only-chaotic)
+                python_args+=(--only-chaotic)
+                shift
+                ;;
             *)
                 print_error "Unknown option: $1"
                 echo "Use --help for usage information."
@@ -175,8 +318,18 @@ main() {
     # Check requirements
     check_requirements
     
-    # Check for AUR helper
-    check_aur_helper
+    # Setup mirrors and repositories
+    if ! $dry_run; then
+        setup_mirrors
+        check_and_setup_repositories
+    else
+        print_info "[DRY-RUN] Would setup mirrors and repositories"
+    fi
+    
+    # Check and install AUR helper if needed
+    if ! check_and_install_aur_helper && ! $dry_run; then
+        print_warning "AUR helper installation failed. AUR packages will be skipped."
+    fi
     
     # Show what we're doing
     if $dry_run; then

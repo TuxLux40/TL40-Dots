@@ -16,16 +16,45 @@ import logging
 import argparse
 from pathlib import Path
 from typing import List, Set, Dict, Tuple
+import time
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('package_install.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
+# Try to import rich for better output, fallback to standard logging if not available
+try:
+    from rich.console import Console
+    from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeRemainingColumn
+    from rich.table import Table
+    from rich.panel import Panel
+    from rich.text import Text
+    from rich.logging import RichHandler
+    from rich.live import Live
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+
+if RICH_AVAILABLE:
+    console = Console()
+    
+    # Configure logging with Rich
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[
+            logging.FileHandler('package_install.log'),
+            RichHandler(console=console, show_path=False)
+        ]
+    )
+else:
+    # Fallback to standard logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('package_install.log'),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+
 logger = logging.getLogger(__name__)
 
 # Core packages already included in CachyOS or system essentials
@@ -58,24 +87,83 @@ CACHYOS_PACKAGES = {
 }
 
 class PackageInstaller:
-    def __init__(self, yaml_path: str, dry_run: bool = False):
+    def __init__(self, yaml_path: str, dry_run: bool = False, skip_aur: bool = False, 
+                 skip_chaotic: bool = False, only_aur: bool = False, only_chaotic: bool = False):
         self.yaml_path = Path(yaml_path)
         self.dry_run = dry_run
+        self.skip_aur = skip_aur
+        self.skip_chaotic = skip_chaotic
+        self.only_aur = only_aur
+        self.only_chaotic = only_chaotic
         self.failed_packages = []
         self.installed_packages = []
         
         if not self.yaml_path.exists():
             raise FileNotFoundError(f"YAML file not found: {yaml_path}")
     
+    def print_info(self, message: str):
+        """Print info message with appropriate formatting."""
+        if RICH_AVAILABLE:
+            console.print(f"[blue]ℹ[/blue] {message}")
+        else:
+            logger.info(message)
+    
+    def print_success(self, message: str):
+        """Print success message with appropriate formatting."""
+        if RICH_AVAILABLE:
+            console.print(f"[green]✓[/green] {message}")
+        else:
+            logger.info(f"✓ {message}")
+    
+    def print_warning(self, message: str):
+        """Print warning message with appropriate formatting."""
+        if RICH_AVAILABLE:
+            console.print(f"[yellow]⚠[/yellow] {message}")
+        else:
+            logger.warning(message)
+    
+    def print_error(self, message: str):
+        """Print error message with appropriate formatting."""
+        if RICH_AVAILABLE:
+            console.print(f"[red]✗[/red] {message}")
+        else:
+            logger.error(message)
+    
+    def create_summary_table(self, installed: List[str], failed: List[str]) -> Table:
+        """Create a summary table for installation results."""
+        if not RICH_AVAILABLE:
+            return None
+            
+        table = Table(title="Installation Summary", show_header=True, header_style="bold magenta")
+        table.add_column("Status", style="dim", width=8)
+        table.add_column("Count", justify="center", style="dim", width=8)
+        table.add_column("Packages", style="dim")
+        
+        if installed:
+            table.add_row(
+                "[green]Success[/green]", 
+                str(len(installed)), 
+                ", ".join(installed[:10]) + ("..." if len(installed) > 10 else "")
+            )
+        
+        if failed:
+            table.add_row(
+                "[red]Failed[/red]", 
+                str(len(failed)), 
+                ", ".join(failed[:10]) + ("..." if len(failed) > 10 else "")
+            )
+        
+        return table
+    
     def load_yaml(self) -> Dict:
         """Load and parse the YAML file."""
         try:
             with open(self.yaml_path, 'r', encoding='utf-8') as f:
                 data = yaml.safe_load(f)
-            logger.info(f"Successfully loaded YAML from {self.yaml_path}")
+            self.print_success(f"Loaded YAML from {self.yaml_path}")
             return data
         except Exception as e:
-            logger.error(f"Failed to load YAML file: {e}")
+            self.print_error(f"Failed to load YAML file: {e}")
             raise
     
     def filter_packages(self, packages: List[str]) -> List[str]:
@@ -101,51 +189,87 @@ class PackageInstaller:
                             install_command: List[str]) -> Tuple[List[str], List[str]]:
         """Install a group of packages and return success/failure lists."""
         if not packages:
-            logger.info(f"No {package_type} packages to install")
+            self.print_info(f"No {package_type} packages to install")
             return [], []
         
         successful = []
         failed = []
         
-        logger.info(f"Installing {len(packages)} {package_type} packages...")
-        
-        for package in packages:
-            if self.dry_run:
-                logger.info(f"[DRY RUN] Would install {package_type} package: {package}")
-                successful.append(package)
-                continue
-            
-            try:
-                cmd = install_command + [package]
-                logger.info(f"Installing {package_type} package: {package}")
+        if RICH_AVAILABLE:
+            # Use Rich progress bar for better visual feedback
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                TextColumn("({task.completed}/{task.total})"),
+                TimeRemainingColumn(),
+                console=console
+            ) as progress:
+                task = progress.add_task(f"Installing {package_type} packages...", total=len(packages))
                 
-                result = subprocess.run(
-                    cmd,
-                    capture_output=True,
-                    text=True,
-                    timeout=300  # 5 minute timeout per package
-                )
-                
-                if result.returncode == 0:
-                    logger.info(f"Successfully installed: {package}")
+                for i, package in enumerate(packages):
+                    progress.update(task, description=f"Installing {package_type}: {package}")
+                    
+                    if self.dry_run:
+                        self.print_info(f"[DRY RUN] Would install {package_type} package: {package}")
+                        successful.append(package)
+                        time.sleep(0.1)  # Small delay for visual effect in dry-run
+                    else:
+                        success = self._install_single_package(package, package_type, install_command)
+                        if success:
+                            successful.append(package)
+                        else:
+                            failed.append(package)
+                    
+                    progress.update(task, advance=1)
+        else:
+            # Fallback without Rich
+            self.print_info(f"Installing {len(packages)} {package_type} packages...")
+            for package in packages:
+                if self.dry_run:
+                    self.print_info(f"[DRY RUN] Would install {package_type} package: {package}")
                     successful.append(package)
                 else:
-                    logger.error(f"Failed to install {package}: {result.stderr}")
-                    failed.append(package)
-                    
-            except subprocess.TimeoutExpired:
-                logger.error(f"Timeout installing {package}")
-                failed.append(package)
-            except Exception as e:
-                logger.error(f"Error installing {package}: {e}")
-                failed.append(package)
+                    success = self._install_single_package(package, package_type, install_command)
+                    if success:
+                        successful.append(package)
+                    else:
+                        failed.append(package)
         
         return successful, failed
+    
+    def _install_single_package(self, package: str, package_type: str, install_command: List[str]) -> bool:
+        """Install a single package and return success status."""
+        try:
+            cmd = install_command + [package]
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout per package
+            )
+            
+            if result.returncode == 0:
+                return True
+            else:
+                self.print_error(f"Failed to install {package}: {result.stderr.strip()}")
+                logger.error(f"Command failed: {' '.join(cmd)}")
+                logger.error(f"Stderr: {result.stderr}")
+                return False
+                
+        except subprocess.TimeoutExpired:
+            self.print_error(f"Timeout installing {package}")
+            return False
+        except Exception as e:
+            self.print_error(f"Error installing {package}: {e}")
+            return False
     
     def setup_chaotic_repo(self) -> bool:
         """Ensure Chaotic-AUR repository is set up."""
         if self.dry_run:
-            logger.info("[DRY RUN] Would setup Chaotic-AUR repository")
+            self.print_info("[DRY RUN] Would setup Chaotic-AUR repository")
             return True
         
         try:
@@ -154,7 +278,7 @@ class PackageInstaller:
                                   capture_output=True, text=True)
             
             if result.returncode != 0:
-                logger.info("Installing Chaotic-AUR keyring...")
+                self.print_info("Installing Chaotic-AUR keyring...")
                 subprocess.run(['sudo', 'pacman', '-Sy', '--noconfirm', 'chaotic-keyring'], 
                              check=True)
                 
@@ -163,15 +287,15 @@ class PackageInstaller:
                                   capture_output=True, text=True)
                                   
             if result.returncode != 0:
-                logger.info("Installing Chaotic-AUR mirrorlist...")
+                self.print_info("Installing Chaotic-AUR mirrorlist...")
                 subprocess.run(['sudo', 'pacman', '-Sy', '--noconfirm', 'chaotic-mirrorlist'], 
                              check=True)
             
-            logger.info("Chaotic-AUR repository setup complete")
+            self.print_success("Chaotic-AUR repository setup complete")
             return True
             
         except Exception as e:
-            logger.error(f"Failed to setup Chaotic-AUR repository: {e}")
+            self.print_error(f"Failed to setup Chaotic-AUR repository: {e}")
             return False
     
     def install_packages(self):
@@ -213,10 +337,36 @@ class PackageInstaller:
         filtered_chaotic = self.filter_packages(chaotic_packages)
         filtered_aur = self.filter_packages(aur_packages)
         
-        logger.info(f"Package summary:")
-        logger.info(f"  Regular packages: {len(filtered_regular)}")
-        logger.info(f"  Chaotic packages: {len(filtered_chaotic)}")
-        logger.info(f"  AUR packages: {len(filtered_aur)}")
+        # Apply installation filters
+        if self.only_aur:
+            filtered_regular = []
+            filtered_chaotic = []
+        elif self.only_chaotic:
+            filtered_regular = []
+            filtered_aur = []
+        else:
+            if self.skip_aur:
+                filtered_aur = []
+            if self.skip_chaotic:
+                filtered_chaotic = []
+        
+        # Display package summary
+        if RICH_AVAILABLE:
+            summary_panel = Panel.fit(
+                f"[bold]Package Installation Summary[/bold]\n\n"
+                f"[blue]Regular packages:[/blue] {len(filtered_regular)}\n"
+                f"[yellow]Chaotic packages:[/yellow] {len(filtered_chaotic)}\n"
+                f"[green]AUR packages:[/green] {len(filtered_aur)}\n"
+                f"[dim]Total packages:[/dim] {len(filtered_regular) + len(filtered_chaotic) + len(filtered_aur)}",
+                title="📦 Installation Plan",
+                border_style="blue"
+            )
+            console.print(summary_panel)
+        else:
+            self.print_info(f"Package summary:")
+            self.print_info(f"  Regular packages: {len(filtered_regular)}")
+            self.print_info(f"  Chaotic packages: {len(filtered_chaotic)}")
+            self.print_info(f"  AUR packages: {len(filtered_aur)}")
         
         all_successful = []
         all_failed = []
@@ -242,7 +392,7 @@ class PackageInstaller:
                 all_successful.extend(success)
                 all_failed.extend(failed)
             else:
-                logger.error("Skipping Chaotic packages due to repository setup failure")
+                self.print_error("Skipping Chaotic packages due to repository setup failure")
                 all_failed.extend(filtered_chaotic)
         
         # Install AUR packages (requires yay or another AUR helper)
@@ -256,7 +406,7 @@ class PackageInstaller:
                     subprocess.run(['which', 'paru'], check=True, capture_output=True)
                     aur_helper = 'paru'
                 except subprocess.CalledProcessError:
-                    logger.error("No AUR helper (yay/paru) found. Skipping AUR packages.")
+                    self.print_error("No AUR helper (yay/paru) found. Skipping AUR packages.")
                     all_failed.extend(filtered_aur)
                     aur_helper = None
             
@@ -269,20 +419,31 @@ class PackageInstaller:
                 all_successful.extend(success)
                 all_failed.extend(failed)
         
-        # Report results
-        logger.info(f"\nInstallation Summary:")
-        logger.info(f"  Successfully installed: {len(all_successful)} packages")
-        logger.info(f"  Failed to install: {len(all_failed)} packages")
+        # Display final results
+        if RICH_AVAILABLE:
+            console.print()
+            table = self.create_summary_table(all_successful, all_failed)
+            if table:
+                console.print(table)
+        else:
+            # Fallback text output
+            self.print_info(f"\nInstallation Summary:")
+            self.print_info(f"  Successfully installed: {len(all_successful)} packages")
+            self.print_info(f"  Failed to install: {len(all_failed)} packages")
         
         if all_successful:
-            logger.info("Successfully installed packages:")
-            for pkg in all_successful:
-                logger.info(f"  ✓ {pkg}")
+            if not RICH_AVAILABLE:
+                self.print_success("Successfully installed packages:")
+                for pkg in all_successful[:10]:  # Show first 10
+                    self.print_success(f"  {pkg}")
+                if len(all_successful) > 10:
+                    self.print_info(f"  ... and {len(all_successful) - 10} more")
         
         if all_failed:
-            logger.error("Failed packages:")
-            for pkg in all_failed:
-                logger.error(f"  ✗ {pkg}")
+            if not RICH_AVAILABLE:
+                self.print_error("Failed packages:")
+                for pkg in all_failed:
+                    self.print_error(f"  {pkg}")
         
         return len(all_failed) == 0
 
@@ -294,25 +455,70 @@ def main():
                        help='Show what would be installed without actually installing')
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Enable verbose logging')
+    parser.add_argument('--skip-aur', action='store_true',
+                       help='Skip AUR packages installation')
+    parser.add_argument('--skip-chaotic', action='store_true',
+                       help='Skip Chaotic-AUR packages installation')
+    parser.add_argument('--only-aur', action='store_true',
+                       help='Install only AUR packages')
+    parser.add_argument('--only-chaotic', action='store_true',
+                       help='Install only Chaotic-AUR packages')
     
     args = parser.parse_args()
+    
+    # Validate mutually exclusive options
+    exclusive_options = [args.only_aur, args.only_chaotic, args.skip_aur and args.skip_chaotic]
+    if sum(exclusive_options) > 1:
+        print("Error: --only-aur, --only-chaotic, and --skip-aur with --skip-chaotic are mutually exclusive")
+        sys.exit(1)
     
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
     
     try:
-        installer = PackageInstaller(args.yaml, args.dry_run)
+        # Display header
+        if RICH_AVAILABLE:
+            header = Panel.fit(
+                "[bold blue]TL40-BOS Custom Package Installer[/bold blue]\n"
+                "[dim]Installing custom packages while excluding core system packages[/dim]",
+                title="🚀 Package Installer",
+                border_style="blue"
+            )
+            console.print(header)
+        else:
+            print("=== TL40-BOS Custom Package Installer ===")
+            print("Installing custom packages while excluding core system packages")
+        
+        installer = PackageInstaller(
+            args.yaml, 
+            args.dry_run, 
+            args.skip_aur, 
+            args.skip_chaotic, 
+            args.only_aur, 
+            args.only_chaotic
+        )
         success = installer.install_packages()
         
         if success:
-            logger.info("All packages installed successfully!")
+            if RICH_AVAILABLE:
+                console.print(Panel("🎉 All packages installed successfully!", 
+                                   title="Success", border_style="green"))
+            else:
+                logger.info("All packages installed successfully!")
             sys.exit(0)
         else:
-            logger.error("Some packages failed to install. Check the log for details.")
+            if RICH_AVAILABLE:
+                console.print(Panel("❌ Some packages failed to install. Check the log for details.", 
+                                   title="Partial Success", border_style="yellow"))
+            else:
+                logger.error("Some packages failed to install. Check the log for details.")
             sys.exit(1)
             
     except Exception as e:
-        logger.error(f"Script failed: {e}")
+        if RICH_AVAILABLE:
+            console.print(Panel(f"💥 Script failed: {e}", title="Error", border_style="red"))
+        else:
+            logger.error(f"Script failed: {e}")
         sys.exit(1)
 
 if __name__ == '__main__':
