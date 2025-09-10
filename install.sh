@@ -30,3 +30,6 @@ echo "Stowing packages: ${PACKAGES[*]} to $TARGET"
 stow -v -t "$TARGET" "${PACKAGES[@]}"
 
 echo "Done."
+echo "Fixing starship.toml symlink..."
+ln -sf "$REPO_DIR/.config/starship/.config/starship.toml" "$HOME/.config/starship.toml"
+echo "Symlink for starship.toml gesetzt: $HOME/.config/starship.toml -> $REPO_DIR/.config/starship/.config/starship.toml"
