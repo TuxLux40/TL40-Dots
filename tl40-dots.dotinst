@@ -1,0 +1,76 @@
+{
+    "name": "TL40-Dots",
+    "id": "com.tuxlux40.tl40dots",
+    "description": "User dotfiles and configs from the TL40-Dots repository",
+    "version": "1.0.0",
+    "author": "TuxLux40",
+    "homepage": "https://github.com/TuxLux40/TL40-Dots",
+    "source": "Projects/TL40-Dots",
+    "subfolder": "",
+    "setupscript": "",
+
+    "restore": [
+        {
+            "title": "Bashrc",
+            "source": "bash/.bashrc",
+            "value": true
+        },
+        {
+            "title": "Git config",
+            "source": "git/.gitconfig",
+            "value": true
+        },
+        {
+            "title": "Kitty config",
+            "source": ".config/kitty/kitty.conf",
+            "value": true
+        },
+        {
+            "title": "Starship",
+            "source": ".config/starship/.config/starship.toml",
+            "value": true
+        },
+        {
+            "title": "Atuin",
+            "source": ".config/atuin/config.toml",
+            "value": true
+        },
+        {
+            "title": "gSnap layouts",
+            "source": ".config/gSnap/layouts.json",
+            "value": true
+        },
+        {
+            "title": "Guake session",
+            "source": ".config/guake/session.json",
+            "value": true
+        },
+        {
+            "title": "aichat config",
+            "source": ".config/aichat/config.yaml",
+            "value": true
+        },
+        {
+            "title": "Burn My Windows profile",
+            "source": ".config/burn-my-windows/profiles/1755598388870831.conf",
+            "value": true
+        },
+        {
+            "title": "user-dirs",
+            "source": ".config/user-dirs.dirs",
+            "value": true
+        },
+        {
+            "title": "Fav Themes (folder)",
+            "source": "fav_themes",
+            "value": true
+        },
+        {
+            "title": "system.yaml",
+            "source": "system.yaml",
+            "value": true
+        }
+    ],
+
+    "settings": []
+}
