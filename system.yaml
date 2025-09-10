@@ -407,6 +407,7 @@ packages:
   - zlib # Compression library
 
   ## Chaotic Packages
+  - appimagepool-appimage # AppImageHub client
   - auto-cpufreq # Automatic CPU speed & power optimizer for Linux
   - betterbird-bin # BetterBird email client
   - chaotic-keyring # Keyring for Chaotic-AUR
@@ -414,7 +415,6 @@ packages:
   - debtap # Tool for converting .deb packages to Arch Linux packages
   - gnome-shell-extension-blur-my-shell # Blur My Shell extension for GNOME Shell
   - gnome-shell-extension-dash-to-dock # Dash to Dock extension for GNOME
-  - gnome-shell-extension-gsconnect-git # GSConnect extension for GNOME Shell
   - gnome-shell-extension-logo-menu # Logo Menu extension for GNOME Shell
   - gnome-shell-extension-space-bar-git # Space Bar extension for GNOME Shell
   - gnome-shell-extension-tiling-assistant # Tiling Assistant extension for GNOME Shell
@@ -544,6 +544,7 @@ aur-packages:
   - gnome-shell-extension-nightthemeswitcher # Night Theme Switcher extension for GNOME Shell
   - gnome-shell-extension-tilingshell # TilingShell extension for GNOME Shell
   - gnome-shell-extension-tray-icons-reloaded # Tray Icons Reloaded extension for GNOME Shell
+  - gnome-shell-extension-gsconnect-git # GSConnect extension for GNOME Shell
   - gnome-terminal-transparency # Transparency support for GNOME Terminal
   - grub-customizer # GRUB configuration GUI
   - linutil-bin # Linux utilities by Chris Titus Tech (failed to build)
