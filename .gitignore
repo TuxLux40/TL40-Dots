@@ -5,3 +5,6 @@
 
 # Ignore local secrets
 .env
+
+# Ignore package installation logs
+package_install.log
