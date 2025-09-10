@@ -3,7 +3,7 @@
 arch-repo: https://geo.mirror.pkgbuild.com
 impl: https://github.com/blend-os/tracks/raw/main
 repo: https://pkg-repo.blendos.co
-track: default-gnome
+track: blendos-base
 
 # Official Repos (Arch)
 packages:
@@ -455,15 +455,13 @@ packages:
   - libnautilus-extension # Extension interface for Nautilus
   - libnautilus-extension-docs # Documentation for libnautilus-extension
   - libadwaita # Library for building GNOME apps with Adwaita style
-#  - planner # Project management application for GNOME
 
 # KDE packages:
-  - "kde-system-meta" # kde system meta package
-  - "kde-utilities-meta" # kde utilities meta package
-  - "plasma" # plasma meta package
-  - "plasma-workspace" # plasma desktop environment
-  - "sddm" # display manager
-
+#  - "kde-system-meta" # kde system meta package
+#  - "kde-utilities-meta" # kde utilities meta package
+#  - "plasma" # plasma meta package
+#  - "plasma-workspace" # plasma desktop environment
+#  - "sddm" # display manager
 
 # XFCE packages:
 #  - "xfce4" # xfce desktop environment
@@ -548,23 +546,18 @@ aur-packages:
   - gnome-terminal-transparency # Transparency support for GNOME Terminal
   - grub-customizer # GRUB configuration GUI
   - linutil-bin # Linux utilities by Chris Titus Tech (failed to build)
-  - linuxthemestore-git # Linux theme store
   - masterpdfeditor # PDF editor
   - nautilus-admin-gtk4 # Nautilus Admin with GTK4 support
 #  - nautilus-backspace # Backspace navigation extension for Nautilus
   - nautilus-checksums # Checksums extension for Nautilus (git version)
   - nautilus-copy-path # Copy Path extension for Nautilus
-  - nautilus-open-in-code # Open in VSCode extension for Nautilus
   - openrgb-plugin-fan-sync-git # Fan sync plugin for OpenRGB
   - powershell-bin # Microsoft PowerShell binary
   - proton-mail-bin # Proton Mail desktop client
   - proton-pass-bin # Proton Pass desktop client
-  - spacedrive-bin # Spacedrive, virtual drive for cloud storage (binary)
   - turtle # Git repository manager in nautilus
   - ufraw-thumbnailer # UFRaw thumbnailer for Nautilus
   - winboat # Run Windows apps on Linux with seamless integration
-  - win11-icon-theme-git # Windows 11 icon theme
-  - win11-sddm-theme # Windows 11 SDDM theme
   - yubico-authenticator-bin # Yubico Authenticator (binary release)
 
 # Services to start automatically
