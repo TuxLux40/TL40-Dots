@@ -3,7 +3,7 @@
 arch-repo: https://geo.mirror.pkgbuild.com
 impl: https://github.com/blend-os/tracks/raw/main
 repo: https://pkg-repo.blendos.co
-track: blendos-base
+track: default-gnome
 
 # Official Repos (Arch)
 packages:
