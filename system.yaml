@@ -31,7 +31,6 @@ packages:
   - bridge-utils # Network bridge utilities
   - btop # Resource monitor
   - btrfs-progs # Btrfs filesystem utilities
-  - caligula # A user-friendly, lightweight TUI for disk imaging
   - cargo-make # Build system for Rust projects
   - cargo-binstall # Binary installation for Rust projects
   - cargo-deb # Create .deb packages from Rust projects
@@ -68,7 +67,6 @@ packages:
   - fatresize # Resize FAT filesystems
   - fd # Simple, fast file search tool
   - ffmpeg # Multimedia framework
-  - filezilla # FTP client
   - flatpak-builder # Flatpak app builder
   - flatpak # Linux app sandboxing
   - flatpak-xdg-utils # XDG utilities for Flatpak
@@ -79,7 +77,6 @@ packages:
   - ghostty # GPU-accelerated terminal emulator
   - ghostty-shell-integration # Shell integration for Ghostty
   - ghostty-terminfo # Terminfo for Ghostty
-  - git # Version control system
   - gimp # GNU Image Manipulation Program
   - github-cli # GitHub command-line tool
   - glibc # GNU C Library
@@ -95,6 +92,7 @@ packages:
   - gramps # Genealogy software, GUI
   - grep # Text search tool
   - grub # GRUB bootloader
+  - gvfs
   - gvfs-mtp # MTP support for GVFS
   - gvfs-smb # SMB support for GVFS
   - gzip # Compression utility
@@ -114,7 +112,6 @@ packages:
   - kdenlive # Video editor
   - kitty # GPU-based terminal emulator
   - lact # Linux AMD Controller, GUI
-  - less # Terminal pager
   - libdvdcss # Library for accessing encrypted DVDs
   - libdvdnav # DVD navigation library
   - libdvdread # DVD reading library
@@ -133,7 +130,6 @@ packages:
   - ltrace # Library call tracer
   - lua # Lua programming language
   - luarocks # Lua package manager
-  - lutris # Gaming platform for Linux
   - lynis # Security auditing tool
   - make # Build automation tool
   - man-db # Manual page utilities
@@ -179,19 +175,15 @@ packages:
   - pam-u2f # U2F PAM module
   - parted # Partition editor
   - partimage # Disk imaging tool
+  - patchelf
   - pciutils # PCI utilities
   - pcsclite # PC/SC Lite
   - pcsc-tools # PC/SC tools
-  - pdfarranger # PDF page arranger
   - pdfcrack # PDF password cracker
   - pdfgrep # PDF text search tool
   - perf # Performance analysis tool
   - php # PHP programming language
   - pika-backup # Simple backup tool
-  - pipewire-alsa # ALSA support for PipeWire
-  - pipewire-docs # PipeWire documentation
-  - pipewire-jack # JACK support for PipeWire
-  - pipewire # Low-latency audio and video processing
   - pipewire-pulse # PulseAudio support for PipeWire
   - pkgconf # Package compiler and linker metadata toolkit
   - podman-compose # Docker Compose for Podman
@@ -204,7 +196,6 @@ packages:
   - protonmail-bridge-core # ProtonMail Bridge core
   - proton-vpn-gtk-app # Proton VPN GUI
   - psmisc # Miscellaneous process utilities
-  - pv # Pipe viewer
   - python-pip # Python package installer
   - python-proton-vpn-api-core # Proton VPN API core
   - python-proton-vpn-local-agent # Proton VPN local agent
@@ -213,7 +204,6 @@ packages:
   - python-gobject # Python bindings for GLib/GObject/GIO/GTK
   - python-pyu2f # Python U2F library
   - python-yubico # Python Yubico library
-  - qemu-full # Full QEMU package
   - qrencode # QR code generator
   - radeontool # Radeon GPU tool, CLI
   - raider # File deletion tool
@@ -308,15 +298,15 @@ packages:
   - xfsprogs # XFS filesystem utilities
   - yara # Malware identification tool
   - yarn # JavaScript package manager
-  - yazi # Blazing fast terminal file manager written in Rust, based on async I/O
   - yubico-c-client # Yubico C client
   - yubico-c # Yubico C library
   - yubico-pam # Yubico PAM module
   - yubico-piv-tool # Yubico PIV tool
   - yubikey-personalization-gui # GUI for YubiKey personalization
   - yubikey-personalization # YubiKey personalization tool
+  - zlib
 
-  ## Chaotic Packages
+## Chaotic Packages
   - auto-cpufreq # Automatic CPU speed & power optimizer for Linux
   - betterbird-bin # BetterBird email client
   - chaotic-keyring # Keyring for Chaotic-AUR
@@ -345,7 +335,7 @@ packages:
   - waydroid # waydroid for running android apps
   - waydroid-image # default android image for waydroid
 
-  ## Gnome Packages
+## Gnome Packages
   - gnome-bluetooth-3.0 # Bluetooth support for GNOME
   - gnome-dictionary # Dictionary application for GNOME
   - gnome-firmware # Manage firmware on devices supported by fwupd
@@ -360,6 +350,8 @@ packages:
   - libnautilus-extension # Extension interface for Nautilus
   - libnautilus-extension-docs # Documentation for libnautilus-extension
   - libadwaita # Library for building GNOME apps with Adwaita style
+  - xdg-desktop-portal
+  - xdg-desktop-portal-gnome
 
 # KDE packages:
 #  - "kde-system-meta" # kde system meta package
@@ -426,7 +418,6 @@ packages:
 #  - waybar # Highly customizable bar for Wayland
 #  - rofi # Window switcher, application launcher and dmenu replacement
 
-# AUR-Packages
 aur-packages:
   - bazaar # New App Store from Bazzite
   - brave-bin # Brave web browser (binary release)
@@ -460,7 +451,6 @@ aur-packages:
   - winboat # Run Windows apps on Linux with seamless integration
   - yubico-authenticator-bin # Yubico Authenticator (binary release)
 
-# Services to start automatically
 services:
   - NetworkManager # Network connection manager, handles network interfaces and connections
   - protonvpn.service # ProtonVPN daemon, provides VPN connectivity
@@ -479,11 +469,27 @@ commands:
   - eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   - echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
 
-# Other Package-Repos
 package-repos:
-  - name: chaotic-aur
-    repo-url: https://cdn-mirror.chaotic.cx/$repo/$arch
+  - name: 'arch-mact2'
+    repo-url: 'https://mirror.funami.tech/$repo/os/$arch/'
+#  - name: arch4edu
+#    repo-url: https://arch4edu.org/$arch
+#    sig-level: Optional TrustAll
+  - name: archstrike
+    repo-url: https://mirror.archstrike.org/$arch/$repo
     sig-level: Optional TrustAll
+  - name: blackarch
+    repo-url: https://mirrors.dotsrc.org/blackarch/blackarch/os/x86_64/
+    sig-level: Optional TrustAll
+#  - name: bioarchlinux
+#    repo-url: https://repo.bioarchlinux.org/$repo/$arch
+#    sig-level: Optional TrustAll
+#  - name: selinux
+#    repo-url: https://mirror1.archlinuxhardened.org/$repo/os/$arch
+#    sig-level: Optional TrustAll
 #  - name: andontie
 #    repo-url: https://aur.andontie.net/$arch
+#    sig-level: Optional TrustAll
+#  - name: cachyos
+#    repo-url: https://mirror.cachyos.org/repo/$repo/$arch
 #    sig-level: Optional TrustAll
