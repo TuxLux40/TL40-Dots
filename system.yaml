@@ -291,35 +291,6 @@ packages:
   - yubikey-personalization-gui # GUI for YubiKey personalization
   - yubikey-personalization # YubiKey personalization tool
 
-## Chaotic Packages
-  - auto-cpufreq # Automatic CPU speed & power optimizer for Linux
-  - betterbird-bin # BetterBird email client
-  - chaotic-keyring # Keyring for Chaotic-AUR
-  - chaotic-mirrorlist # Mirrorlist for Chaotic-AUR
-  - debtap # Tool for converting .deb packages to Arch Linux packages
-  - gnome-shell-extension-blur-my-shell # Blur My Shell extension for GNOME Shell
-  - gnome-shell-extension-dash-to-dock # Dash to Dock extension for GNOME
-  - gnome-shell-extension-logo-menu # Logo Menu extension for GNOME Shell
-  - gnome-shell-extension-space-bar-git # Space Bar extension for GNOME Shell
-  - gnome-shell-extension-tiling-assistant # Tiling Assistant extension for GNOME Shell
-  - go-mtpfs-git # MTP filesystem for Go (git version)
-  - google-chrome # Google Chrome web browser
-  - handbrake-full # Video transcoder with GUI
-  - hardinfo2 # System information and benchmark tool
-  - input-remapper-git # Input Remapper (git version)
-  - linux-cachyos # Linux kernel with additional patches and optimizations from CachyOS
-  - linux-cachyos-headers # Headers for linux-cachyos
-  - microsoft-edge-stable-bin # Microsoft Edge web browser (stable)
-  - mediawriter # Fedora Media Writer, USB image writer
-  - nautilus-code-git # Nautilus with VSCode integration (git version)
-  - nautilus-open-any-terminal # Open Any Terminal extension for Nautilus
-  - simple-mtpfs # Simple MTP filesystem
-  - tabby-bin # Terminal emulator
-  - visual-studio-code-bin # Official closed source binary
-  - webapp-manager # Web application manager
-  - waydroid # waydroid for running android apps
-  - waydroid-image # default android image for waydroid
-
 ## Gnome Packages
   - gnome-bluetooth-3.0 # Bluetooth support for GNOME
   - gnome-dictionary # Dictionary application for GNOME
@@ -435,6 +406,33 @@ aur-packages:
   - ufraw-thumbnailer # UFRaw thumbnailer for Nautilus
   - winboat # Run Windows apps on Linux with seamless integration
   - yubico-authenticator-bin # Yubico Authenticator (binary release)
+  - auto-cpufreq # Automatic CPU speed & power optimizer for Linux
+  - betterbird-bin # BetterBird email client
+  - chaotic-keyring # Keyring for Chaotic-AUR
+  - chaotic-mirrorlist # Mirrorlist for Chaotic-AUR
+  - debtap # Tool for converting .deb packages to Arch Linux packages
+  - gnome-shell-extension-blur-my-shell # Blur My Shell extension for GNOME Shell
+  - gnome-shell-extension-dash-to-dock # Dash to Dock extension for GNOME
+  - gnome-shell-extension-logo-menu # Logo Menu extension for GNOME Shell
+  - gnome-shell-extension-space-bar-git # Space Bar extension for GNOME Shell
+  - gnome-shell-extension-tiling-assistant # Tiling Assistant extension for GNOME Shell
+  - go-mtpfs-git # MTP filesystem for Go (git version)
+  - google-chrome # Google Chrome web browser
+  - handbrake-full # Video transcoder with GUI
+  - hardinfo2 # System information and benchmark tool
+  - input-remapper-git # Input Remapper (git version)
+  - linux-cachyos # Linux kernel with additional patches and optimizations from CachyOS
+  - linux-cachyos-headers # Headers for linux-cachyos
+  - microsoft-edge-stable-bin # Microsoft Edge web browser (stable)
+  - mediawriter # Fedora Media Writer, USB image writer
+  - nautilus-code-git # Nautilus with VSCode integration (git version)
+  - nautilus-open-any-terminal # Open Any Terminal extension for Nautilus
+  - simple-mtpfs # Simple MTP filesystem
+  - tabby-bin # Terminal emulator
+  - visual-studio-code-bin # Official closed source binary
+  - webapp-manager # Web application manager
+  - waydroid # waydroid for running android apps
+  - waydroid-image # default android image for waydroid
 
 services:
   - NetworkManager # Network connection manager, handles network interfaces and connections
