@@ -9,11 +9,17 @@ and Chaotic packages separately and logs any installation failures.
 Author: TuxLux40
 """
 
-import yaml
 import subprocess
 import sys
 import logging
 import argparse
+import shutil
+import os
+try:
+    import yaml  # type: ignore
+except ImportError:
+    print("Missing dependency 'PyYAML'. Install with: pacman -S python-yaml OR pip install pyyaml")
+    sys.exit(1)
 from pathlib import Path
 from typing import List, Set, Dict, Tuple
 
@@ -61,9 +67,10 @@ class PackageInstaller:
     def __init__(self, yaml_path: str, dry_run: bool = False):
         self.yaml_path = Path(yaml_path)
         self.dry_run = dry_run
-        self.failed_packages = []
-        self.installed_packages = []
-        
+        self.failed_packages: List[str] = []
+        self.installed_packages: List[str] = []
+        self.auto_install_managers: bool = False  # toggled later via argument
+
         if not self.yaml_path.exists():
             raise FileNotFoundError(f"YAML file not found: {yaml_path}")
     
@@ -286,6 +293,103 @@ class PackageInstaller:
         
         return len(all_failed) == 0
 
+    # ---------------- Additional Developer Package Managers -----------------
+    def install_dev_managers(self, auto_install: bool = False):
+        """Provide (and optionally run) installation commands for popular meta package managers.
+
+        Managers covered:
+          - Homebrew (Linuxbrew)
+          - cargo (via rustup)
+          - nvm (Node Version Manager)
+          - pyenv (Python version manager)
+
+        If auto_install is True, missing managers will be installed automatically (best-effort).
+        Always logs the exact commands for transparency.
+        """
+
+        logger.info("\nDeveloper Package Managers Summary:")
+
+        home_dir = Path.home()
+
+        managers = [
+            {
+                'name': 'Homebrew',
+                'detect': lambda: shutil.which('brew') or Path('/home/linuxbrew/.linuxbrew/bin/brew').exists() or Path(home_dir, '.linuxbrew', 'bin', 'brew').exists(),
+                'commands': [
+                    'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+                    # PATH export suggestion (not executed automatically):
+                ],
+                'post_note': 'Add to shell profile: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" if installed under /home/linuxbrew.'
+            },
+            {
+                'name': 'cargo (rustup)',
+                'detect': lambda: shutil.which('cargo') is not None,
+                'commands': [
+                    'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
+                ],
+                'post_note': 'After install, ensure ~/.cargo/bin is in PATH.'
+            },
+            {
+                'name': 'nvm',
+                'detect': lambda: (home_dir / '.nvm').exists(),
+                'commands': [
+                    'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash'
+                ],
+                'post_note': 'Source ~/.nvm/nvm.sh (add to profile) to use nvm command.'
+            },
+            {
+                'name': 'pyenv',
+                'detect': lambda: (home_dir / '.pyenv').exists(),
+                'commands': [
+                    'git clone https://github.com/pyenv/pyenv.git ~/.pyenv'
+                ],
+                'post_note': 'Add PYENV_ROOT and eval "$(pyenv init -)" to shell profile.'
+            }
+        ]
+
+        any_missing = False
+        for mgr in managers:
+            installed = False
+            try:
+                installed = bool(mgr['detect']())
+            except Exception:
+                installed = False
+
+            if installed:
+                logger.info(f"  ✓ {mgr['name']} already present")
+                continue
+
+            any_missing = True
+            logger.info(f"  ✗ {mgr['name']} not found")
+            logger.info(f"    Install commands:")
+            for cmd in mgr['commands']:
+                logger.info(f"      {cmd}")
+            logger.info(f"    Note: {mgr['post_note']}")
+
+            if auto_install:
+                for cmd in mgr['commands']:
+                    if self.dry_run:
+                        logger.info(f"[DRY RUN] Would execute: {cmd}")
+                        continue
+                    try:
+                        logger.info(f"Executing install for {mgr['name']}...")
+                        # Use bash -c to allow pipes and quotes
+                        subprocess.run(['bash', '-c', cmd], check=True)
+                        logger.info(f"{mgr['name']} installation command completed")
+                    except subprocess.CalledProcessError as e:
+                        logger.error(f"Failed installing {mgr['name']} (command failed): {e}")
+                        break
+                    except Exception as e:
+                        logger.error(f"Unexpected error installing {mgr['name']}: {e}")
+                        break
+
+        if not any_missing:
+            logger.info("All tracked developer package managers already installed.")
+        else:
+            if not auto_install:
+                logger.info("(Use --auto-install-managers to install missing managers automatically.)")
+        logger.info("End of developer package managers section.\n")
+
 def main():
     parser = argparse.ArgumentParser(description='Install custom packages from system.yaml')
     parser.add_argument('--yaml', '-y', default='system.yaml',
@@ -294,6 +398,10 @@ def main():
                        help='Show what would be installed without actually installing')
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Enable verbose logging')
+    parser.add_argument('--auto-install-managers', action='store_true',
+                        help='Automatically install missing developer package managers (Homebrew, rustup/cargo, nvm, pyenv) at end')
+    parser.add_argument('-a', '--all', action='store_true',
+                        help='Install everything: all packages plus developer package managers (implies --auto-install-managers)')
     
     args = parser.parse_args()
     
@@ -302,15 +410,24 @@ def main():
     
     try:
         installer = PackageInstaller(args.yaml, args.dry_run)
+        # Enable comprehensive mode
+        if args.all:
+            args.auto_install_managers = True
+            logger.info("--all flag set: enabling developer package managers installation.")
+
         success = installer.install_packages()
-        
+
+        # Developer package managers section always runs at the end
+        installer.install_dev_managers(auto_install=args.auto_install_managers)
+
         if success:
             logger.info("All packages installed successfully!")
-            sys.exit(0)
+            exit_code = 0
         else:
             logger.error("Some packages failed to install. Check the log for details.")
-            sys.exit(1)
-            
+            exit_code = 1
+        sys.exit(exit_code)
+
     except Exception as e:
         logger.error(f"Script failed: {e}")
         sys.exit(1)
