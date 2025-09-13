@@ -1,0 +1,50 @@
+Dialect	Translate between languages	app.drey.Dialect	2.6.1	stable	x86_64	flathub	user	app.drey.Dialect/x86_64/stable	c3ca4de175d2	-	8,3 MB	user,current
+SSH-MITM	SSH-MITM - ssh audits made simple	at.ssh_mitm.server	5.0.0	stable	x86_64	flathub	user	at.ssh_mitm.server/x86_64/stable	19c2cc17863c	-	34,6 MB	user,current
+Simplexity	Simple desktop app for Perplexity.AI	br.com.wiselabs.simplexity	1.0.1	stable	x86_64	flathub	user	br.com.wiselabs.simplexity/x86_64/stable	379e0065847a	-	280,0 MB	user,current
+Bitwarden	A secure and free password manager for all of your devices	com.bitwarden.desktop	2025.8.2	stable	x86_64	flathub	user	com.bitwarden.desktop/x86_64/stable	ad6a6cd67239	-	434,2 MB	user,current
+Discord	Talk, play, hang out	com.discordapp.Discord	0.0.109	stable	x86_64	flathub	user	com.discordapp.Discord/x86_64/stable	bfdd58211ab3	-	278,1 MB	user,current
+Portal for Teams	Unofficial Microsoft Teams client for Linux	com.github.IsmaelMartinez.teams_for_linux	2.2.1	stable	x86_64	flathub	user	com.github.IsmaelMartinez.teams_for_linux/x86_64/stable	af310de82fb6	-	324,0 MB	user,current
+Pinta	Edit images and paint digitally	com.github.PintaProject.Pinta	3.0.3	stable	x86_64	flathub	user	com.github.PintaProject.Pinta/x86_64/stable	0cfa1b682268	-	118,1 MB	user,current
+Eyedropper	Pick and format colors	com.github.finefindus.eyedropper	2.1.0	stable	x86_64	flathub	user	com.github.finefindus.eyedropper/x86_64/stable	debdfbfaf760	-	6,0 MB	user,current
+gpuvis	A GPU Trace Visualizer	com.github.gpuvis.Gpuvis	0.1	stable	x86_64	flathub	user	com.github.gpuvis.Gpuvis/x86_64/stable	a582d72d5997	-	1,7 MB	user,current
+EasySSH	SSH Connection Manager	com.github.muriloventuroso.easyssh	1.7.9	stable	x86_64	flathub	user	com.github.muriloventuroso.easyssh/x86_64/stable	fa1acb676eb7	-	83,2 MB	user,current
+Flatseal	Manage Flatpak permissions	com.github.tchx84.Flatseal	2.3.1	stable	x86_64	flathub	user	com.github.tchx84.Flatseal/x86_64/stable	79456afc5a11	-	1,4 MB	user,current
+IntelliJ IDEA Ultimate	Leading Java and Kotlin editor	com.jetbrains.IntelliJ-IDEA-Ultimate	2025.2.1	stable	x86_64	flathub	user	com.jetbrains.IntelliJ-IDEA-Ultimate/x86_64/stable	c8d733db77e4	-	1,2 MB	user,current
+Extension Manager	Browse, install, and manage GNOME Shell Extensions	com.mattjakeman.ExtensionManager	0.6.3	stable	x86_64	flathub	user	com.mattjakeman.ExtensionManager/x86_64/stable	582c81d0559c	-	2,4 MB	user,current
+Azure Storage Explorer	Graphical tool to manage Azure cloud storage resources	com.microsoft.AzureStorageExplorer	v1.39.1	stable	x86_64	flathub	user	com.microsoft.AzureStorageExplorer/x86_64/stable	228cd1843c57	-	98,3 MB	user,current
+Dotfiles Installer	Manage dotfiles fast and secure	com.ml4w.dotfilesinstaller	0.9.9	stable	x86_64	flathub	user	com.ml4w.dotfilesinstaller/x86_64/stable	0bb3e3566441	-	27,8 MB	user,current
+John the Ripper CE	Security auditing and recovery tool	com.openwall.John	1.9.1-ce	stable	x86_64	flathub	user	com.openwall.John/x86_64/stable	6725094f3e68	-	141,3 MB	user,current
+Share Preview	Test social media cards locally	com.rafaelmardojai.SharePreview	1.0.0	stable	x86_64	flathub	user	com.rafaelmardojai.SharePreview/x86_64/stable	4dd10d22212b	-	11,7 MB	user,current
+Bottles	Run Windows software	com.usebottles.bottles	51.24	stable	x86_64	flathub	user	com.usebottles.bottles/x86_64/stable	45a26d64e30b	-	502,3 MB	user,current
+Steam	Launcher for the Steam software distribution service	com.valvesoftware.Steam	1.0.0.83	stable	x86_64	flathub	user	com.valvesoftware.Steam/x86_64/stable	a28933d177a1	-	60,1 MB	user,current
+Archives	Create and view web archives	dev.geopjr.Archives	0.6.0	stable	x86_64	flathub	user	dev.geopjr.Archives/x86_64/stable	7d4f3b8a80fb	-	42,4 MB	user,current
+GPU-Viewer	A front-end to glxinfo, vulkaninfo, clinfo and es2_info	io.github.arunsivaramanneo.GPUViewer	3.15	stable	x86_64	flathub	user	io.github.arunsivaramanneo.GPUViewer/x86_64/stable	2537e12c21d0	-	32,4 MB	user,current
+Cohesion	Unofficial Notion Desktop client	io.github.brunofin.Cohesion	1.0.9	stable	x86_64	flathub	user	io.github.brunofin.Cohesion/x86_64/stable	0fe1adb6fe99	-	280,3 MB	user,current
+IP Lookup	Find info about an IP address	io.github.bytezz.IPLookup	0.4.1	stable	x86_64	flathub	user	io.github.bytezz.IPLookup/x86_64/stable	8da1e35642f5	-	977,4 kB	user,current
+Ignition	Manage startup apps and scripts	io.github.flattool.Ignition	2.1.2	stable	x86_64	flathub	user	io.github.flattool.Ignition/x86_64/stable	d2e4bb33e3be	-	728,1 kB	user,current
+Warehouse	Manage all things Flatpak	io.github.flattool.Warehouse	2.1.0	stable	x86_64	flathub	user	io.github.flattool.Warehouse/x86_64/stable	3b3c898d2202	-	1,2 MB	user,current
+Gauge	Unit converter	io.github.josephmawa.Gauge	0.1.2	stable	x86_64	flathub	user	io.github.josephmawa.Gauge/x86_64/stable	27773b19cd23	-	225,3 kB	user,current
+AppImage Pool	A simple, modern AppImageHub Client.	io.github.prateekmedia.appimagepool	5.1.0	stable	x86_64	flathub	user	io.github.prateekmedia.appimagepool/x86_64/stable	b44adc962810	-	29,9 MB	user,current
+Newelle	AI chatbot	io.github.qwersyk.Newelle	1.0.1	master	x86_64	newelle-origin	user	io.github.qwersyk.Newelle/x86_64/master	51e0568da571	-	444,8 MB	user,current
+GDM Settings	Customize your login screen	io.github.realmazharhussain.GdmSettings	5.0	stable	x86_64	flathub	user	io.github.realmazharhussain.GdmSettings/x86_64/stable	ae3b8169cf0a	-	1,3 MB	user,current
+Wardrobe	Prettify your desktop effortlessly	io.github.swordpuffin.wardrobe	1.1.2	stable	x86_64	flathub	user	io.github.swordpuffin.wardrobe/x86_64/stable	125fa566b667	-	2,2 MB	user,current
+KeySmith	SSH Key Management Application	io.github.tobagin.keysmith	1.0.3	stable	x86_64	flathub	user	io.github.tobagin.keysmith/x86_64/stable	ddf28f3e4805	-	14,6 MB	user,current
+Mission Center	Monitor system resource usage	io.missioncenter.MissionCenter	1.0.2	stable	x86_64	flathub	user	io.missioncenter.MissionCenter/x86_64/stable	82a59aec914e	-	32,0 MB	user,current
+Gear Lever	Manage AppImages	it.mijorus.gearlever	3.4.2	stable	x86_64	flathub	user	it.mijorus.gearlever/x86_64/stable	17b5f6117675	-	21,4 MB	user,current
+Dev Toolbox	Dev tools at your fingertips	me.iepure.devtoolbox	1.3.0	stable	x86_64	flathub	user	me.iepure.devtoolbox/x86_64/stable	3d7e1d310a7f	-	135,1 MB	user,current
+Burp Suite Community	The most widely used web application security testing software	net.portswigger.BurpSuite-Community	2025.8.4	stable	x86_64	flathub	user	net.portswigger.BurpSuite-Community/x86_64/stable	79d60e9e7e16	-	208,3 MB	user,current
+FileZilla	Fast and reliable FTP client	org.filezillaproject.Filezilla	3.69.3	stable	x86_64	flathub	user	org.filezillaproject.Filezilla/x86_64/stable	0cd41ec291b1	-	35,9 MB	user,current
+Bustle	Visualize D-Bus activity	org.freedesktop.Bustle	0.12.0	stable	x86_64	flathub	user	org.freedesktop.Bustle/x86_64/stable	c2ca8e45dd18	-	4,5 MB	user,current
+fwupd	Update device firmware on Linux	org.freedesktop.fwupd	2.0.16	stable	x86_64	flathub	user	org.freedesktop.fwupd/x86_64/stable	cc80066ca4ec	-	29,6 MB	user,current
+Gaphor	Simple UML and SysML modeling tool	org.gaphor.Gaphor	3.1.0	stable	x86_64	flathub	user	org.gaphor.Gaphor/x86_64/stable	f6f603999aae	-	61,7 MB	user,current
+Boxes	Virtualization made simple	org.gnome.Boxes	48.0	stable	x86_64	flathub	user	org.gnome.Boxes/x86_64/stable	baba643f2896	-	333,2 MB	user,current
+Contacts	Manage your contacts	org.gnome.Contacts	48.0	stable	x86_64	flathub	user	org.gnome.Contacts/x86_64/stable	ffd75adf6273	-	28,2 MB	user,current
+Gramps	Manage genealogical information, perform genealogical research and analysis	org.gramps_project.Gramps	6.0.5	stable	x86_64	flathub	user	org.gramps_project.Gramps/x86_64/stable	a6d548c64486	-	207,5 MB	user,current
+Kdenlive	Video editor	org.kde.kdenlive	25.08.0	stable	x86_64	flathub	user	org.kde.kdenlive/x86_64/stable	742aa8214fa9	-	246,8 MB	user,current
+SSH Host Editor	Edit SSH hosts and aliases	org.mintguide.ssh-host-editor	1.0.0	stable	x86_64	flathub	user	org.mintguide.ssh-host-editor/x86_64/stable	5d106b5936b8	-	300,2 MB	user,current
+Nuspell	Spelling checker	org.nuspell.Nuspell	5.1.6	stable	x86_64	flathub	user	org.nuspell.Nuspell/x86_64/stable	3bd28ef32df9	-	606,7 kB	user,current
+OnionShare	Securely and anonymously share files, host websites, and chat with friends	org.onionshare.OnionShare	2.6.3	stable	x86_64	flathub	user	org.onionshare.OnionShare/x86_64/stable	a4636837890c	-	375,0 MB	user,current
+Squey	Explore your data	org.squey.Squey	5.0.8	stable	x86_64	flathub	user	org.squey.Squey/x86_64/stable	b6ef9400b93d	-	719,5 MB	user,current
+Vim	The ubiquitous text editor	org.vim.Vim	v9.1.1723	stable	x86_64	flathub	user	org.vim.Vim/x86_64/stable	a7d962bcdd4c	-	44,1 MB	user,current
+Refine	Tweak various aspects of GNOME	page.tesk.Refine	0.5.10	stable	x86_64	flathub	user	page.tesk.Refine/x86_64/stable	b8e062e2f96c	-	1,7 MB	user,current
+Zoom	Video Conferencing, Web Conferencing, Webinars, Screen Sharing	us.zoom.Zoom	6.5.10.3973	stable	x86_64	flathub	user	us.zoom.Zoom/x86_64/stable	e2a1de0166d5	-	10,9 MB	user,current
