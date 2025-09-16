@@ -377,7 +377,7 @@ packages:
   # Chaotic-AUR Packages
   - chaotic-keyring # Keyring for Chaotic-AUR
   - chaotic-mirrorlist # Mirrorlist for Chaotic-AUR
-#  - input-remapper-git # Input Remapper (git version)
+  - input-remapper-git # Input Remapper (git version)
   - auto-cpufreq # Automatic CPU speed & power optimizer for Linux
   - go-mtpfs-git # MTP filesystem for Go (git version)
   - simple-mtpfs # Simple MTP filesystem
@@ -390,7 +390,7 @@ aur-packages:
   - dxvk-bin # Vulkan-based translation layer for Direct3D 9/10/11 to Vulkan
   - glance-bin # A self-hosted dashboard that puts all your feeds in one place
   - google-chrome # Google Chrome web browser
-  - input-remapper-bin # Input Remapper (binary release)
+#  - input-remapper-bin # Input Remapper (binary release)
   - linutil-bin # Linux utilities by Chris Titus Tech
   - microsoft-edge-stable-bin # Microsoft Edge web browser (stable)
   - nautilus-admin-gtk4 # Nautilus Admin with GTK4 support

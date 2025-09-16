@@ -177,7 +177,7 @@ alias vi='vim' # use vim instead of vi
 alias svi='sudo vi' # shortcut for sudo vi
 alias vis='vim "+set si"' # use vim instead of vi and enable smartindent
 alias yayf="yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=down:75% | xargs -ro yay -S" # Search and install packages with yay and fzf
-alias update='sudo akshara update --keep-files-on-error' # Update Akshara and all installed packages with error handling
+alias update='sudo akshara update' # Update Akshara and all installed packages with error handling
 alias syst='sudo systemctl-tui' # shortcut to systemctl-tui
 alias blu='bluetui' # shortcut to bluetui
 alias a='aichat' # shortcut to aichat
