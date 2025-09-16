@@ -1,0 +1,13 @@
+[user]
+  name = TuxLux40
+  email = github@oliverschlueter.business
+
+[core]
+  editor = nano
+
+[alias]
+  st = status
+  co = checkout
+  br = branch
+[pull]
+	rebase = true
