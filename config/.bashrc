@@ -180,7 +180,7 @@ alias yayf="yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=dow
 alias update='sudo akshara update' # Update Akshara and all installed packages with error handling
 alias syst='sudo systemctl-tui' # shortcut to systemctl-tui
 alias blu='bluetui' # shortcut to bluetui
-alias a='aichat' # shortcut to aichat
+alias a='aichat' # shortcut Zto aichat
 # alias grep='ugrep --color=always -T' # use ugrep instead of grep for better performance and features
 
 # Change directory aliases

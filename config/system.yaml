@@ -74,6 +74,7 @@ packages:
   - fragments # Download manager
   - fuse2fs # FUSE module for ext2/3/4
   - fzf # Command-line fuzzy finder
+  - gamescope # Steam compatibility tool
   - ghostty # GPU-accelerated terminal emulator
   - ghostty-shell-integration # Shell integration for Ghostty
   - ghostty-terminfo # Terminfo for Ghostty
@@ -222,6 +223,7 @@ packages:
   - squashfs-tools # SquashFS tools
   - sshfs # SSH filesystem
   - starship # Shell prompt
+  - steam # Gaming platform
   - step-ca # Step Certificate Authority
   - step-cli # Step command-line tool
   - stow # Symlink farm manager
