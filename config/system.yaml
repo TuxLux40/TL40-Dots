@@ -88,6 +88,8 @@ packages:
   - gpart # Partition manipulation tool
   - gptfdisk # GPT partitioning tool
   - gradle # Build automation tool
+  - grafana-agent # Lightweight agent for sending metrics to Grafana Cloud
+  - grafana-agentctl # CLI for Grafana Agent
   - gvfs # GNOME Virtual File System
   - gvfs-mtp # MTP support for GVFS
   - gvfs-smb # SMB support for GVFS
@@ -119,6 +121,7 @@ packages:
   - linux-firmware-amdgpu # AMD GPU firmware
   - llm-manager # LLM management tool
   - lm_sensors # Hardware monitoring tools
+  - lnav # Log file navigator
   - lsdvd # DVD information tool
   - lshw # Hardware lister
   - ltrace # Library call tracer
@@ -183,6 +186,7 @@ packages:
   - podman # OCI container engine
   - power-profiles-daemon # Power profiles daemon
   - powertop # Power consumption monitor
+  - promtail # Promtail log collector for Loki
   - protonmail-bridge # ProtonMail Bridge
   - protonmail-bridge-core # ProtonMail Bridge core
   - proton-vpn-gtk-app # Proton VPN GUI
@@ -230,6 +234,7 @@ packages:
   - strace # System call tracer
   - stress # System stress tool
   - superfile # Fast file copy/move tool
+  - syslog-ng # Next-generation syslogd with advanced networking and filtering capabilities
   - system-config-printer # Printer configuration tool
   - systemctl-tui # TUI for systemctl
   - tailscale # Mesh VPN
@@ -392,13 +397,13 @@ aur-packages:
   - dxvk-bin # Vulkan-based translation layer for Direct3D 9/10/11 to Vulkan
   - glance-bin # A self-hosted dashboard that puts all your feeds in one place
   - google-chrome # Google Chrome web browser
+  - graylog # Log management tool
 #  - input-remapper-bin # Input Remapper (binary release)
   - linutil-bin # Linux utilities by Chris Titus Tech
   - microsoft-edge-stable-bin # Microsoft Edge web browser (stable)
   - nautilus-admin-gtk4 # Nautilus Admin with GTK4 support
   - nautilus-checksums # Checksums extension for Nautilus
   - nautilus-copy-path # Copy Path extension for Nautilus
-  - oxker-bin # Docker TUI
   - powershell-bin # Microsoft PowerShell binary
   - proton-mail-bin # Proton Mail desktop client
   - proton-pass-bin # Proton Pass desktop client
