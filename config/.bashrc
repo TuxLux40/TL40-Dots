@@ -182,6 +182,7 @@ alias syst='sudo systemctl-tui' # shortcut to systemctl-tui
 alias blu='bluetui' # shortcut to bluetui
 alias a='aichat' # shortcut Zto aichat
 # alias grep='ugrep --color=always -T' # use ugrep instead of grep for better performance and features
+alias stui='systemctl-tui' # shortcut to systemctl-tui
 
 # Change directory aliases
 alias home='cd ~'

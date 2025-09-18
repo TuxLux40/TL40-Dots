@@ -8,11 +8,14 @@ impl: https://github.com/blend-os/tracks/raw/main
 repo: https://pkg-repo.blendos.co
 track: default-gnome
 
-# Official Repos (Arch)
+# Official Repos
 packages:
   - aichat # AI-powered chat CLI
   - aircrack-ng # WiFi security auditing tools
   - amdgpu_top # AMD GPU monitoring tool
+  - amd-ucode # AMD CPU microcode updates
+  - amd-debug-tools # AMD GPU debugging tools
+  - amdsmi # AMD System Management Interface
   - android-file-transfer # Android file transfer utility
   - android-tools # Android platform tools (adb, fastboot)
   - android-udev # Udev rules for Android devices
@@ -38,8 +41,6 @@ packages:
   - btrfs-progs # Btrfs filesystem utilities
   - cargo-make # Build system for Rust projects
   - cargo-binstall # Binary installation for Rust projects
-  - cargo-deb # Create .deb packages from Rust projects
-  - cargo-debstatus # cargo-tree for Debian packaging
   - chezmoi # Manage your dotfiles across multiple machines
   - chromium # Web browser
   - cifs-utils # CIFS/SMB filesystem utilities
@@ -131,7 +132,7 @@ packages:
   - make # Build automation tool
   - man-db # Manual page utilities
   - man-pages # Linux manual pages
-  - md-tui
+  - md-tui # Markdown TUI
   - memtest86+ # Memory testing tool
   - mesa # Open-source graphics drivers
   - meson # Build system
@@ -160,6 +161,7 @@ packages:
   - nvme-cli # NVMe command-line tool
   - nvtop # GPU monitoring tool
   - ollama # LLM runner
+  - ollama-docs # Documentation for Ollama
   - ollama-rocm # ROCm support for Ollama
   - openconnect # VPN client
   - opensc # Smart card utilities
@@ -246,6 +248,7 @@ packages:
   - testdisk # Data recovery tool
   - tgpt # Terminal GPT client
   - timeshift # System restore tool
+  - tldr # Simplified man pages
   - tmux # Terminal multiplexer
   - tor # Anonymity network
   - transmission-cli # BitTorrent client (CLI)
@@ -341,30 +344,30 @@ packages:
   #  - "lightdm-gtk-greeter" # lightdm greeter
 
 # Cosmic DE Packages
-  - cosmic-app-library # Common library for COSMIC apps
-  - cosmic-wallpapers # Cosmic wallpaper collection
-  - cosmic-applets # Applets for COSMIC Panel
-  - cosmic-bg # Background manager for COSMIC
-  - cosmic-comp # Window compositor for COSMIC
-  - cosmic-greeter # Login screen for COSMIC
-  - cosmic-files # File manager from Pop!_OS (Nautilus fork, disabled until stable release)
-  - cosmic-icon-theme # Icon theme for COSMIC
-  - cosmic-idle # Idle manager for COSMIC
-  - cosmic-launcher # Application launcher for COSMIC
-  - cosmic-player # Media player for COSMIC
-  - cosmic-notifications # Notification system for COSMIC
-  - cosmic-osd # On-screen display for COSMIC
-  - cosmic-panel # Panel for COSMIC
-  - cosmic-randr # Display settings for COSMIC
-  - cosmic-screenshot # Screenshot tool for COSMIC
-  - cosmic-session # Session manager for COSMIC
-  - cosmic-settings # Settings app for COSMIC
-  - cosmic-settings-daemon # Settings daemon for COSMIC
-  - cosmic-store # App store for COSMIC
-  - cosmic-terminal # Terminal emulator for COSMIC
-  - cosmic-text-editor # Text editor for COSMIC
-  - cosmic-workspaces # Workspace manager for COSMIC
-  - xdg-desktop-portal-cosmic # XDG desktop portal implementation for COSMIC
+#  - cosmic-app-library # Common library for COSMIC apps
+#  - cosmic-wallpapers # Cosmic wallpaper collection
+#  - cosmic-applets # Applets for COSMIC Panel
+#  - cosmic-bg # Background manager for COSMIC
+#  - cosmic-comp # Window compositor for COSMIC
+#  - cosmic-greeter # Login screen for COSMIC
+#  - cosmic-files # File manager from Pop!_OS (Nautilus fork, disabled until stable release)
+#  - cosmic-icon-theme # Icon theme for COSMIC
+#  - cosmic-idle # Idle manager for COSMIC
+#  - cosmic-launcher # Application launcher for COSMIC
+#  - cosmic-player # Media player for COSMIC
+#  - cosmic-notifications # Notification system for COSMIC
+#  - cosmic-osd # On-screen display for COSMIC
+#  - cosmic-panel # Panel for COSMIC
+#  - cosmic-randr # Display settings for COSMIC
+#  - cosmic-screenshot # Screenshot tool for COSMIC
+#  - cosmic-session # Session manager for COSMIC
+#  - cosmic-settings # Settings app for COSMIC
+#  - cosmic-settings-daemon # Settings daemon for COSMIC
+#  - cosmic-store # App store for COSMIC
+#  - cosmic-terminal # Terminal emulator for COSMIC
+#  - cosmic-text-editor # Text editor for COSMIC
+#  - cosmic-workspaces # Workspace manager for COSMIC
+#  - xdg-desktop-portal-cosmic # XDG desktop portal implementation for COSMIC
 
   # Hyprland Packages
   #  - hyprland # Dynamic tiling Wayland compositor
