@@ -39,10 +39,7 @@ echo "Done. Service file created at $SERVICE_FILE"
 
 sleep 1
 
-################################################
 # Enable and start the service                 #
-################################################
-
 echo "Enabling and starting the service..."
 systemctl --user enable protonvpn.service
 sleep 2

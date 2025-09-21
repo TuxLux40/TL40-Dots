@@ -1,5 +1,7 @@
 # Post-installation script to set up the environment
-# To be installed after the main installation process of the system.yaml
+# To be installed after the main installation process
+# Only for OS/DE independent programs and configurations
+# See other scripts for OS/DE specific setups
 # Work in progress - use at your own risk
 
 #------------------------------------------------------------------------------
@@ -16,9 +18,10 @@ INFO='ℹ️'
 ERROR='❌'
 
 echo -e "${INFO} ${YELLOW}Installation script started...${NC}"
-sleep 2
 
-# ------------------------------------------------------------------------------
+#############################
+# START: YubiKey-PAM Configuration #
+#############################
 # Add Yubikey authentication to PAM configuration for sudo, requiring touch and not prompting for password.
 # This code sets up your Yubikey for sudo authentication.
 # It adds a rule to the system's PAM configuration that lets you use your Yubikey's touch to confirm sudo commands instead of typing a password.
@@ -43,83 +46,87 @@ bash ~/Projects/TL40-Dots/scripts/sudo_diag.sh | tee ~/sudo_diag.log
 echo -e "${INFO} ${GREEN}Sudo configuration test completed. Log saved to ~/sudo_diag.log.${NC}"
 # Note: If you encounter issues with sudo after this change, you can remove the last line from /etc/pam.d/sudo using:
 # sudo sed -i '$ d' /etc/pam.d/sudo
-# ------------------------------------------------------------------------------
+##################################
+# END: YubiKey-PAM Configuration #
+##################################
 
 sleep 2
 
-# ------------------------------------------------------------------------------
-# Install Homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install Homebrew
-echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc # Add Homebrew to bashrc for future sessions
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" # Add Homebrew to current session
-echo -e "${INFO} ${GREEN}Homebrew installed and configured.${NC}"
-# ------------------------------------------------------------------------------
+##########################################################################
+# START: Install Homebrew (idempotent) and configure shells (bash + fish)#
+##########################################################################
+install_homebrew() {
+  if command -v brew >/dev/null 2>&1; then
+    echo -e "${INFO} ${GREEN}Homebrew already installed. Skipping install step.${NC}"
+  else
+    echo -e "${INFO} ${YELLOW}Installing Homebrew...${NC}"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
+      echo -e "${ERROR} ${RED}Homebrew installation failed.${NC}"; return 1; }
+  fi
+
+  # Determine brew binary path (Linuxbrew default path fallback)
+  if command -v brew >/dev/null 2>&1; then
+    BREW_BIN="$(command -v brew)"
+  elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
+  else
+    echo -e "${ERROR} ${RED}brew binary not found after install attempt.${NC}"; return 1
+  fi
+
+  # Bash integration
+  if ! grep -q 'brew shellenv' ~/.bashrc 2>/dev/null; then
+    echo "eval \"$(${BREW_BIN} shellenv)\"" >> ~/.bashrc
+    echo -e "${INFO} ${GREEN}Added brew shellenv to ~/.bashrc${NC}"
+  fi
+  eval "$("${BREW_BIN}" shellenv)"
+
+  # Fish integration
+  mkdir -p ~/.config/fish
+  FISH_CONFIG=~/.config/fish/config.fish
+  if ! grep -q 'brew shellenv' "$FISH_CONFIG" 2>/dev/null; then
+    # Use fish syntax eval ( ... )
+    echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> "$FISH_CONFIG"
+    echo -e "${INFO} ${GREEN}Added brew shellenv to fish config.${NC}"
+  fi
+
+  echo -e "${INFO} ${GREEN}Homebrew ready (bash + fish).${NC}"
+}
+
+install_homebrew || echo -e "${ERROR} ${RED}Continuing despite Homebrew issues.${NC}"
+########################################################################
+# END: Install Homebrew (idempotent) and configure shells (bash + fish)#
+########################################################################
 
 sleep 2
 
-# ------------------------------------------------------------------------------
-# Load iptables and iptable_nat modules at boot, ensuring that Winboat can function properly
+##########################################################################
+# START: Load iptables and iptable_nat modules at boot, ensuring that Winboat can function properly #
+##########################################################################
 # This is necessary for certain networking functionalities, such as NAT (Network Address Translation).
 echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
+##########################################################################
+# END: Load iptables and iptable_nat modules at boot, ensuring that Winboat can function properly #
+##########################################################################
 
-# ------------------------------------------------------------------------------
-# Create symbolic links for dotfile in .config and system.yaml in root
-ln -sf ~/Projects/TL40-Dots/config/atuin/config.toml ~/.config/atuin/config.toml # Link atuin config
-cp ~/Projects/TL40-Dots/config/aichat/config.yaml ~/.config/aichat/config.yaml # Copy instead of symlinking to avoid exposing sensitive API keys and allow safe template editing
-ln -sf ~/Projects/TL40-Dots/config/.bashrc ~/.bashrc # Link bashrc
-ln -sf ~/Projects/TL40-Dots/pkg_lists/system.yaml ~/system.yaml # Link system.yaml to home directory
-sudo mv ~/system.yaml / --force                                 # Move system.yaml symlink to root directory
-echo -e "${INFO} ${GREEN}Symbolic links for .config and system.yaml created.${NC}" # Link creation message
-# ------------------------------------------------------------------------------
-sleep 2
-# ------------------------------------------------------------------------------
-# Restore GNOME Keyboard Shortcuts
-# ------------------------------------------------------------------------------
-echo -e "${INFO} ${YELLOW}Restoring GNOME keyboard shortcuts...${NC}"
+sleep 1
 
-# Define the list of custom keybinding paths
-CUSTOM_KEYBINDINGS=(
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/'
-    '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/'
-)
+##########################################################################
+# START: Create symbolic links for dotfile in .config and system.yaml in root #
+##############################################################################
+ensure_dir_and_link() { mkdir -p "$(dirname "$2")" && ln -sf "$1" "$2"; }
+ensure_dir_and_copy() { mkdir -p "$(dirname "$2")" && cp "$1" "$2"; }
 
-# Set the custom keybindings list
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "${CUSTOM_KEYBINDINGS[*]}"
+ensure_dir_and_link   ~/Projects/TL40-Dots/config/atuin/config.toml ~/.config/atuin/config.toml   # Link atuin config
+ensure_dir_and_copy   ~/Projects/TL40-Dots/config/aichat/config.yaml ~/.config/aichat/config.yaml # Copy aichat (avoid exposing secrets via symlink)
+ensure_dir_and_link   ~/Projects/TL40-Dots/config/.bashrc            ~/.bashrc                    # Link bashrc
+ensure_dir_and_link   ~/Projects/TL40-Dots/pkg_lists/system.yaml     ~/system.yaml                # Link system.yaml to home directory
+ensure_dir_and_link   ~/Projects/TL40-Dots/config/starship.toml      ~/.config/starship.toml      # Link starship config
+ensure_dir_and_link   ~/Projects/TL40-Dots/config/fastfetch          ~/.config/fastfetch          # Link fastfetch directory
+ensure_dir_and_link   ~/Projects/TL40-Dots/config/ghostty/config     ~/.config/ghostty/config     # Link ghostty config file
+echo -e "${INFO} ${GREEN}Symbolic links created.${NC}" # Link creation message
+############################################################################
+# END: Create symbolic links for dotfile in .config and system.yaml in root#
+############################################################################
 
-# Define shortcuts data
-declare -A SHORTCUTS
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']='name:Terminal|command:guake|binding:<Super>x'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']='name:Text Editor|command:flatpak run org.gnome.gitlab.cheywood.Buffer/x86_64/stable|binding:<Super>t'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']='name:VS Code|command:code|binding:<Super>c'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/']='name:Yubikey Authenticator|command:yubico-authenticator|binding:<Super>y'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/']='name:Files|command:nautilus --new-window|binding:<Super>f'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']='name:Ghostty|command:ghostty|binding:<Alt><Super>x'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/']='name:Signal|command:signal-desktop|binding:<Super>m'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/']='name:WhatsApp|command:flatpak run com.rtosta.zapzap|binding:<Alt><Super>m'
-SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/']='name:Hardware Info|command:hardinfo2|binding:<Super>i'
-
-# Apply each shortcut
-for path in "${!SHORTCUTS[@]}"; do
-    IFS='|' read -r name_part command_part binding_part <<< "${SHORTCUTS[$path]}"
-    name_value="${name_part#*:}"
-    command_value="${command_part#*:}"
-    binding_value="${binding_part#*:}"
-    
-    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$path" name "'$name_value'"
-    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$path" command "'$command_value'"
-    gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$path" binding "'$binding_value'"
-done
-
-echo -e "${INFO} ${GREEN}GNOME keyboard shortcuts restored.${NC}"
-# ------------------------------------------------------------------------------
-sleep 2
-# ------------------------------------------------------------------------------
 # Final message
 echo -e "${INFO} ${GREEN}Post-installation script completed.${NC}"
