@@ -19,39 +19,6 @@ ERROR='❌'
 
 echo -e "${INFO} ${YELLOW}Installation script started...${NC}"
 
-#############################
-# START: YubiKey-PAM Configuration #
-#############################
-# Add Yubikey authentication to PAM configuration for sudo, requiring touch and not prompting for password.
-# This code sets up your Yubikey for sudo authentication.
-# It adds a rule to the system's PAM configuration that lets you use your Yubikey's touch to confirm sudo commands instead of typing a password.
-# This is safer than using "required" because "sufficient" means if the Yubikey works, you're in (no password needed), but if it fails (e.g., key lost), you can still use your password as a backup. "Required" would demand both, potentially locking you out if the key is unavailable.
-
-# Backup existing PAM configuration for sudo
-sudo tar -C / -czf ~/pam_u2f_backup.tgz etc/pam.d/sudo etc/u2f_mappings
-echo -e "${INFO} ${GREEN}Backup of PAM configuration for sudo created at ~/pam_u2f_backup.tgz${NC}"
-
-sleep 1
-
-if ! grep -q "pam_u2f.so" /etc/pam.d/sudo; then
-  echo -e "${INFO} ${YELLOW}Configuring PAM for Yubikey...${NC}"
-  sudo bash -c 'echo "auth       sufficient   pam_u2f.so cue" >> /etc/pam.d/sudo'
-  echo -e "${INFO} ${GREEN}PAM configured for Yubikey.${NC}"
-else
-  echo -e "${INFO} ${GREEN}PAM already configured for Yubikey. Skipping...${NC}"
-fi
-# Test sudo configuration and log output
-echo -e "${INFO} ${YELLOW}Testing sudo configuration...${NC}"
-bash ~/Projects/TL40-Dots/scripts/sudo_diag.sh | tee ~/sudo_diag.log
-echo -e "${INFO} ${GREEN}Sudo configuration test completed. Log saved to ~/sudo_diag.log.${NC}"
-# Note: If you encounter issues with sudo after this change, you can remove the last line from /etc/pam.d/sudo using:
-# sudo sed -i '$ d' /etc/pam.d/sudo
-##################################
-# END: YubiKey-PAM Configuration #
-##################################
-
-sleep 2
-
 ##########################################################################
 # START: Install Homebrew (idempotent) and configure shells (bash + fish)#
 ##########################################################################
@@ -117,7 +84,7 @@ ensure_dir_and_link() { mkdir -p "$(dirname "$2")" && ln -sf "$1" "$2"; }
 ensure_dir_and_copy() { mkdir -p "$(dirname "$2")" && cp "$1" "$2"; }
 
 ensure_dir_and_link   ~/Projects/TL40-Dots/config/atuin/config.toml ~/.config/atuin/config.toml   # Link atuin config
-ensure_dir_and_copy   ~/Projects/TL40-Dots/config/aichat/config.yaml ~/.config/aichat/config.yaml # Copy aichat (avoid exposing secrets via symlink)
+ensure_dir_and_copy   ~/Projects/TL40-Dots/config/aichat/config.yaml ~/.config/aichat/config.yaml # Copy aichat
 ensure_dir_and_link   ~/Projects/TL40-Dots/config/.bashrc            ~/.bashrc                    # Link bashrc
 ensure_dir_and_link   ~/Projects/TL40-Dots/pkg_lists/system.yaml     ~/system.yaml                # Link system.yaml to home directory
 ensure_dir_and_link   ~/Projects/TL40-Dots/config/starship.toml      ~/.config/starship.toml      # Link starship config
