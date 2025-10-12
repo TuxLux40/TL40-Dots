@@ -103,6 +103,7 @@ export VISUAL=nano
 alias spico='sudo pico'
 alias snano='sudo nano'
 alias vim='nano'
+alias micro='nano'
 
 # To have colors for ls and all grep commands such as grep, egrep and zgrep
 export CLICOLOR=1
@@ -134,6 +135,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Alias's for SSH
 # alias SERVERNAME='ssh YOURWEBSITE.com -l USERNAME -p PORTNUMBERHERE'
+alias nas='ssh oliver@192.168.178.2'
 
 # Alias's to change the directory
 alias web='cd /var/www/html'
