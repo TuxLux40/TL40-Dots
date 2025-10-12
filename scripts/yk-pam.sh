@@ -1,6 +1,7 @@
 #############################
-# START: YubiKey-PAM Configuration #
+# YubiKey-PAM Configuration
 #############################
+# TESTED AND WORKING
 # Add Yubikey authentication to PAM configuration for sudo, requiring touch and not prompting for password.
 # This code sets up your Yubikey for sudo authentication.
 # It adds a rule to the system's PAM configuration that lets you use your Yubikey's touch to confirm sudo commands instead of typing a password.
