@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  
+   calibre:
+        image: linuxserver/calibre
+        container_name: calibre
+        environment:
+        - PUID=1026
+        - PGID=65539
+        - TZ='Europe/Berlin'
+        - PASSWORD=secret-password #optional. username: abc
+        - CLI_ARGS= #optional
+        volumes:
+        - /volume1/docker/calibre/config:/config
+        - /volume1/homes/Oliver/09_eBooks:/books
+        ports:
+        - 7080:8080
+        - 7081:8081
+        restart: unless-stopped
