@@ -27,6 +27,7 @@ This README provides an overview and links to concise documentation for each are
 - Output artifacts: `docs/output.md`
 - Miscellaneous files: `docs/misc.md`
 - Git settings: `docs/git.md`
+- Copilot instructions for AI agents: `.github/copilot-instructions.md`
 
 ## Notes
 

@@ -1,0 +1,5 @@
+sudo docker run --rm \
+  -v /volume1/docker/kleopatra/config:/config \
+  -v /volume1/docker/kleopatra/gnupg:/gnupg \
+  -e DISPLAY="unix$DISPLAY" \
+  thelolagemann/kleopatra:latest

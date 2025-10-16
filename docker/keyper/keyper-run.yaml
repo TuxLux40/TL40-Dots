@@ -1,0 +1,7 @@
+docker run                    \
+        -p 8080:80              \
+        -p 8443:443             \
+        --hostname <hostname>   \
+        -it dbsentry/keyper
+
+# Source: https://keyper.dbsentry.com/

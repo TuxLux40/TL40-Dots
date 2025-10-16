@@ -5,11 +5,11 @@ services:
         image: linuxserver/calibre
         container_name: calibre
         environment:
-        - PUID=1026
-        - PGID=65539
+        - PUID=1026 # change to your user id
+        - PGID=100 # change to your group id
         - TZ='Europe/Berlin'
-        - PASSWORD=secret-password #optional. username: abc
-        - CLI_ARGS= #optional
+        - PASSWORD=secret-password
+#        - CLI_ARGS= #optional
         volumes:
         - /volume1/docker/calibre/config:/config
         - /volume1/homes/Oliver/09_eBooks:/books
