@@ -9,3 +9,5 @@ ln -s /run/user/1000/gvfs/sftp:host=NASIPADDRESS,user=oliver/homes/Oliver/03_Vid
 ln -s /run/user/1000/gvfs/sftp:host=NASIPADDRESS,user=oliver/homes/Oliver/Music ~/Music
 ## Documents
 ln -s /run/user/1000/gvfs/sftp:host=NASIPADDRESS,user=oliver/homes/Oliver/01_Documents ~/Documents/
+## eBooks
+ln -s /run/user/1000/gvfs/sftp:host=NASIPADDRESS,user=oliver/homes/Oliver/09_eBooks ~/Documents/eBooks
