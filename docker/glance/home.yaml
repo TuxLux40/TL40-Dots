@@ -528,7 +528,7 @@ columns:
 
       - type: releases
         cache: 1d
-        token: ***REMOVED***
+        token: $GITHUB_TOKEN
         repositories:
           - glanceapp/glance
           - go-gitea/gitea
