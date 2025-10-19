@@ -1,37 +1,43 @@
 # Copilot instructions for TL40-Dots
 
-Goal: enable fast, safe edits to this dotfiles + scripts + Docker repo. Prefer small, idempotent changes; keep ad-hoc commands fish-shell friendly.
+Purpose: help AI agents make safe, useful edits to this dotfiles + scripts + Docker repo. Favor small, idempotent changes; generate fish-shell friendly commands for docs and examples.
 
 ## Big picture
-- Layout: configs (`config/`), scripts (`scripts/`), Docker manifests (`docker/`), docs (`docs/`), generated outputs (`output/`).
-- Hosts include Synology DSM; Docker binds live under `/volume1/docker/<service>`; services should be restartable without manual state.
-- Scripts are re-runnable across distros; avoid breaking on missing tools, use feature detection.
+- Structure: `config/` (app/system config), `scripts/` (setup/maintenance), `docker/` (compose + run examples), `docs/` (how-tos), `output/` (generated), `git/`, `misc/`.
+- Vendored configs: `config/Arch-Hyprland/Hyprland-Dots/` mirrors upstream (JaKooLit). Treat as third‑party: avoid large stylistic rewrites; keep targeted tweaks local where possible.
+- NAS/Synology usage: Docker volumes typically bind under `/volume1/docker/<service>`; prefer stateless services and web UIs (no X11).
 
-## Conventions
-- Shell: author scripts in bash; in docs/comments, emit fish-safe commands (no heredocs; prefer printf/echo).
-- Idempotency: guard with `command -v`, `grep -q`, `mkdir -p`, `ln -sf`; avoid duplicate lines on re-run.
-- Secrets: copy rather than symlink (e.g., `config/aichat/config.yaml`).
-- Docker: absolute binds under `/volume1/docker/...`; don’t assume X11 on Synology (see `docker/kleopatra/error.md`).
+## Conventions (project‑specific)
+- Shell: author scripts in bash; in docs/comments, emit fish‑safe commands (no heredocs; use printf | sudo tee).
+- Idempotency: use `command -v`, `grep -q`, `mkdir -p`, `ln -sfn`, and guard repeated edits. Prefer absolute symlinks; copy files that may hold secrets/state.
+- XDG: default to `$XDG_CONFIG_HOME` or `~/.config` consistently.
+- Secrets: copy not symlink for files like `config/aichat/config.yaml`.
 
-## Key files to mirror
-- `scripts/postinstall.sh` – Homebrew init, shell integration, symlinks.
-- `scripts/install-flatpaks.sh` – parses `output/flatpaks.md`, supports `--dry-run|--list|--force`.
-- `scripts/yk-pam.sh`, `scripts/sudo_diag.sh`, `scripts/sudo_pam_rollback.sh` – PAM U2F setup/diagnostics/rollback.
-- `docker/<service>/compose.yaml` – per-service compose; some folders include `*-run.yaml` as a documented docker run example.
-
-## Workflow examples
-- Baseline setup: `bash ~/Projects/TL40-Dots/scripts/postinstall.sh`
-- Flatpaks: `bash ~/Projects/TL40-Dots/scripts/install-flatpaks.sh --dry-run` then run without flags to install.
-- YubiKey sudo: `fish ~/Projects/TL40-Dots/scripts/yk-pam.sh`; verify with `sudo -K && sudo -v`.
+## Key workflows (with examples)
+- Dotfile links: `scripts/dotfile-symlinks.sh` creates links/copies into `$HOME`/`$XDG_CONFIG_HOME`.
+	- Example (fish): `bash ~/Projects/TL40-Dots/scripts/dotfile-symlinks.sh --dry-run`
+- Post‑install: `scripts/postinstall.sh` sets up Homebrew (bash + fish shellenv) and ensures iptables modules load at boot. It does not manage symlinks.
+	- Example (fish): `bash ~/Projects/TL40-Dots/scripts/postinstall.sh`
+- Flatpaks: `scripts/install-flatpaks.sh` parses `output/flatpaks.md` and installs by remote; supports `--dry-run|--list|--force`.
+	- Example (fish): `bash ~/Projects/TL40-Dots/scripts/install-flatpaks.sh --dry-run`
+- YubiKey sudo (U2F): `scripts/yk-pam.sh` enrolls keys and updates PAM; diagnostics in `scripts/sudo_diag.sh`; rollback via `scripts/sudo_pam_rollback.sh`.
+	- Verify: `sudo -K && sudo -v` (expect touch prompt; password fallback remains).
+- GNOME shortcuts: export with `scripts/gnome/list_gnome_shortcuts.sh`, restore with `scripts/gnome/restore-gnome-shortcuts.sh`.
+- Docker services: `docker/<service>/compose.yaml` or `*-run.yaml`. On NAS, mount under `/volume1/docker/<service>`; use `restart: unless-stopped` and explicit `container_name`.
 
 ## Patterns to reuse
-- Script scaffold: `set -euo pipefail`, `usage()`, feature detection, idempotent file ops; format logs similar to `sudo_diag.sh`.
-- Docker compose: mount `/volume1/docker/<service>:/config` (or service-specific), `restart: unless-stopped`, explicit `container_name`.
-- Fish-safe writes in docs/scripts: `printf "line1\n" | sudo tee /etc/example.conf >/dev/null`.
+- Script scaffold: `set -euo pipefail`, `usage()`, feature detection, idempotent file ops, friendly logs (icons/colors like in `dotfile-symlinks.sh`).
+- Symlinks/copies: replicate helpers from `scripts/dotfile-symlinks.sh` (`ln -sfn`, `cp -u`, canonicalize with `readlink -f`).
+- Fish‑safe file writes in docs/scripts: `printf "line\n" | sudo tee /etc/example.conf > /dev/null`.
+
+## Integration points
+- AICLI: `config/aichat/config.yaml` (copied, not linked); local LLMs via Ollama are referenced.
+- System package list: `config/system.yaml` (BlendOS); keep references aligned with `docs/config.md`.
+- Hyprland: upstream docs/scripts live under `config/Arch-Hyprland/`.
 
 ## Gotchas
-- GUI-in-container on NAS likely fails (Qt/XCB); prefer headless/web UIs.
-- Keep `output/flatpaks.md` format stable (AWK in `install-flatpaks.sh` depends on it).
-- Be consistent with `config/system.yaml` references; align with `docs/config.md`.
+- GUI apps inside containers on NAS often fail (Qt/XCB). Prefer headless/web solutions.
+- `scripts/install-flatpaks.sh` parses `output/flatpaks.md` with awk; keep that file’s structure stable.
+- Don’t reintroduce heredocs in examples—fish shell is the default environment.
 
-When changing behavior, update the matching doc under `docs/` with concise steps and fish-safe commands; ensure reversibility for system changes (see rollback script).
+When changing behavior, update the corresponding doc in `docs/` with fish‑safe commands and note rollback steps (see sudo rollback script). Keep edits minimal in vendored Hyprland directories and document any divergence.

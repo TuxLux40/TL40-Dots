@@ -75,25 +75,5 @@ echo -e "ip_tables\niptable_nat" | sudo tee /etc/modules-load.d/iptables.conf
 # END: Load iptables and iptable_nat modules at boot, ensuring that Winboat can function properly #
 ##########################################################################
 
-sleep 1
-
-##########################################################################
-# START: Create symbolic links for dotfile in .config and system.yaml in root #
-##############################################################################
-ensure_dir_and_link() { mkdir -p "$(dirname "$2")" && ln -sf "$1" "$2"; }
-ensure_dir_and_copy() { mkdir -p "$(dirname "$2")" && cp "$1" "$2"; }
-
-ensure_dir_and_link   ~/Projects/TL40-Dots/config/atuin/config.toml ~/.config/atuin/config.toml   # Link atuin config
-ensure_dir_and_copy   ~/Projects/TL40-Dots/config/aichat/config.yaml ~/.config/aichat/config.yaml # Copy aichat
-ensure_dir_and_link   ~/Projects/TL40-Dots/config/.bashrc            ~/.bashrc                    # Link bashrc
-ensure_dir_and_link   ~/Projects/TL40-Dots/pkg_lists/system.yaml     ~/system.yaml                # Link system.yaml to home directory
-ensure_dir_and_link   ~/Projects/TL40-Dots/config/starship.toml      ~/.config/starship.toml      # Link starship config
-ensure_dir_and_link   ~/Projects/TL40-Dots/config/fastfetch          ~/.config/fastfetch          # Link fastfetch directory
-ensure_dir_and_link   ~/Projects/TL40-Dots/config/ghostty/config     ~/.config/ghostty/config     # Link ghostty config file
-echo -e "${INFO} ${GREEN}Symbolic links created.${NC}" # Link creation message
-############################################################################
-# END: Create symbolic links for dotfile in .config and system.yaml in root#
-############################################################################
-
 # Final message
 echo -e "${INFO} ${GREEN}Post-installation script completed.${NC}"

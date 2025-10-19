@@ -24,7 +24,7 @@ services:
       - ${OPEN_WEBUI_PORT-3000}:8080
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY=9a7f3c1e5d2b4a68c0f1e2d3b4a596871b2c3d4e5f607182a4b5c6d7e8f90123'
+      - 'WEBUI_SECRET_KEY=SECRETHERE'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
