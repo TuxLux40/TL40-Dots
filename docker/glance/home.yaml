@@ -485,22 +485,22 @@ columns:
       - type: group
         tabs: true
         widgets:
-#          - type: reddit
-#            subreddit: selfhosted
-#            show-thumbnails: true
-#            show-videos: true
-#          - type: reddit
-#            subreddit: linux
-#            show-thumbnails: true
-#            show-videos: true
-#          - type: reddit
-#            subreddit: foundsatan
-#            show-thumbnails: true
-#            show-videos: true
-#          - type: reddit
-#            subreddit: guysbeingdudes
-#            show-thumbnails: true
-#            show-videos: true
+          #          - type: reddit
+          #            subreddit: selfhosted
+          #            show-thumbnails: true
+          #            show-videos: true
+          #          - type: reddit
+          #            subreddit: linux
+          #            show-thumbnails: true
+          #            show-videos: true
+          #          - type: reddit
+          #            subreddit: foundsatan
+          #            show-thumbnails: true
+          #            show-videos: true
+          #          - type: reddit
+          #            subreddit: guysbeingdudes
+          #            show-thumbnails: true
+          #            show-videos: true
           - type: rss
           - $include: rss.yml
 
@@ -528,7 +528,7 @@ columns:
 
       - type: releases
         cache: 1d
-        token: $GITHUB_TOKEN
+        token:
         repositories:
           - glanceapp/glance
           - go-gitea/gitea
