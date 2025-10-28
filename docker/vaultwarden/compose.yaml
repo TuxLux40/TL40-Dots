@@ -1,0 +1,13 @@
+name: vaultwarden
+services:
+    \:
+        container_name: vaultwarden
+        environment:
+            - SIGNUPS_ALLOWED=false
+            - SIGNUPS_DOMAINS_WHITELIST=
+        volumes:
+            - /volume1/docker/vaultwarden:/data
+        ports:
+            - 6060:80
+        restart: unless-stopped
+        image: \

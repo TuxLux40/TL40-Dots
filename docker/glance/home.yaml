@@ -538,7 +538,6 @@ columns:
           - torvalds/linux
           - spacedriveapp/spacedrive
           - topjohnwu/Magisk
-          - permissionlesstech/bitchat
           - gedsh/Invinzible
           - grocy/grocy
           - Grokability/snipit

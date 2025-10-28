@@ -3,7 +3,7 @@
   email = github@oliverschlueter.business
 
 [core]
-  editor = nano
+  editor = micro
 
 [alias]
   st = status
