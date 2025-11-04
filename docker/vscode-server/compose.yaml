@@ -3,15 +3,16 @@ services:
     codeserver:
         container_name: vscodeserver
         ports:
-            - 8377:8443
+            - 5100:8443
         environment:
             - PUID=1026
             - PGID=100
             - TZ=Europe/Berlin
-            - PASSWORD=CHANGME
-            - PROXY_DOMAIN=code.MYDOMAIN.com
-            - SUDO_PASSWORD=CHANGEME
+            - PASSWORD=CHANGEME
+            - DEFAULT_WORKSPACE=/repos
         volumes:
             - /volume1/docker/codeserver:/config
+            - /volume1/docker/codeserver/data:/data
+            - /volume1/docker:/repos
         restart: unless-stopped
-        image: \
+        image: lscr.io/linuxserver/code-server:latest
