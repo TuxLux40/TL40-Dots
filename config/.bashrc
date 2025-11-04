@@ -135,10 +135,17 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 
 # Alias's for SSH
 # alias SERVERNAME='ssh YOURWEBSITE.com -l USERNAME -p PORTNUMBERHERE'
-alias nas='ssh oliver@192.168.178.2'
 
 # Alias's to change the directory
 alias web='cd /var/www/html'
+alias config='cd ~/.config'
+alias dl='cd ~/Downloads'
+alias docs='cd ~/Documents'
+alias pics='cd ~/Pictures'
+alias vids='cd ~/Videos'
+alias music='cd ~/Music'
+alias desk='cd ~/Desktop'
+alias projects='cd ~/Projects'
 
 # Alias's to mount ISO files
 # mount -o loop /home/NAMEOFISO.iso /home/ISOMOUNTDIR/
@@ -541,7 +548,7 @@ install_bashrc_support() {
 			sudo zypper install multitail tree zoxide trash-cli fzf bash-completion fastfetch
 			;;
 		"debian")
-			sudo apt-get install multitail tree zoxide trash-cli fzf bash-completion
+			sudo apt install multitail tree zoxide trash-cli fzf bash-completion
 			# Fetch the latest fastfetch release URL for linux-amd64 deb file
 			FASTFETCH_URL=$(curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest | grep "browser_download_url.*linux-amd64.deb" | cut -d '"' -f 4)
 

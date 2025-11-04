@@ -1,0 +1,16 @@
+# Keep secrets out of git
+
+# Dotenv files (global)
+.env
+.env.local
+.envrc
+*.env
+*.env.local
+**/.env
+**/.env.local
+**/*.env
+
+# But keep example templates tracked
+!.env.example
+!**/.env.example
+!*.env.example

@@ -3,9 +3,13 @@
 
 set -Eeuo pipefail  # -E: trap functions, -e: exit on error, -u: undefined vars error, -o pipefail: fail on pipeline errors
 
-# Resolve repo root from this script path (works no matter where the repo is cloned)
+# Resolve repo root even when script is invoked from arbitrary working directories
 SCRIPT_DIR=$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-REPO_ROOT=$(cd -- "$SCRIPT_DIR/.." && pwd)
+if REPO_ROOT_GIT=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null); then
+	REPO_ROOT="$REPO_ROOT_GIT"
+else
+	REPO_ROOT=$(cd -- "$SCRIPT_DIR/../.." && pwd)
+fi
 
 # Prefer XDG config dir; fallback to ~/.config
 XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -110,9 +114,8 @@ ensure_dir_and_link   "$REPO_ROOT/config/.bashrc"             "$HOME/.bashrc"   
 ensure_dir_and_link   "$REPO_ROOT/config/starship.toml"       "$XDG_CONFIG_HOME/starship.toml"       # Link starship config
 ensure_dir_and_link   "$REPO_ROOT/config/fastfetch"           "$XDG_CONFIG_HOME/fastfetch"           # Link fastfetch directory
 ensure_dir_and_link   "$REPO_ROOT/config/ghostty/config"      "$XDG_CONFIG_HOME/ghostty/config"      # Link ghostty config file
-
-# Explicitly link Arch-Hyprland directory into $HOME (avoid trailing slash on destination)
-ensure_dir_and_link   "$REPO_ROOT/config/Arch-Hyprland"       "$HOME/Arch-Hyprland"                  # Link Arch-Hyprland directory
+ensure_dir_and_link   "$REPO_ROOT/config/fish/config.fish"  "$XDG_CONFIG_HOME/fish/config.fish"    # Link fish config
+ensure_dir_and_link   "$REPO_ROOT/config/micro/settings.json" "$XDG_CONFIG_HOME/micro/settings.json" # Link micro editor settings
 
 if $DRY_RUN; then
 	drymsg "Completed dry-run. No changes were made."
