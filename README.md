@@ -37,30 +37,16 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 
 ---
 
-### 🚀 Bootstrap in one command
+### 🚀 Bootstrap
 
-Ready a clean box with Fisher, Starship, Atuin, Tailscale, ChezMoi, Homebrew, and dotfile links:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/scripts/postinstall/postinstall.sh | bash
-```
-
-**Dry run first?** Append `--dry-run` (or any other `postinstall.sh` flag) after `--`:
+Get Fisher, Starship, Atuin, Tailscale, ChezMoi, Homebrew, and the dotfile links in place:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/scripts/postinstall/postinstall.sh | bash -s -- --dry-run
+git clone https://github.com/TuxLux40/TL40-Dots.git "${TL40_DOTS_DIR:-~/Projects/TL40-Dots}" && bash "${TL40_DOTS_DIR:-~/Projects/TL40-Dots}/scripts/postinstall/postinstall.sh"
 ```
 
-The script clones/updates `TL40-Dots` under `~/Projects/TL40-Dots` (override with `TL40_DOTS_DIR`, `TL40_DOTS_BRANCH`, or `TL40_DOTS_REPO`) and then runs the local copy.
+Already cloned the repo? Pull the latest changes, then rerun the script to re-sync.
+
+You can point the checkout elsewhere by setting `TL40_DOTS_DIR`, or switch remotes/branches with `TL40_DOTS_REPO` / `TL40_DOTS_BRANCH` before running the script.
 
 > The post-install entrypoint auto-detects your distro, selects the right package manager, then walks through all dependent scripts with friendly logging.
-
----
-
-### 📝 Notes & expectations
-
-- Some scripts request `sudo`; you’ll see the prompt when needed
-- Have a good network connection—the bootstrap pulls binaries via `curl`
-- Back up before running this against a production machine (you know the drill)
-
-Questions, ideas, PRs? Always welcome.
