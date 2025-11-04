@@ -684,3 +684,5 @@ eval "$(atuin init bash)" # Initialize Atuin
 
 # Initialize Homebrew if installed
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+. "$HOME/.atuin/bin/env"
