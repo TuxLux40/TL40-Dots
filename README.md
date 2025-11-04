@@ -7,6 +7,7 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 ---
 
 ### 🏁 Quick start
+
 - Skim the docs below so you know what each script configures
 - Run commands from `fish` or `bash` (both are supported unless noted)
 - Most scripts are idempotent—rerun them if you need to sync state
@@ -14,6 +15,7 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 ---
 
 ### 📦 Structure at a glance
+
 - `config/` — terminal, shell, prompt, and app configs
 - `docs/` — deep dives on scripts and setup rationale
 - `git/` — user-level Git configuration
@@ -24,6 +26,7 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 ---
 
 ### 📚 Documentation map
+
 - YubiKey + sudo: `docs/yubikey-pam-u2f.md`
 - Script catalogue: `docs/scripts.md`
 - Config reference: `docs/config.md`
@@ -35,6 +38,7 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 ---
 
 ### 🚀 Bootstrap in one command
+
 Ready a clean box with Fisher, Starship, Atuin, Tailscale, ChezMoi, Homebrew, and dotfile links:
 
 ```bash
@@ -52,6 +56,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/scri
 ---
 
 ### 📝 Notes & expectations
+
 - Some scripts request `sudo`; you’ll see the prompt when needed
 - Have a good network connection—the bootstrap pulls binaries via `curl`
 - Back up before running this against a production machine (you know the drill)
