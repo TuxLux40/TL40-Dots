@@ -32,6 +32,7 @@ EOF
 }
 
 DRY_RUN=false
+ORIGINAL_ARGS=("$@")
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -56,7 +57,99 @@ success_msg() { echo -e "${CHECK} ${GREEN}$1${NC}"; }
 error_msg() { echo -e "${ERROR} ${RED}$1${NC}" >&2; }
 dry_msg() { echo -e "${DRY} ${YELLOW}$1${NC}"; }
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+resolve_repo_root() {
+    local candidate
+
+    if [[ -n "${TL40_DOTS_ROOT:-}" ]]; then
+        if candidate="$(cd "${TL40_DOTS_ROOT}" && pwd 2>/dev/null)"; then
+            if [[ -d "${candidate}/scripts/pkg-scripts" ]]; then
+                printf '%s\n' "${candidate}"
+                return 0
+            fi
+        fi
+    fi
+
+    local source_path="${BASH_SOURCE[0]:-}"
+    case "${source_path}" in
+        /dev/fd/*|pipe:*|*://*)
+            ;;
+        *)
+            if candidate="$(cd "$(dirname "${source_path}")" && pwd 2>/dev/null)"; then
+                if candidate="$(cd "${candidate}/../.." && pwd 2>/dev/null)"; then
+                    if [[ -d "${candidate}/scripts/pkg-scripts" ]]; then
+                        printf '%s\n' "${candidate}"
+                        return 0
+                    fi
+                fi
+            fi
+            ;;
+    esac
+
+    if command -v git >/dev/null 2>&1; then
+        if candidate="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+            if [[ -d "${candidate}/scripts/pkg-scripts" ]]; then
+                printf '%s\n' "${candidate}"
+                return 0
+            fi
+        fi
+    fi
+
+    return 1
+}
+
+ensure_repo_and_reexec() {
+    local repo_url="${TL40_DOTS_REPO:-https://github.com/TuxLux40/TL40-Dots.git}"
+    local branch="${TL40_DOTS_BRANCH:-main}"
+    local target_dir_default="${TL40_DOTS_DIR:-$HOME/Projects/TL40-Dots}"
+    local target_dir
+    case "${target_dir_default}" in
+        ~)
+            target_dir="${HOME}"
+            ;;
+        ~/*)
+            target_dir="${HOME}/${target_dir_default#~/}"
+            ;;
+        /*)
+            target_dir="${target_dir_default}"
+            ;;
+        *)
+            target_dir="${PWD}/${target_dir_default}"
+            ;;
+    esac
+
+    if ! command -v git >/dev/null 2>&1; then
+        error_msg "Git is required to bootstrap the repository."
+        exit 1
+    fi
+
+    info_msg "Preparing TL40-Dots repository at ${target_dir}."
+
+    if [[ -d "${target_dir}/.git" ]]; then
+        info_msg "Updating existing repository checkout."
+        git -C "${target_dir}" fetch --depth=1 origin "${branch}"
+        git -C "${target_dir}" checkout "${branch}"
+        git -C "${target_dir}" pull --ff-only origin "${branch}"
+    else
+        if [[ -e "${target_dir}" && ! -d "${target_dir}" ]]; then
+            error_msg "Target path exists and is not a directory: ${target_dir}."
+            exit 1
+        fi
+        mkdir -p "${target_dir}"
+        if [[ -n "$(ls -A "${target_dir}" 2>/dev/null)" ]]; then
+            error_msg "Target directory exists and is not empty: ${target_dir}."
+            exit 1
+        fi
+        info_msg "Cloning repository from ${repo_url}."
+        git clone --depth=1 --branch "${branch}" "${repo_url}" "${target_dir}"
+    fi
+
+    info_msg "Restarting postinstall from local checkout."
+    exec bash "${target_dir}/scripts/postinstall/postinstall.sh" "${ORIGINAL_ARGS[@]}"
+}
+
+if ! ROOT_DIR="$(resolve_repo_root)"; then
+    ensure_repo_and_reexec
+fi
 
 cd "${ROOT_DIR}" >/dev/null 2>&1 || {
     error_msg "Failed to change directory to repository root: ${ROOT_DIR}."

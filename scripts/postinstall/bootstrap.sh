@@ -29,10 +29,13 @@ expand_path() {
             printf '%s\n' "$HOME"
             ;;
         ~/*)
-            printf '%s/%s\n' "$HOME" "${input:2}"
+            printf '%s/%s\n' "$HOME" "${input#~/}"
+            ;;
+        /*)
+            printf '%s\n' "$input"
             ;;
         *)
-            printf '%s\n' "$input"
+            printf '%s/%s\n' "$PWD" "$input"
             ;;
     esac
 }

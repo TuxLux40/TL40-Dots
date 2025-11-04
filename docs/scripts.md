@@ -76,6 +76,8 @@ Table of Contents
 
 ```fish
 bash ~/Projects/TL40-Dots/scripts/postinstall.sh
+# Or bootstrap remotely (clones to ~/Projects/TL40-Dots by default)
+curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/scripts/postinstall/postinstall.sh | bash
 ```
 
 Actions performed:
@@ -92,7 +94,7 @@ Actions performed:
   - `~/.config/fastfetch` (symlink directory)
   - `~/.config/ghostty/config` (symlink)
 
-  2.4 Verification
+    2.4 Verification
 
 - Open a new terminal and confirm that the Starship prompt and Homebrew environment are active.
 
