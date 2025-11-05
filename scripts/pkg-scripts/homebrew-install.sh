@@ -1,25 +1,27 @@
+#!/usr/bin/env sh
+
 install_homebrew() {
   if command -v brew >/dev/null 2>&1; then
-    echo -e "${INFO} ${GREEN}Homebrew already installed. Skipping install step.${NC}"
+      printf '%s %sHomebrew already installed. Skipping install step.%s\n' "${INFO}" "${GREEN}" "${NC}"
   else
-    echo -e "${INFO} ${YELLOW}Installing Homebrew...${NC}"
+      printf '%s %sInstalling Homebrew...%s\n' "${INFO}" "${YELLOW}" "${NC}"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || {
-      echo -e "${ERROR} ${RED}Homebrew installation failed.${NC}"; return 1; }
+        printf '%s %sHomebrew installation failed.%s\n' "${ERROR}" "${RED}" "${NC}"; return 1; }
   fi
 
   # Determine brew binary path (Linuxbrew default path fallback)
   if command -v brew >/dev/null 2>&1; then
     BREW_BIN="$(command -v brew)"
-  elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
     BREW_BIN="/home/linuxbrew/.linuxbrew/bin/brew"
   else
-    echo -e "${ERROR} ${RED}brew binary not found after install attempt.${NC}"; return 1
+      printf '%s %sbrew binary not found after install attempt.%s\n' "${ERROR}" "${RED}" "${NC}"; return 1
   fi
 
   # Bash integration
   if ! grep -q 'brew shellenv' ~/.bashrc 2>/dev/null; then
-    echo "eval \"$(${BREW_BIN} shellenv)\"" >> ~/.bashrc
-    echo -e "${INFO} ${GREEN}Added brew shellenv to ~/.bashrc${NC}"
+    printf 'eval "%s"\n' "$("${BREW_BIN}" shellenv)" >> "$HOME/.bashrc"
+      printf '%s %sAdded brew shellenv to ~/.bashrc%s\n' "${INFO}" "${GREEN}" "${NC}"
   fi
   eval "$("${BREW_BIN}" shellenv)"
 
@@ -28,11 +30,11 @@ install_homebrew() {
   FISH_CONFIG=~/.config/fish/config.fish
   if ! grep -q 'brew shellenv' "$FISH_CONFIG" 2>/dev/null; then
     # Use fish syntax eval ( ... )
-    echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> "$FISH_CONFIG"
-    echo -e "${INFO} ${GREEN}Added brew shellenv to fish config.${NC}"
+      printf 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)\n' >> "$FISH_CONFIG"
+      printf '%s %sAdded brew shellenv to fish config.%s\n' "${INFO}" "${GREEN}" "${NC}"
   fi
 
-  echo -e "${INFO} ${GREEN}Homebrew ready (bash + fish).${NC}"
+    printf '%s %sHomebrew ready (bash + fish).%s\n' "${INFO}" "${GREEN}" "${NC}"
 }
 
-install_homebrew || echo -e "${ERROR} ${RED}Continuing despite Homebrew issues.${NC}"
+  install_homebrew || printf '%s %sContinuing despite Homebrew issues.%s\n' "${ERROR}" "${RED}" "${NC}"
