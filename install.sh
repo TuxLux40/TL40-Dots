@@ -19,6 +19,9 @@ CHECK='✅'
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
 ROOT_DIR="${SCRIPT_DIR}"
 
+# Ensure Atuin config directory exists before any shell integrations touch it
+mkdir -p "${HOME}/.config/atuin"
+
 # Helper to run installation only if binary is missing
 run_if_missing() {
     description="$1"
