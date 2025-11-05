@@ -67,24 +67,25 @@ alias pacman 'sudo pacman --color=always --noconfirm --needed'
 alias yay 'yay --color=always --noconfirm --needed'
 alias yayf "yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=down:75% | xargs -ro yay -S"
 alias blupdate 'sudo akshara update'
-alias paru 'paru --color=always --noconfirm --needed'
-alias dnf 'sudo dnf --color=always -y'
+alias dupdate='sudo apt update && sudo apt upgrade -y' # Debian/Ubuntu update
+alias paru 'paru --color=always --noconfirm --needed' # Arch AUR helper alias
+alias dnf 'sudo dnf --color=always -y' # Fedora package manager alias
 # Miscellaneous aliases
-alias cp 'cp -i'
-alias mv 'mv -i'
-alias rm 'trash -v'
-alias mkdir 'mkdir -p'
-alias ps 'ps auxf'
-alias ping 'ping -c 10'
-alias less 'less -R'
-alias multitail 'multitail --no-repeat -c'
-alias a 'aichat'
-alias grep 'ugrep --color=always -T'
-alias freshclam 'sudo freshclam'
+alias cp 'cp -i' # Interactive copy
+alias mv 'mv -i' # Interactive move
+alias rm 'trash -v' # Move to trash
+alias mkdir 'mkdir -p' # Create parent directories
+alias ps 'ps auxf' # Tree view of processes
+alias ping 'ping -c 10' # Ping with count
+alias less 'less -R' # Less with raw control chars
+alias multitail 'multitail --no-repeat -c' # Multitail with no repeat and color
+alias a 'aichat' # AI chat alias
+alias grep 'ugrep --color=always -T' # Grep with color and tree view
+alias freshclam 'sudo freshclam' # Update ClamAV database
 # Alias's for TUI tools
-alias sysctl 'sudo systemctl-tui'
-alias stui 'systemctl-tui'
-alias blui 'bluetui'
+alias sysctl 'sudo systemctl-tui' # Systemctl TUI alias
+alias stui 'systemctl-tui' # Systemctl TUI alias
+alias blui 'bluetui' # Bluetui alias
 # Change directory aliases
 alias home 'cd ~'
 alias cd.. 'cd ..'

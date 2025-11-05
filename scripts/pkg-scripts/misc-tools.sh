@@ -33,6 +33,7 @@ arch_only_packages=(
     ninja
     base-devel
     go
+    aichat
 )
 
 if [[ "$ID" == "debian" || "$ID" == "ubuntu" || "${ID_LIKE:-}" == *debian* ]]; then
