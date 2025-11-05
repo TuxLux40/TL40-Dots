@@ -59,4 +59,3 @@ ensure_dir_and_link   "$REPO_ROOT/config/starship.toml"       "$XDG_CONFIG_HOME/
 ensure_dir_and_link   "$REPO_ROOT/config/fastfetch"           "$XDG_CONFIG_HOME/fastfetch"           # Link fastfetch directory
 ensure_dir_and_link   "$REPO_ROOT/config/ghostty/config"      "$XDG_CONFIG_HOME/ghostty/config"      # Link ghostty config file
 ensure_dir_and_link   "$REPO_ROOT/config/fish/config.fish"  "$XDG_CONFIG_HOME/fish/config.fish"    # Link fish config
-ensure_dir_and_link   "$REPO_ROOT/config/micro/settings.json" "$XDG_CONFIG_HOME/micro/settings.json" # Link micro editor settings
