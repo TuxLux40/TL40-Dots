@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Post-installation script to set up the environment
 # To be installed after the main installation process
@@ -6,7 +6,7 @@
 # See other scripts for OS/DE specific setups
 # Work in progress - use at your own risk
 
-set -euo pipefail
+set -eu
 
 # Colors and symbols for pretty output
 GREEN='\033[0;32m'
@@ -16,13 +16,13 @@ NC='\033[0m' # No Color
 CHECK='✅'
 
 # Directory variables
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd -P)"
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
+ROOT_DIR="${SCRIPT_DIR}"
 
 # Helper to run installation only if binary is missing
 run_if_missing() {
-    local description="$1"
-    local binary_name="$2"
+    description="$1"
+    binary_name="$2"
     shift 2
 
     printf '\n%s%s%s\n' "${GREEN}" "${description}" "${NC}"
@@ -34,9 +34,11 @@ run_if_missing() {
     "$@"
     printf '    %s↳ Completed.%s\n' "${YELLOW}" "${NC}"
 }
-# Clear any previously set environment variables
-unset OS_NAME OS_FAMILY PKG_MANAGER
-detect_distro
+# Basic host info for logging
+OS_NAME=$(uname -s)
+OS_FAMILY="unknown"
+PKG_MANAGER="unknown"
+# Export so called scripts can re-use
 export OS_NAME OS_FAMILY PKG_MANAGER
 # Detecting operating system and package manager
 printf '\n%sTL40-Dots post-installation%s\n' "${BLUE}" "${NC}"
