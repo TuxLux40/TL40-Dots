@@ -25,14 +25,14 @@ run_if_missing() {
     binary_name="$2"
     shift 2
 
-    printf '\n%s%s%s\n' "${GREEN}" "${description}" "${NC}"
+    printf '\n%b%b%b\n' "${GREEN}" "${description}" "${NC}"
     if command -v "${binary_name}" >/dev/null 2>&1; then
-        printf '    %s↳ %s already installed. Skipping.%s\n' "${YELLOW}" "${binary_name}" "${NC}"
+        printf '    %b↳ %s already installed. Skipping.%b\n' "${YELLOW}" "${binary_name}" "${NC}"
         return 0
     fi
 
     "$@"
-    printf '    %s↳ Completed.%s\n' "${YELLOW}" "${NC}"
+    printf '    %b↳ Completed.%b\n' "${YELLOW}" "${NC}"
 }
 # Basic host info for logging
 OS_NAME=$(uname -s)
@@ -41,15 +41,15 @@ PKG_MANAGER="unknown"
 # Export so called scripts can re-use
 export OS_NAME OS_FAMILY PKG_MANAGER
 # Detecting operating system and package manager
-printf '\n%sTL40-Dots post-installation%s\n' "${BLUE}" "${NC}"
-printf '%sDetected:%s %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME}" "${PKG_MANAGER}"
+printf '\n%bTL40-Dots post-installation%b\n' "${BLUE}" "${NC}"
+printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME}" "${PKG_MANAGER}"
 
 #############################################
 # Running miscellaneous installation scripts#
 ##############################################
-printf '\n%s[1/6]%s Ensure Fish shell is installed\n' "${GREEN}" "${NC}"
+printf '\n%b[1/6]%b Ensure Fish shell is installed\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/pkg-scripts/fish-install.sh"
-printf '%s    ↳ Fish shell ready.%s\n' "${YELLOW}" "${NC}"
+printf '%b    ↳ Fish shell ready.%b\n' "${YELLOW}" "${NC}"
 
 run_if_missing "[2/6] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
 
@@ -61,26 +61,26 @@ run_if_missing "[5/6] Install ChezMoi" chezmoi "${ROOT_DIR}/scripts/pkg-scripts/
 
 run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
-printf '\n%sSymlinking dotfiles%s\n' "${GREEN}" "${NC}"
+printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
-printf '%s    ↳ All configs symlinked.%s\n' "${YELLOW}" "${NC}"
+printf '%b    ↳ All configs symlinked.%b\n' "${YELLOW}" "${NC}"
 
 #####################
 # Restore shortcuts #
 #####################
 kde_shortcuts() {
-    printf '  %sKDE shortcuts restored.%s\n' "${YELLOW}" "${NC}"
+    printf '  %bKDE shortcuts restored.%b\n' "${YELLOW}" "${NC}"
 }
 
 gnome_shortcuts() {
-    printf '  %sGNOME shortcuts restored.%s\n' "${YELLOW}" "${NC}"
+    printf '  %bGNOME shortcuts restored.%b\n' "${YELLOW}" "${NC}"
 }
 
 no_restore() {
-    printf '  %sNo shortcuts restored.%s\n' "${YELLOW}" "${NC}"
+    printf '  %bNo shortcuts restored.%b\n' "${YELLOW}" "${NC}"
 }
 
-printf '\n%sShortcut restore options%s\n' "${GREEN}" "${NC}"
+printf '\n%bShortcut restore options%b\n' "${GREEN}" "${NC}"
 printf '  1) KDE Shortcuts\n'
 printf '  2) GNOME Shortcuts\n'
 printf '  3) No shortcuts\n'
@@ -102,7 +102,7 @@ case "$choice" in
         ;;
     *)
         # Handle invalid selection
-        printf '%sInvalid selection.%s\n' "${YELLOW}" "${NC}"
+    printf '%bInvalid selection.%b\n' "${YELLOW}" "${NC}"
         exit 1
         ;;
 esac
@@ -113,13 +113,13 @@ sleep 2
 # YubiKey configuration #
 #########################
 configure_now() {
-    printf '  %sConfiguring YubiKey...%s\n' "${YELLOW}" "${NC}"
+    printf '  %bConfiguring YubiKey...%b\n' "${YELLOW}" "${NC}"
     "${ROOT_DIR}/scripts/yubikey-setup.sh"
 }
 configure_later() {
-    printf '  %sYou can run yubikey-setup.sh later to configure your key.%s\n' "${YELLOW}" "${NC}"
+    printf '  %bYou can run yubikey-setup.sh later to configure your key.%b\n' "${YELLOW}" "${NC}"
 }
-printf '\n%sYubiKey configuration%s\n' "${GREEN}" "${NC}"
+printf '\n%bYubiKey configuration%b\n' "${GREEN}" "${NC}"
 printf '  y) Configure now\n'
 printf '  n) Configure later\n'
 printf 'Selection (y/n): '
@@ -132,7 +132,7 @@ case "$configure_choice" in
         configure_later
         ;;
     *)
-        printf '%sInvalid choice.%s\n' "${YELLOW}" "${NC}"
+    printf '%bInvalid choice.%b\n' "${YELLOW}" "${NC}"
         exit 1
         ;;
 esac
@@ -141,4 +141,4 @@ esac
 # Restoring Flatpak apps #
 ##########################
 
-printf '\n%s %sPost-installation script completed.%s\n' "${CHECK}" "${GREEN}" "${NC}"
+printf '\n%b %bPost-installation script completed.%b\n' "${CHECK}" "${GREEN}" "${NC}"
