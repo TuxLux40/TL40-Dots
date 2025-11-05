@@ -56,7 +56,31 @@ printf '%b    ↳ Fish shell ready.%b\n' "${YELLOW}" "${NC}"
 
 run_if_missing "[2/6] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
 
-run_if_missing "[3/6] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
+tailscale_install() {
+    run_if_missing "[3/6] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
+}
+
+tailscale_skip() {
+    printf '    %b↳ Skipping Tailscale installation.%b\n' "${YELLOW}" "${NC}"
+}
+
+printf '\n%bTailscale installation%b\n' "${GREEN}" "${NC}"
+printf '  y) Install now\n'
+printf '  n) Skip installation\n'
+printf 'Selection (y/n): '
+read -r tailscale_choice
+case "${tailscale_choice}" in
+    y|Y)
+        tailscale_install
+        ;;
+    n|N)
+        tailscale_skip
+        ;;
+    *)
+        printf '%bInvalid choice.%b\n' "${YELLOW}" "${NC}"
+        exit 1
+        ;;
+esac
 
 run_if_missing "[4/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
 
