@@ -61,8 +61,8 @@ alias efish 'micro ~/.config/fish/config.fish'
 # alias to show the date
 alias da 'date "+%Y-%m-%d %A %T %Z"'
 # Aliases for package managers
-alias apt-get 'sudo nala'
-alias apt 'sudo nala'
+# Alias apt-get 'sudo nala'
+# Alias apt 'sudo nala'
 alias pacman 'sudo pacman --color=always --noconfirm --needed'
 alias yay 'yay --color=always --noconfirm --needed'
 alias yayf "yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=down:75% | xargs -ro yay -S"

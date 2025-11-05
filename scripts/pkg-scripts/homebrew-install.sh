@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-
 install_homebrew() {
   if command -v brew >/dev/null 2>&1; then
     printf '%b %bHomebrew already installed. Skipping install step.%b\n' "${INFO}" "${GREEN}" "${NC}"
