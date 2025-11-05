@@ -19,75 +19,6 @@ CHECK='✅'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd -P)"
 
-#################################
-# Detect OS and package manager #
-#################################
-detect_distro() {
-    local id_lc=""
-    local id_like_lc=""
-
-    OS_NAME="$(uname -s)"
-    OS_FAMILY="unknown"
-    PKG_MANAGER="unknown"
-
-    if [[ -r /etc/os-release ]]; then
-        # shellcheck disable=SC1091
-        . /etc/os-release
-        OS_NAME="${PRETTY_NAME:-$NAME}"
-        id_lc="${ID,,}"
-        if [[ -n "${ID_LIKE:-}" ]]; then
-            id_like_lc="${ID_LIKE,,}"
-        fi
-
-        case "${id_lc}" in
-            arch|artix|manjaro|endeavouros|garuda|cachyos)
-                OS_FAMILY="arch"
-                PKG_MANAGER="pacman"
-                ;;
-            debian|ubuntu|pop|linuxmint|elementary|zorin|kali|raspbian|tuxedo|neon)
-                OS_FAMILY="debian"
-                PKG_MANAGER="apt"
-                ;;
-            fedora|rhel|centos|rocky|almalinux|oracle|amazon|alma|rockylinux)
-                OS_FAMILY="fedora"
-                PKG_MANAGER="dnf"
-                ;;
-            opensuse*|sles)
-                OS_FAMILY="suse"
-                PKG_MANAGER="zypper"
-                ;;
-            alpine)
-                OS_FAMILY="alpine"
-                PKG_MANAGER="apk"
-                ;;
-            *)
-                if [[ "${id_like_lc}" == *arch* ]]; then
-                    OS_FAMILY="arch"
-                    PKG_MANAGER="pacman"
-                elif [[ "${id_like_lc}" == *debian* ]]; then
-                    OS_FAMILY="debian"
-                    PKG_MANAGER="apt"
-                elif [[ "${id_like_lc}" == *rhel* || "${id_like_lc}" == *fedora* ]]; then
-                    OS_FAMILY="fedora"
-                    PKG_MANAGER="dnf"
-                elif [[ "${id_like_lc}" == *suse* ]]; then
-                    OS_FAMILY="suse"
-                    PKG_MANAGER="zypper"
-                fi
-                ;;
-        esac
-    fi
-
-    if [[ "${PKG_MANAGER}" == "unknown" ]]; then
-        if [[ -x /usr/local/bin/brew ]]; then
-            OS_FAMILY="darwin"
-            PKG_MANAGER="brew"
-        elif command -v brew >/dev/null 2>&1; then
-            OS_FAMILY="darwin"
-            PKG_MANAGER="brew"
-        fi
-    fi
-}
 # Helper to run installation only if binary is missing
 run_if_missing() {
     local description="$1"
@@ -130,7 +61,7 @@ run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/ho
 
 printf '\n%sSymlinking dotfiles%s\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
-printf '%s    ↳ Dotfile links updated.%s\n' "${YELLOW}" "${NC}"
+printf '%s    ↳ All configs symlinked.%s\n' "${YELLOW}" "${NC}"
 
 #####################
 # Restore shortcuts #

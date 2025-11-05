@@ -37,16 +37,11 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 
 ---
 
-### 🚀 Bootstrap
+### 🚀 Install
 
-Get Fisher, Starship, Atuin, Tailscale, ChezMoi, Homebrew, and the dotfile links in place:
+For install run:
 
 ```bash
-git clone https://github.com/TuxLux40/TL40-Dots.git "${TL40_DOTS_DIR:-~/Projects/TL40-Dots}" && bash "${TL40_DOTS_DIR:-~/Projects/TL40-Dots}/scripts/postinstall/postinstall.sh"
+git clone https://github.com/TuxLux40/TL40-Dots.git && cd TL40-Dots && sh ./install.sh
 ```
-
-Already cloned the repo? Pull the latest changes, then rerun the script to re-sync.
-
-You can point the checkout elsewhere by setting `TL40_DOTS_DIR`, or switch remotes/branches with `TL40_DOTS_REPO` / `TL40_DOTS_BRANCH` before running the script.
-
 > The post-install entrypoint auto-detects your distro, selects the right package manager, then walks through all dependent scripts with friendly logging.
