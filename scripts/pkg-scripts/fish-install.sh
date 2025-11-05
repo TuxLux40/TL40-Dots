@@ -10,8 +10,17 @@ log_info() {
 }
 
 detect_env() {
-	if [[ -n "${OS_FAMILY:-}" && -n "${PKG_MANAGER:-}" ]]; then
-		return
+	local env_family="${OS_FAMILY:-}"
+	local env_pkg="${PKG_MANAGER:-}"
+
+	if [[ -n "${env_family}" && -n "${env_pkg}" ]]; then
+		local env_family_lc="${env_family,,}"
+		local env_pkg_lc="${env_pkg,,}"
+		if [[ "${env_family_lc}" != "unknown" && "${env_pkg_lc}" != "unknown" ]]; then
+			export OS_FAMILY="${env_family}"
+			export PKG_MANAGER="${env_pkg}"
+			return
+		fi
 	fi
 
 	if [[ ! -r /etc/os-release ]]; then
