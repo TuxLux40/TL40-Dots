@@ -67,7 +67,7 @@ alias pacman 'sudo pacman --color=always --noconfirm --needed'
 alias yay 'yay --color=always --noconfirm --needed'
 alias yayf "yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=down:75% | xargs -ro yay -S"
 alias blupdate 'sudo akshara update'
-alias dupdate='sudo apt update && sudo apt upgrade -y' # Debian/Ubuntu update
+alias dupdate 'sudo apt update && sudo apt upgrade -y' # Debian/Ubuntu update
 alias paru 'paru --color=always --noconfirm --needed' # Arch AUR helper alias
 alias dnf 'sudo dnf --color=always -y' # Fedora package manager alias
 # Miscellaneous aliases

@@ -29,6 +29,9 @@ bash scripts/dotfile-symlinks.sh --dry-run
 
 # Apply changes
 bash scripts/dotfile-symlinks.sh
+
+# Force overwrite existing destinations (files/dirs/links)
+bash scripts/dotfile-symlinks.sh --force
 ```
 
 Disable colors:
@@ -40,6 +43,7 @@ NO_COLOR=1 bash scripts/dotfile-symlinks.sh --dry-run
 ## Options
 
 - `--dry-run`, `-n`: Show intended actions without applying
+- `--force`, `-f`: Overwrite/replace existing destination files, directories, or symlinks
 - `--help`, `-h`: Print usage summary
 - Environment: `NO_COLOR=1` disables colorized output
 
@@ -47,7 +51,7 @@ NO_COLOR=1 bash scripts/dotfile-symlinks.sh --dry-run
 
 - 📁 ensure dir: create parent directory (no-op if it exists)
 - 🔗 link: create/update a symbolic link
-- 📄 copy: copy a file (only if newer)
+- 📄 copy: copy a file
 - ⏭ Skip: operation skipped (already up to date or same file)
 - ⚠ Warn: source missing or potential caveat
 - 🧪 DRY-RUN: run completed without changes
@@ -68,6 +72,7 @@ Guidelines:
 - Prefer linking directories for tool configs that are repo-managed as a tree (e.g., `fastfetch/`)
 - Prefer copying for files that tools may frequently rewrite locally (e.g., caches or machine-specific tokens)
 - Always verify the source path exists; the script will warn if it doesn’t
+- Use `--force` when you want to replace existing destination content with what’s in the repo.
 
 ## Relative vs absolute links
 
@@ -75,14 +80,14 @@ The script currently uses absolute links for simplicity and clarity. If you freq
 
 ## Troubleshooting
 
-- "same file" when copying: The script now checks canonical paths and skips the copy if they’re the same.
-- Destination already exists: `ln -sfn` replaces files/symlinks and updates links correctly; parent directories are created as needed.
+- Destination already exists: Without `--force`, the script skips and warns. With `--force`, it removes the destination first, then links/copies.
 - Source missing: The script prints a warning and still attempts to create a symlink (which may be dangling). Run again after the source exists.
 - Colors look odd: Set `NO_COLOR=1` to disable ANSI colors.
 
 ## Safety notes
 
-- The script never recursively removes directories. It only creates directories (with `mkdir -p`) and writes files/links to specified destinations.
+- The script only removes existing destinations when `--force` is specified. Otherwise, it leaves them untouched and warns.
+- Parent directories are created as needed with `mkdir -p`.
 - Be mindful when adding new mappings that point outside your home directory; those may require `sudo` and are not recommended here.
 
 ## Extending the script
