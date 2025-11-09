@@ -50,6 +50,10 @@ printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME
 #############################################
 # Running miscellaneous installation scripts#
 ##############################################
+printf '\n%b[1/6]%b Install miscellaneous tools\n' "${GREEN}" "${NC}"
+"${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
+printf '%b    ↳ Miscellaneous tools installed.%b\n' "${YELLOW}" "${NC}"
+
 printf '\n%b[1/6]%b Ensure Fish shell is installed\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/pkg-scripts/fish-install.sh"
 printf '%b    ↳ Fish shell ready.%b\n' "${YELLOW}" "${NC}"
