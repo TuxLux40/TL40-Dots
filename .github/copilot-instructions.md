@@ -16,14 +16,16 @@
 ## Key Workflows
 - Bootstrap from fish: `bash ./install.sh` (script prompts for GNOME/KDE shortcut restore and YubiKey setup; plan for non-interactive usage before changing prompts).
 - Re-run only portions by calling scripts directly, e.g. `bash scripts/postinstall/dotfile-symlinks.sh`, `bash scripts/openrgb-udev-install.sh`, or `fish scripts/yk-pam.sh`.
-- Flatpaks install via `bash scripts/pkg-scripts/install-flatpaks.sh` (uses `output/flatpaks.md`; supports `--dry-run`, `--list`, `FLATPAKS_MD=/path`).
+- Flatpaks install via `bash scripts/pkg-scripts/flatpaks-install.sh` (uses `output/flatpaks.md`; supports `--dry-run`, `--list`, `FLATPAKS_MD=/path`).
 - GNOME tooling reads/writes `output/gnome_*`; keep ordering deterministic like `scripts/gnome/restore-gnome-shortcuts.sh`.
+- Use `--force` with `dotfile-symlinks.sh` to overwrite existing files when needed.
 
 ## Patterns & Conventions
-- Shell scripts use `/usr/bin/env bash`, `set -euo pipefail`, guard rails (backups, dry-run flags, logging helpers). Follow the example in `scripts/pkg-scripts/fish-install.sh` and `scripts/yk-pam.sh`.
+- Shell scripts use `/usr/bin/env bash`, `set -euo pipefail`, guard rails (backups, dry-run flags, logging helpers). Follow the example in `scripts/pkg-scripts/misc-tools.sh` (with install functions like `install_rustup()` and `install_fastfetch()`) and `scripts/yk-pam.sh`.
 - Fish remains the interactive shell; when documenting commands, wrap Bash scripts with `bash …` so the guidance works from fish. Avoid heredocs; prefer `printf`/`echo` pipelines.
 - Symlink-by-default policy: anything safe for VCS gets a symlink; sensitive configs (AI tokens, service credentials) must be copied instead—see `dotfile-symlinks.sh` for the mapping table.
 - Docker examples expect NAS-style mount roots and may share `docker.sock`; call out deviations inline to avoid accidental host-specific paths.
+- Installation functions check `command -v` before installing; use temp dirs with traps for cleanup (see `install_fastfetch()` pattern).
 
 ## Integration Notes
 - Homebrew setup lives in `scripts/pkg-scripts/homebrew-install.sh`; it appends shellenv lines to both Bash and Fish—maintain those conventions when touching prompt or brew logic.

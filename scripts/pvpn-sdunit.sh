@@ -2,15 +2,8 @@
 # Creates a systemd service for ProtonVPN unit and service, enables and starts it
 # Usage: bash postinstall.sh
 # Work in progress
-# Colors and symbols for pretty output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-CHECK='✅'
-LINK='🔗'
-INFO='ℹ️'
-ERROR='❌'
+# Source pretty output definitions
+source ./pretty-output.sh
 
 echo "Starting ProtonVPN systemd service setup..."
 echo "creating the directory for the service file..."

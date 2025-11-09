@@ -17,11 +17,11 @@ Table of Contents
 
 1.1 `config/.bashrc`
 
-- User Bash startup file. Symlinked by `scripts/postinstall.sh` to `~/.bashrc`.
+- User Bash startup file. Symlinked by `scripts/postinstall/dotfile-symlinks.sh` to `~/.bashrc`.
 
   1.2 `config/starship.toml`
 
-- Starship prompt configuration. Symlinked by `scripts/postinstall.sh` to `~/.config/starship.toml`.
+- Starship prompt configuration. Symlinked by `scripts/postinstall/dotfile-symlinks.sh` to `~/.config/starship.toml`.
 - Provides a powerline-style prompt with Git, language runtimes, Docker context, and time.
 
 ---
@@ -41,7 +41,7 @@ Table of Contents
 - Contains:
   - `config.jsonc`, `config-compact.jsonc`, `config-v2.jsonc` (configuration variants)
   - `arch.png` (asset referenced by some themes)
-- Symlinked as a directory by `scripts/postinstall.sh` to `~/.config/fastfetch`.
+- Symlinked as a directory by `scripts/postinstall/dotfile-symlinks.sh` to `~/.config/fastfetch`.
 
 ---
 
@@ -53,7 +53,7 @@ Table of Contents
 
   4.2 `config/aichat/config.yaml`
 
-- AIChat configuration. Copied to `~/.config/aichat/config.yaml` by `scripts/postinstall.sh` (not symlinked to avoid exposing secrets).
+- AIChat configuration. Copied to `~/.config/aichat/config.yaml` by `scripts/postinstall/dotfile-symlinks.sh` (not symlinked to avoid exposing secrets).
 
 ---
 

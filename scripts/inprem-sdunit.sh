@@ -3,15 +3,8 @@
 # It is assumed that Input Remapper is already installed
 # Work in progress
 
-# Colors and symbols for pretty output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-CHECK='✅'
-LINK='🔗'
-INFO='ℹ️'
-ERROR='❌'
+# Source pretty output definitions
+source ./pretty-output.sh
 
 # Create the systemd user service file
 mkdir -p "$HOME/.config/systemd/user"

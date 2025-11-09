@@ -21,7 +21,7 @@ Table of Contents
 2. flatpaks.md
 
 - Human-readable inventory derived from `flatpaks_raw.yaml`.
-- Consumed by `scripts/install-flatpaks.sh` to reproduce installations.
+- Consumed by `scripts/pkg-scripts/flatpaks-install.sh` to reproduce installations.
 
 ---
 

@@ -14,20 +14,6 @@ install_rustup() {
     fi
 }
 
-install_fastfetch() {
-    if ! command -v fastfetch >/dev/null 2>&1; then
-        local fastfetch_url="https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.tar.gz"
-        local tmp_dir
-        tmp_dir="$(mktemp -d)"
-        trap 'rm -rf "${tmp_dir}"' EXIT
-        curl -L "${fastfetch_url}" -o "${tmp_dir}/fastfetch.tar.gz"
-        tar -xzf "${tmp_dir}/fastfetch.tar.gz" -C "${tmp_dir}"
-        sudo cp "${tmp_dir}/fastfetch-linux-amd64/usr/bin/fastfetch" /usr/local/bin/
-        rm -rf "${tmp_dir}"
-        trap - EXIT
-    fi
-}
-
 debian_packages=(
     micro
     trash-cli
@@ -41,6 +27,15 @@ debian_packages=(
     unzip
     curl
     wget
+    fish
+    chezmoi
+    starship
+    tailscale
+    nodejs
+    flatpak
+    build-essential
+    cmake
+    ninja
 )
 
 arch_packages=(
@@ -48,8 +43,6 @@ arch_packages=(
     trash-cli
     fzf
     zoxide
-    fastfetch
-    rustup
     bat
     git
     python-pip
@@ -67,6 +60,38 @@ arch_packages=(
     base-devel
     go
     aichat
+    fish
+    chezmoi
+    starship
+    tailscale
+    nodejs
+    flatpak
+    linutil
+)
+
+fedora_packages=(
+    micro
+    trash-cli
+    fzf
+    zoxide
+    bat
+    git
+    python3-pip
+    python3
+    rustc
+    unzip
+    curl
+    wget
+    fish
+    chezmoi
+    starship
+    tailscale
+    nodejs
+    flatpak
+    make
+    cmake
+    gcc
+    ninja
 )
 
 install_nerd_font() {
@@ -111,9 +136,11 @@ if [[ "$ID" == "debian" || "$ID" == "ubuntu" || "${ID_LIKE:-}" == *debian* ]]; t
     sudo apt update
     sudo apt install -y "${debian_packages[@]}"
     install_rustup
-    install_fastfetch
 elif [[ "$ID" == "arch" || "${ID_LIKE:-}" == *arch* ]]; then
     sudo pacman -S --color=always --noconfirm --needed "${arch_packages[@]}"
+elif [[ "$ID" == "fedora" || "${ID_LIKE:-}" == *rhel* ]]; then
+    sudo dnf install -y "${fedora_packages[@]}"
+    install_rustup
 else
     echo "Unsupported distribution: $ID" >&2
     exit 1
