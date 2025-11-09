@@ -50,6 +50,10 @@ printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME
 #############################################
 # Running miscellaneous installation scripts#
 ##############################################
+printf '\n%b[1/6]%b Install miscellaneous tools\n' "${GREEN}" "${NC}"
+"${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
+printf '%b    ↳ Miscellaneous tools installed.%b\n' "${YELLOW}" "${NC}"
+
 printf '\n%b[1/6]%b Ensure Fish shell is installed\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/pkg-scripts/fish-install.sh"
 printf '%b    ↳ Fish shell ready.%b\n' "${YELLOW}" "${NC}"
@@ -83,9 +87,7 @@ case "${tailscale_choice}" in
 esac
 
 run_if_missing "[4/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
-
-run_if_missing "[5/6] Install ChezMoi" chezmoi "${ROOT_DIR}/scripts/pkg-scripts/chezmoi-install.sh"
-
+run_if_missing "[5/6] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
 run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"

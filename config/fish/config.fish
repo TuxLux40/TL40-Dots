@@ -38,10 +38,46 @@ end
 # Set the default editor
 set -gx EDITOR micro
 set -gx VISUAL micro
-alias spico 'sudo micro'
-alias snano 'sudo micro'
 alias vim 'micro'
 alias nano 'micro'
+
+# Automatically list directory contents on cd
+function cd
+    builtin cd $argv
+    ls
+end
+
+# Disable the bell (Fish equivalent)
+set -U fish_bell off
+
+# Expand the history size (Fish equivalent)
+set -U fish_history_max_count 10000
+
+# Enable colorized output for ls-compatible tools
+set -gx CLICOLOR 1
+set -gx LS_COLORS 'no=00:fi=00:di=00;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.xml=00;31:'
+
+# GREP_OPTIONS is deprecated; rely on aliases or GREP_COLORS instead
+set -e GREP_OPTIONS
+
+# Check if ripgrep is installed
+if command -v rg >/dev/null 2>&1
+    # Alias grep to rg if ripgrep is installed
+    alias grep='rg'
+else
+    # Alias grep to /usr/bin/grep with GREP_OPTIONS if ripgrep is not installed
+    alias grep="/usr/bin/grep $GREP_OPTIONS"
+end
+# unset GREP_OPTIONS  # Bash-specific, already handled
+
+# Color for manpages in less makes manpages a little easier to read
+set -gx LESS_TERMCAP_mb '\e[01;31m'
+set -gx LESS_TERMCAP_md '\e[01;31m'
+set -gx LESS_TERMCAP_me '\e[0m'
+set -gx LESS_TERMCAP_se '\e[0m'
+set -gx LESS_TERMCAP_so '\e[01;44;33m'
+set -gx LESS_TERMCAP_ue '\e[0m'
+set -gx LESS_TERMCAP_us '\e[01;32m'
 
 ############################################
 #                 ALIAS'S                  #
@@ -60,16 +96,6 @@ alias projects 'cd ~/Projects'
 alias efish 'micro ~/.config/fish/config.fish'
 # alias to show the date
 alias da 'date "+%Y-%m-%d %A %T %Z"'
-# Aliases for package managers
-# Alias apt-get 'sudo nala'
-# Alias apt 'sudo nala'
-alias pacman 'sudo pacman --color=always --noconfirm --needed'
-alias yay 'yay --color=always --noconfirm --needed'
-alias yayf "yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=down:75% | xargs -ro yay -S"
-alias blupdate 'sudo akshara update'
-alias dupdate 'sudo apt update && sudo apt upgrade -y' # Debian/Ubuntu update
-alias paru 'paru --color=always --noconfirm --needed' # Arch AUR helper alias
-alias dnf 'sudo dnf --color=always -y' # Fedora package manager alias
 # Miscellaneous aliases
 alias cp 'cp -i' # Interactive copy
 alias mv 'mv -i' # Interactive move
@@ -81,9 +107,8 @@ alias less 'less -R' # Less with raw control chars
 alias multitail 'multitail --no-repeat -c' # Multitail with no repeat and color
 alias a 'aichat' # AI chat alias
 alias grep 'ugrep --color=always -T' # Grep with color and tree view
-alias freshclam 'sudo freshclam' # Update ClamAV database
 # Alias's for TUI tools
-alias sysctl 'sudo systemctl-tui' # Systemctl TUI alias
+alias sysctl 'systemctl-tui' # Systemctl TUI alias
 alias stui 'systemctl-tui' # Systemctl TUI alias
 alias blui 'bluetui' # Bluetui alias
 # Change directory aliases

@@ -36,20 +36,32 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+# Executes the provided command unless DRY_RUN is enabled, in which case it logs
+# the command prefixed with a DRY-RUN notice without executing it.
 run_cmd() {
-	# Echo the command, and only execute it when not a dry-run
 	if $DRY_RUN; then
-		printf '%s DRY-RUN: %s\n' "$INFO" "$*"
+		printf '%s DRY-RUN:' "$INFO"
+		printf ' %q' "$@"
+		printf '\n'
 	else
-		eval "$@"
+		"$@"
 	fi
 }
 
+# ensure_dir <dir>
+# Ensures the specified directory exists by invoking run_cmd with mkdir -p.
 ensure_dir() {
 	local dir="$1"
 	run_cmd mkdir -p "$dir"
 }
 
+# dest_points_to_src SOURCE DEST
+# Determines whether DEST is a symbolic link targeting SOURCE, comparing normalized paths when possible.
+# Arguments:
+#   SOURCE — expected origin path of the symbolic link.
+#   DEST   — path to inspect for correct symbolic link target.
+# Returns:
+#   0 if DEST is a symlink resolving to SOURCE; otherwise 1.
 dest_points_to_src() {
 	# returns 0 (true) if $2 is a symlink targeting $1 (same realpath), else 1
 	local src="$1" dest="$2"
@@ -65,6 +77,11 @@ dest_points_to_src() {
 	fi
 }
 
+# ensure_dir_and_link src dest
+# Verifies that src exists, prepares the destination directory, and establishes a symlink.
+# Leave intact when the existing link already targets src.
+# If dest exists, replaces it when FORCE is enabled, otherwise emits a warning.
+# Logs each action and delegates operations to helper functions such as ensure_dir, dest_points_to_src, and run_cmd.
 ensure_dir_and_link() {
 	local src="$1"
 	local dest="$2"
@@ -96,6 +113,11 @@ ensure_dir_and_link() {
 	run_cmd ln -s "$src" "$dest"
 }
 
+
+## Copies the source file or directory to the destination, creating parent directories as
+## needed. Skips existing destinations unless the global FORCE flag is set, in which case
+## the destination is overwritten. Logs operations and missing sources, returning non-zero
+## when the source is absent.
 ensure_dir_and_copy() {
 	local src="$1"
 	local dest="$2"
@@ -107,7 +129,8 @@ ensure_dir_and_copy() {
 
 	ensure_dir "$(dirname "$dest")"
 
-	if [[ -e "$dest" && !$FORCE ]]; then
+	# Skips creating the symlink when the destination already exists unless the --force flag is supplied.
+	if [[ -e "$dest" && ! $FORCE ]]; then
 		printf '%s warn: %s exists; use --force to overwrite\n' "$INFO" "$dest"
 		return 0
 	fi
