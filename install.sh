@@ -30,12 +30,12 @@ run_if_missing() {
 
     printf '\n%b%b%b\n' "${GREEN}" "${description}" "${NC}"
     if command -v "${binary_name}" >/dev/null 2>&1; then
-        printf '    %b↳ %s already installed. Skipping.%b\n' "${YELLOW}" "${binary_name}" "${NC}"
+        printf '    %b%b %s already installed. Skipping.%b\n' "${YELLOW}" "${CHECK}" "${binary_name}" "${NC}"
         return 0
     fi
 
     "$@"
-    printf '    %b↳ Completed.%b\n' "${YELLOW}" "${NC}"
+    printf '    %b%b Completed.%b\n' "${YELLOW}" "${CHECK}" "${NC}"
 }
 # Basic host info for logging
 OS_NAME=$(uname -s)
@@ -50,45 +50,17 @@ printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME
 #############################################
 # Running miscellaneous installation scripts#
 ##############################################
-printf '\n%b[1/6]%b Install miscellaneous tools\n' "${GREEN}" "${NC}"
-"${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
-printf '%b    ↳ Miscellaneous tools installed.%b\n' "${YELLOW}" "${NC}"
+run_if_missing "[1/7] Install miscellaneous tools" micro "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
 
-printf '\n%b[1/6]%b Ensure Fish shell is installed\n' "${GREEN}" "${NC}"
-"${ROOT_DIR}/scripts/pkg-scripts/fish-install.sh"
-printf '%b    ↳ Fish shell ready.%b\n' "${YELLOW}" "${NC}"
+run_if_missing "[2/7] Ensure Fish shell is installed" fish "${ROOT_DIR}/scripts/pkg-scripts/fish-install.sh"
 
-run_if_missing "[2/6] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
+run_if_missing "[3/7] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
 
-tailscale_install() {
-    run_if_missing "[3/6] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
-}
+run_if_missing "[4/7] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
 
-tailscale_skip() {
-    printf '    %b↳ Skipping Tailscale installation.%b\n' "${YELLOW}" "${NC}"
-}
-
-printf '\n%bTailscale installation%b\n' "${GREEN}" "${NC}"
-printf '  y) Install now\n'
-printf '  n) Skip installation\n'
-printf 'Selection (y/n): '
-read -r tailscale_choice
-case "${tailscale_choice}" in
-    y|Y)
-        tailscale_install
-        ;;
-    n|N)
-        tailscale_skip
-        ;;
-    *)
-        printf '%bInvalid choice.%b\n' "${YELLOW}" "${NC}"
-        exit 1
-        ;;
-esac
-
-run_if_missing "[4/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
-run_if_missing "[5/6] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
-run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
+run_if_missing "[5/7] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
+run_if_missing "[6/7] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
+run_if_missing "[7/7] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
