@@ -16,7 +16,7 @@
 ## Key Workflows
 - Bootstrap from fish: `bash ./install.sh` (script prompts for GNOME/KDE shortcut restore and YubiKey setup; plan for non-interactive usage before changing prompts).
 - Re-run only portions by calling scripts directly, e.g. `bash scripts/postinstall/dotfile-symlinks.sh`, `bash scripts/openrgb-udev-install.sh`, or `fish scripts/yk-pam.sh`.
-- Flatpaks install via `bash scripts/pkg-scripts/install-flatpaks.sh` (uses `output/flatpaks.md`; supports `--dry-run`, `--list`, `FLATPAKS_MD=/path`).
+- Flatpaks install via `bash scripts/pkg-scripts/flatpaks-install.sh` (uses `output/flatpaks.md`; supports `--dry-run`, `--list`, `FLATPAKS_MD=/path`).
 - GNOME tooling reads/writes `output/gnome_*`; keep ordering deterministic like `scripts/gnome/restore-gnome-shortcuts.sh`.
 - Use `--force` with `dotfile-symlinks.sh` to overwrite existing files when needed.
 

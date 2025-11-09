@@ -2,7 +2,7 @@
 
 TL40-Dots bundles reproducible shell environments, desktop tweaks, and automation scripts that keep my Linux workstations—and assorted homelab services—consistent across distros.
 
-> **Why you might care:** one command bootstraps a fresh machine with Fish, Starship, Atuin, Tailscale, ChezMoi, Docker stacks, and the dotfiles that glue it all together.
+> **Why you might care:** one command bootstraps a fresh machine with Fish, Starship, Atuin, Tailscale, Docker stacks, and the dotfiles that glue it all together.
 
 ---
 
@@ -18,6 +18,7 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 
 - `config/` — terminal, shell, prompt, and app configs
 - `docs/` — deep dives on scripts and setup rationale
+- `docker/` — homelab service Docker compose stacks
 - `git/` — user-level Git configuration
 - `misc/` — helper assets (themes, udev rules, etc.)
 - `output/` — generated exports (Flatpak lists, GNOME mappings)
@@ -42,6 +43,7 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 For install run:
 
 ```bash
-git clone https://github.com/TuxLux40/TL40-Dots.git && cd TL40-Dots && sh ./install.sh
+git clone https://github.com/TuxLux40/TL40-Dots.git && cd TL40-Dots && bash ./install.sh
 ```
+
 > The post-install entrypoint auto-detects your distro, selects the right package manager, then walks through all dependent scripts with friendly logging.

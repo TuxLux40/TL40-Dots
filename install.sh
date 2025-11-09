@@ -117,10 +117,10 @@ sleep 2
 #########################
 configure_now() {
     printf '  %bConfiguring YubiKey...%b\n' "${YELLOW}" "${NC}"
-    "${ROOT_DIR}/scripts/yubikey-setup.sh"
+    "${ROOT_DIR}/scripts/yk-pam.sh"
 }
 configure_later() {
-    printf '  %bYou can run yubikey-setup.sh later to configure your key.%b\n' "${YELLOW}" "${NC}"
+    printf '  %bYou can run yk-pam.sh later to configure your key.%b\n' "${YELLOW}" "${NC}"
 }
 printf '\n%bYubiKey configuration%b\n' "${GREEN}" "${NC}"
 printf '  y) Configure now\n'

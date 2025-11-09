@@ -5,13 +5,13 @@ This document describes each script under `scripts/` in a formal and consistent 
 Table of Contents
 
 1. Conventions
-2. postinstall.sh
+2. install.sh
    2.1 Overview
    2.2 Prerequisites
    2.3 Procedure
    2.4 Verification
    2.5 Notes
-3. install-flatpaks.sh
+3. flatpaks-install.sh
    3.1 Overview
    3.2 Prerequisites
    3.3 Procedure
@@ -62,39 +62,31 @@ Table of Contents
 
 ---
 
-2. postinstall.sh
+2. install.sh
 
 2.1 Overview
 
-- Post-installation environment setup that is desktop- and OS-agnostic.
+- Main post-installation environment setup that is desktop- and OS-agnostic.
 
   2.2 Prerequisites
 
-- `curl`, `bash`, and an active network connection (for Homebrew installation).
+- `curl`, `bash`, and an active network connection (for package installations).
 
   2.3 Procedure
 
 ```fish
-bash ~/Projects/TL40-Dots/scripts/postinstall.sh
+bash ~/Projects/TL40-Dots/install.sh
 # Or bootstrap remotely (clones to ~/Projects/TL40-Dots by default)
-curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/scripts/postinstall/postinstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/install.sh | bash
 ```
 
 Actions performed:
 
-- Install Homebrew if missing; configure shell integration for bash and fish.
-- Load `ip_tables` and `iptable_nat` modules at boot via `/etc/modules-load.d/iptables.conf`.
-- Create symlinks or copies for:
+- Install miscellaneous tools, Atuin, Tailscale, Starship, Zoxide, and Homebrew if missing.
+- Configure shell integration for bash and fish.
+- Set Fish as default shell if available.
 
-  - `~/.config/atuin/config.toml` (symlink)
-  - `~/.config/aichat/config.yaml` (copy)
-  - `~/.bashrc` (symlink)
-  - `~/system.yaml` (symlink)
-  - `~/.config/starship.toml` (symlink)
-  - `~/.config/fastfetch` (symlink directory)
-  - `~/.config/ghostty/config` (symlink)
-
-    2.4 Verification
+  2.4 Verification
 
 - Open a new terminal and confirm that the Starship prompt and Homebrew environment are active.
 
@@ -104,7 +96,7 @@ Actions performed:
 
 ---
 
-3. install-flatpaks.sh
+3. flatpaks-install.sh
 
 3.1 Overview
 
@@ -118,10 +110,10 @@ Actions performed:
 
 ```fish
 # Dry run
-bash ~/Projects/TL40-Dots/scripts/install-flatpaks.sh --dry-run
+bash ~/Projects/TL40-Dots/scripts/pkg-scripts/flatpaks-install.sh --dry-run
 
 # Install
-bash ~/Projects/TL40-Dots/scripts/install-flatpaks.sh
+bash ~/Projects/TL40-Dots/scripts/pkg-scripts/flatpaks-install.sh
 ```
 
 Options:
