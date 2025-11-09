@@ -66,10 +66,8 @@ alias da 'date "+%Y-%m-%d %A %T %Z"'
 alias pacman 'sudo pacman --color=always --noconfirm --needed'
 alias yay 'yay --color=always --noconfirm --needed'
 alias yayf "yay -Slq | fzf --multi --preview 'yay -Sii {1}' --preview-window=down:75% | xargs -ro yay -S"
-alias blupdate 'sudo akshara update'
-alias dupdate 'sudo apt update && sudo apt upgrade -y' # Debian/Ubuntu update
+alias blupdate 'akshara update'
 alias paru 'paru --color=always --noconfirm --needed' # Arch AUR helper alias
-alias dnf 'sudo dnf --color=always -y' # Fedora package manager alias
 # Miscellaneous aliases
 alias cp 'cp -i' # Interactive copy
 alias mv 'mv -i' # Interactive move
@@ -81,9 +79,8 @@ alias less 'less -R' # Less with raw control chars
 alias multitail 'multitail --no-repeat -c' # Multitail with no repeat and color
 alias a 'aichat' # AI chat alias
 alias grep 'ugrep --color=always -T' # Grep with color and tree view
-alias freshclam 'sudo freshclam' # Update ClamAV database
 # Alias's for TUI tools
-alias sysctl 'sudo systemctl-tui' # Systemctl TUI alias
+alias sysctl 'systemctl-tui' # Systemctl TUI alias
 alias stui 'systemctl-tui' # Systemctl TUI alias
 alias blui 'bluetui' # Bluetui alias
 # Change directory aliases
