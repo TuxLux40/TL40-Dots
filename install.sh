@@ -8,12 +8,8 @@
 
 set -eu
 
-# Colors and symbols for pretty output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[1;34m'
-NC='\033[0m' # No Color
-CHECK='✅'
+# Source pretty output definitions
+. ./scripts/pretty-output.sh
 
 # Directory variables
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
@@ -50,17 +46,23 @@ printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME
 #############################################
 # Running miscellaneous installation scripts#
 ##############################################
-run_if_missing "[1/7] Install miscellaneous tools" micro "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
+run_if_missing "[1/6] Install miscellaneous tools" micro "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
 
-run_if_missing "[2/7] Ensure Fish shell is installed" fish "${ROOT_DIR}/scripts/pkg-scripts/fish-install.sh"
+# Set Fish as default shell if installed
+if command -v fish >/dev/null 2>&1; then
+    fish_path=$(command -v fish)
+    if [ "$SHELL" != "$fish_path" ]; then
+        chsh -s "$fish_path"
+    fi
+fi
 
-run_if_missing "[3/7] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
+run_if_missing "[2/6] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
 
-run_if_missing "[4/7] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
+run_if_missing "[3/6] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
 
-run_if_missing "[5/7] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
-run_if_missing "[6/7] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
-run_if_missing "[7/7] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
+run_if_missing "[4/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
+run_if_missing "[5/6] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
+run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"

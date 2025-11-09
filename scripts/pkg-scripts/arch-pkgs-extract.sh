@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# Script to extract installed Arch packages from pacman & AUR and save them to /output/arch-packages.md
+# Script to extract installed Arch packages from pacman & AUR and save them to arch-packages.md
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 OUTPUT_FILE="${REPO_ROOT}/output/arch-packages.md"
 
 if ! command -v pacman >/dev/null 2>&1; then
@@ -50,18 +50,18 @@ fi
 		printf '_No explicit repo packages found._\n\n'
 	else
 		for pkg in "${official[@]}"; do
-			printf '- %s\n' "${pkg}"
+			echo "- ${pkg}"
 		done
-		printf '\n'
+		echo ""
 	fi
 	printf '## AUR (foreign)\n\n'
 	if [[ ${#aur[@]} -eq 0 ]]; then
 		printf '_No foreign packages found._\n'
 	else
 		for pkg in "${aur[@]}"; do
-			printf '- %s\n' "${pkg}"
+			echo "- ${pkg}"
 		done
-		printf '\n'
+		echo ""
 	fi
 } >"${OUTPUT_FILE}"
 
