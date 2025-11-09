@@ -83,9 +83,7 @@ case "${tailscale_choice}" in
 esac
 
 run_if_missing "[4/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
-
-run_if_missing "[5/6] Install ChezMoi" chezmoi "${ROOT_DIR}/scripts/pkg-scripts/chezmoi-install.sh"
-
+run_if_missing "[5/6] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
 run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
