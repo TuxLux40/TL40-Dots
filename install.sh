@@ -46,7 +46,9 @@ printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME
 #############################################
 # Running miscellaneous installation scripts#
 ##############################################
-run_if_missing "[1/6] Install miscellaneous tools" micro "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
+run_if_missing "[1/7] Install miscellaneous tools" micro "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
+
+run_if_missing "[2/7] Install Fastfetch" fastfetch "${ROOT_DIR}/scripts/pkg-scripts/fastfetch-install.sh"
 
 # Set Fish as default shell if installed
 if command -v fish >/dev/null 2>&1; then
@@ -56,13 +58,13 @@ if command -v fish >/dev/null 2>&1; then
     fi
 fi
 
-run_if_missing "[2/6] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
+run_if_missing "[3/7] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
 
-run_if_missing "[3/6] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
+run_if_missing "[4/7] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
 
-run_if_missing "[4/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
-run_if_missing "[5/6] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
-run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
+run_if_missing "[5/7] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
+run_if_missing "[6/7] Install Zoxide" zoxide "${ROOT_DIR}/scripts/pkg-scripts/zoxide-install.sh"
+run_if_missing "[7/7] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
