@@ -47,8 +47,10 @@ function cd
     ls
 end
 
-# Alias to remove a directory and all files
-alias rmd='/bin/rm  --recursive --force --verbose '
+# Alias to remove a directory and all files (explicit command path)
+function rmd
+	command /bin/rm --recursive --force --verbose $argv
+end
 
 # Disable the bell (Fish equivalent)
 set -U fish_bell off
@@ -59,19 +61,6 @@ set -U fish_history_max_count 10000
 # Enable colorized output for ls-compatible tools
 set -gx CLICOLOR 1
 set -gx LS_COLORS 'no=00:fi=00:di=00;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.xml=00;31:'
-
-# GREP_OPTIONS is deprecated; rely on aliases or GREP_COLORS instead
-set -e GREP_OPTIONS
-
-# Check if ripgrep is installed
-if command -v rg >/dev/null 2>&1
-    # Alias grep to rg if ripgrep is installed
-    alias grep='rg'
-else
-    # Alias grep to /usr/bin/grep with GREP_OPTIONS if ripgrep is not installed
-    alias grep="/usr/bin/grep $GREP_OPTIONS"
-end
-# unset GREP_OPTIONS  # Bash-specific, already handled
 
 # Color for manpages in less makes manpages a little easier to read
 set -gx LESS_TERMCAP_mb '\e[01;31m'
@@ -121,26 +110,36 @@ alias .. 'cd ..'
 alias ... 'cd ../..'
 alias .... 'cd ../../..'
 alias ..... 'cd ../../../..'
-# Remove a directory and all files
-alias rmd '/bin/rm  --recursive --force --verbose '
+# Remove a directory and all files (defined above)
 # Alias's for multiple directory listing commands
-alias la 'ls -Alh'
-alias ls 'ls -aFh --color=always'
-alias lx 'ls -lXBh'
-alias lk 'ls -lSrh'
-alias lc 'ls -ltcrh'
-alias lu 'ls -lturh'
-alias lr 'ls -lRh'
-alias lt 'ls -ltrh'
-alias lm 'ls -alh |more'
-alias lw 'ls -xAh'
-alias ll 'ls -Fls'
-alias labc 'ls -lap'
-alias lf "ls -l | egrep -v '^d'"
-alias ldir "ls -l | egrep '^d'"
-alias lla 'ls -Al'
-alias las 'ls -A'
-alias lls 'ls -l'
+# Use `command` to prevent alias-chaining and ensure coreutils ls is called
+alias la 'command ls -Alh'
+alias ls 'command ls -aFh --color=always'
+alias lx 'command ls -lXBh'
+alias lk 'command ls -lSrh'
+alias lc 'command ls -ltcrh'
+alias lu 'command ls -lturh'
+alias lr 'command ls -lRh'
+alias lt 'command ls -ltrh'
+alias lw 'command ls -xAh'
+alias ll 'command ls -Fls'
+alias labc 'command ls -lap'
+alias lla 'command ls -Al'
+alias las 'command ls -A'
+alias lls 'command ls -l'
+
+# Pipeline-based list helpers as functions for clarity and correctness
+function lm
+	command ls -alh | command more
+end
+
+function lf
+	command ls -l | ugrep -E -v '^d'
+end
+
+function ldir
+	command ls -l | ugrep -E '^d'
+end
 # alias chmod commands
 alias mx 'chmod a+x'
 alias 000 'chmod -R 000'
@@ -149,21 +148,34 @@ alias 666 'chmod -R 666'
 alias 755 'chmod -R 755'
 alias 777 'chmod -R 777'
 # Search command line history
-alias h 'history | grep '
+function h
+	history | ugrep 
+end
 # Search running processes
-alias p 'ps aux | grep '
-alias topcpu '/bin/ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10'
+function p
+	command ps aux | ugrep 
+end
+
+function topcpu
+	/bin/ps -eo pcpu,pid,user,args | command sort -k 1 -r | command head -10
+end
 # Search files in the current folder
-alias f 'find . | grep '
+function f
+	command find . | ugrep 
+end
 # Show open ports
 alias openports 'netstat -nape --inet'
 # Alias's for safe and forced reboots
 alias rebootsafe 'sudo shutdown -r now'
 alias rebootforce 'sudo shutdown -r -n now'
 # Alias's to show disk space and space used in a folder
-alias diskspace 'du -S | sort -n -r |more'
+function diskspace
+	command du -S | command sort -n -r | command more
+end
 alias folders 'du -h --max-depth=1'
-alias folderssort 'find . -maxdepth 1 -type d -print0 | xargs -0 du -sk | sort -rn'
+function folderssort
+	command find . -maxdepth 1 -type d -print0 | command xargs -0 du -sk | command sort -rn
+end
 alias tree 'tree -CAhF --dirsfirst'
 alias treed 'tree -CAFd'
 alias mountedinfo 'df -hT'
