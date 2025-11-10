@@ -136,7 +136,11 @@ function mv
     command mv -i $argv
 end
 function rm
-    trash -v $argv
+    if command -v trash >/dev/null 2>&1
+        trash -v $argv
+    else
+        command rm $argv
+    end
 end
 function mkdir
     command mkdir -p $argv
@@ -151,20 +155,40 @@ function less
     command less -R $argv
 end
 function multitail
-    multitail --no-repeat -c $argv
+    if command -v multitail >/dev/null 2>&1
+        multitail --no-repeat -c $argv
+    else
+        echo "multitail not installed"
+    end
 end
 function a
-    aichat $argv
+    if command -v aichat >/dev/null 2>&1
+        aichat $argv
+    else
+        echo "aichat not installed"
+    end
 end
 # Alias's for TUI tools
 function sysctl
-    systemctl-tui $argv
+    if command -v systemctl-tui >/dev/null 2>&1
+        systemctl-tui $argv
+    else
+        echo "systemctl-tui not installed"
+    end
 end
 function stui
-    systemctl-tui $argv
+    if command -v systemctl-tui >/dev/null 2>&1
+        systemctl-tui $argv
+    else
+        echo "systemctl-tui not installed"
+    end
 end
 function blui
-    bluetui $argv
+    if command -v bluetui >/dev/null 2>&1
+        bluetui $argv
+    else
+        echo "bluetui not installed"
+    end
 end
 # Change directory functions
 function home
