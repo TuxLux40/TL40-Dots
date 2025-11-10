@@ -47,6 +47,9 @@ function cd
     ls
 end
 
+# Alias to remove a directory and all files
+alias rmd='/bin/rm  --recursive --force --verbose '
+
 # Disable the bell (Fish equivalent)
 set -U fish_bell off
 
