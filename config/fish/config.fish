@@ -64,16 +64,18 @@ set -gx LS_COLORS 'no=00:fi=00:di=00;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=4
 # GREP_OPTIONS is deprecated; rely on aliases or GREP_COLORS instead
 set -e GREP_OPTIONS
 
-# Check if ripgrep is installed
-if command -v rg >/dev/null 2>&1
-    # Alias grep to rg if ripgrep is installed
+# Check if ugrep is installed
+if command -v ugrep >/dev/null 2>&1
+    function grep
+        ugrep --color=always -T $argv
+    end
+else if command -v rg >/dev/null 2>&1
     function grep
         rg $argv
     end
 else
-    # Alias grep to /usr/bin/grep with GREP_OPTIONS if ripgrep is not installed
     function grep
-        /usr/bin/grep $GREP_OPTIONS $argv
+        /usr/bin/grep $argv
     end
 end
 # unset GREP_OPTIONS  # Bash-specific, already handled
@@ -92,31 +94,31 @@ set -gx LESS_TERMCAP_us '\e[01;32m'
 ############################################
 # Functions to change the directory
 function web
-    cd /var/www/html $argv
+    cd /var/www/html
 end
 function config
-    cd ~/.config $argv
+    cd ~/.config
 end
 function dl
-    cd ~/Downloads $argv
+    cd ~/Downloads
 end
 function docs
-    cd ~/Documents $argv
+    cd ~/Documents
 end
 function pics
-    cd ~/Pictures $argv
+    cd ~/Pictures
 end
 function vids
-    cd ~/Videos $argv
+    cd ~/Videos
 end
 function music
-    cd ~/Music $argv
+    cd ~/Music
 end
 function desk
-    cd ~/Desktop $argv
+    cd ~/Desktop
 end
 function projects
-    cd ~/Projects $argv
+    cd ~/Projects
 end
 # Edit this fish config file
 function efish
@@ -124,7 +126,7 @@ function efish
 end
 # function to show the date
 function da
-    date "+%Y-%m-%d %A %T %Z" $argv
+    date "+%Y-%m-%d %A %T %Z"
 end
 # Miscellaneous functions
 function cp
@@ -166,22 +168,22 @@ function blui
 end
 # Change directory functions
 function home
-    cd ~ $argv
+    cd ~
 end
 function cd..
-    cd .. $argv
+    cd ..
 end
 function ..
-    cd .. $argv
+    cd ..
 end
 function ...
-    cd ../.. $argv
+    cd ../..
 end
 function ....
-    cd ../../.. $argv
+    cd ../../..
 end
 function .....
-    cd ../../../.. $argv
+    cd ../../../..
 end
 # Remove a directory and all files
 function rmd
