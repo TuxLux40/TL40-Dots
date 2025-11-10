@@ -38,8 +38,12 @@ end
 # Set the default editor
 set -gx EDITOR micro
 set -gx VISUAL micro
-alias vim 'micro'
-alias nano 'micro'
+function vim
+    micro $argv
+end
+function nano
+    micro $argv
+end
 
 # Automatically list directory contents on cd
 function cd
@@ -63,10 +67,14 @@ set -e GREP_OPTIONS
 # Check if ripgrep is installed
 if command -v rg >/dev/null 2>&1
     # Alias grep to rg if ripgrep is installed
-    alias grep='rg'
+    function grep
+        rg $argv
+    end
 else
     # Alias grep to /usr/bin/grep with GREP_OPTIONS if ripgrep is not installed
-    alias grep="/usr/bin/grep $GREP_OPTIONS"
+    function grep
+        /usr/bin/grep $GREP_OPTIONS $argv
+    end
 end
 # unset GREP_OPTIONS  # Bash-specific, already handled
 
@@ -80,101 +88,237 @@ set -gx LESS_TERMCAP_ue '\e[0m'
 set -gx LESS_TERMCAP_us '\e[01;32m'
 
 ############################################
-#                 ALIAS'S                  #
+#                 FUNCTIONS               #
 ############################################
-# Alias's to change the directory
-alias web 'cd /var/www/html'
-alias config 'cd ~/.config'
-alias dl 'cd ~/Downloads'
-alias docs 'cd ~/Documents'
-alias pics 'cd ~/Pictures'
-alias vids 'cd ~/Videos'
-alias music 'cd ~/Music'
-alias desk 'cd ~/Desktop'
-alias projects 'cd ~/Projects'
+# Functions to change the directory
+function web
+    cd /var/www/html $argv
+end
+function config
+    cd ~/.config $argv
+end
+function dl
+    cd ~/Downloads $argv
+end
+function docs
+    cd ~/Documents $argv
+end
+function pics
+    cd ~/Pictures $argv
+end
+function vids
+    cd ~/Videos $argv
+end
+function music
+    cd ~/Music $argv
+end
+function desk
+    cd ~/Desktop $argv
+end
+function projects
+    cd ~/Projects $argv
+end
 # Edit this fish config file
-alias efish 'micro ~/.config/fish/config.fish'
-# alias to show the date
-alias da 'date "+%Y-%m-%d %A %T %Z"'
-# Miscellaneous aliases
-alias cp 'cp -i' # Interactive copy
-alias mv 'mv -i' # Interactive move
-alias rm 'trash -v' # Move to trash
-alias mkdir 'mkdir -p' # Create parent directories
-alias ps 'ps auxf' # Tree view of processes
-alias ping 'ping -c 10' # Ping with count
-alias less 'less -R' # Less with raw control chars
-alias multitail 'multitail --no-repeat -c' # Multitail with no repeat and color
-alias a 'aichat' # AI chat alias
-alias grep 'ugrep --color=always -T' # Grep with color and tree view
+function efish
+    micro ~/.config/fish/config.fish $argv
+end
+# function to show the date
+function da
+    date "+%Y-%m-%d %A %T %Z" $argv
+end
+# Miscellaneous functions
+function cp
+    command cp -i $argv
+end
+function mv
+    command mv -i $argv
+end
+function rm
+    trash -v $argv
+end
+function mkdir
+    command mkdir -p $argv
+end
+function ps
+    command ps auxf $argv
+end
+function ping
+    command ping -c 10 $argv
+end
+function less
+    command less -R $argv
+end
+function multitail
+    multitail --no-repeat -c $argv
+end
+function a
+    aichat $argv
+end
 # Alias's for TUI tools
-alias sysctl 'systemctl-tui' # Systemctl TUI alias
-alias stui 'systemctl-tui' # Systemctl TUI alias
-alias blui 'bluetui' # Bluetui alias
-# Change directory aliases
-alias home 'cd ~'
-alias cd.. 'cd ..'
-alias .. 'cd ..'
-alias ... 'cd ../..'
-alias .... 'cd ../../..'
-alias ..... 'cd ../../../..'
+function sysctl
+    systemctl-tui $argv
+end
+function stui
+    systemctl-tui $argv
+end
+function blui
+    bluetui $argv
+end
+# Change directory functions
+function home
+    cd ~ $argv
+end
+function cd..
+    cd .. $argv
+end
+function ..
+    cd .. $argv
+end
+function ...
+    cd ../.. $argv
+end
+function ....
+    cd ../../.. $argv
+end
+function .....
+    cd ../../../.. $argv
+end
 # Remove a directory and all files
-alias rmd '/bin/rm  --recursive --force --verbose '
-# Alias's for multiple directory listing commands
-alias la 'ls -Alh'
-alias ls 'ls -aFh --color=always'
-alias lx 'ls -lXBh'
-alias lk 'ls -lSrh'
-alias lc 'ls -ltcrh'
-alias lu 'ls -lturh'
-alias lr 'ls -lRh'
-alias lt 'ls -ltrh'
-alias lm 'ls -alh |more'
-alias lw 'ls -xAh'
-alias ll 'ls -Fls'
-alias labc 'ls -lap'
-alias lf "ls -l | egrep -v '^d'"
-alias ldir "ls -l | egrep '^d'"
-alias lla 'ls -Al'
-alias las 'ls -A'
-alias lls 'ls -l'
-# alias chmod commands
-alias mx 'chmod a+x'
-alias 000 'chmod -R 000'
-alias 644 'chmod -R 644'
-alias 666 'chmod -R 666'
-alias 755 'chmod -R 755'
-alias 777 'chmod -R 777'
+function rmd
+    /bin/rm --recursive --force --verbose $argv
+end
+# Functions for multiple directory listing commands
+function la
+    ls -Alh $argv
+end
+function ls
+    command ls -aFh --color=always $argv
+end
+function lx
+    ls -lXBh $argv
+end
+function lk
+    ls -lSrh $argv
+end
+function lc
+    ls -ltcrh $argv
+end
+function lu
+    ls -lturh $argv
+end
+function lr
+    ls -lRh $argv
+end
+function lt
+    ls -ltrh $argv
+end
+function lm
+    ls -alh | more $argv
+end
+function lw
+    ls -xAh $argv
+end
+function ll
+    ls -Fls $argv
+end
+function labc
+    ls -lap $argv
+end
+function lf
+    ls -l | egrep -v '^d' $argv
+end
+function ldir
+    ls -l | egrep '^d' $argv
+end
+function lla
+    ls -Al $argv
+end
+function las
+    ls -A $argv
+end
+function lls
+    ls -l $argv
+end
+# chmod functions
+function mx
+    chmod a+x $argv
+end
+function 000
+    chmod -R 000 $argv
+end
+function 644
+    chmod -R 644 $argv
+end
+function 666
+    chmod -R 666 $argv
+end
+function 755
+    chmod -R 755 $argv
+end
+function 777
+    chmod -R 777 $argv
+end
 # Search command line history
-alias h 'history | grep '
+function h
+    history | grep $argv
+end
 # Search running processes
-alias p 'ps aux | grep '
-alias topcpu '/bin/ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10'
+function p
+    ps aux | grep $argv
+end
+function topcpu
+    /bin/ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10 $argv
+end
 # Search files in the current folder
-alias f 'find . | grep '
+function f
+    find . | grep $argv
+end
 # Show open ports
-alias openports 'netstat -nape --inet'
-# Alias's for safe and forced reboots
-alias rebootsafe 'sudo shutdown -r now'
-alias rebootforce 'sudo shutdown -r -n now'
-# Alias's to show disk space and space used in a folder
-alias diskspace 'du -S | sort -n -r |more'
-alias folders 'du -h --max-depth=1'
-alias folderssort 'find . -maxdepth 1 -type d -print0 | xargs -0 du -sk | sort -rn'
-alias tree 'tree -CAhF --dirsfirst'
-alias treed 'tree -CAFd'
-alias mountedinfo 'df -hT'
-# Alias's for archives
-alias mktar 'tar -cvf'
-alias mkbz2 'tar -cvjf'
-alias mkgz 'tar -cvzf'
-alias untar 'tar -xvf'
-alias unbz2 'tar -xvjf'
-alias ungz 'tar -xvzf'
-# alias to cleanup unused podman containers, images, networks, and volumes
-function podman-clean
-	podman container prune -f
-	podman image prune -f
-	podman network prune -f
-	podman volume prune -f
+function openports
+    netstat -nape --inet $argv
+end
+# Functions for safe and forced reboots
+function rebootsafe
+    sudo shutdown -r now $argv
+end
+function rebootforce
+    sudo shutdown -r -n now $argv
+end
+# Functions to show disk space and space used in a folder
+function diskspace
+    du -S | sort -n -r | more $argv
+end
+function folders
+    du -h --max-depth=1 $argv
+end
+function folderssort
+    find . -maxdepth 1 -type d -print0 | xargs -0 du -sk | sort -rn $argv
+end
+function tree
+    tree -CAhF --dirsfirst $argv
+end
+function treed
+    tree -CAFd $argv
+end
+function mountedinfo
+    df -hT $argv
+end
+# Functions for archives
+function mktar
+    tar -cvf $argv
+end
+function mkbz2
+    tar -cvjf $argv
+end
+function mkgz
+    tar -cvzf $argv
+end
+function untar
+    tar -xvf $argv
+end
+function unbz2
+    tar -xvjf $argv
+end
+function ungz
+    tar -xvzf $argv
 end
