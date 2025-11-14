@@ -70,6 +70,14 @@ printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
 "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
 printf '%b    ↳ All configs symlinked.%b\n' "${YELLOW}" "${NC}"
 
+if command -v podman >/dev/null 2>&1; then
+    printf '\n%bPodman detected — enabling socket activation%b\n' "${GREEN}" "${NC}"
+    # If install was executed with sudo, prefer the sudo user; else use current
+    POSTINSTALL_USER=${SUDO_USER:-$(whoami)}
+    # Run the helper script (safe; prints info/warnings) — allow it to run as root
+    "${ROOT_DIR}/scripts/pkg-scripts/podman-postinstall.sh" --user "${POSTINSTALL_USER}" || printf '    %bFailed to enable podman socket activation.%b\n' "${YELLOW}" "${NC}"
+fi
+
 #####################
 # Restore shortcuts #
 #####################

@@ -1,6 +1,7 @@
 ## flathub
 
 - at.ssh_mitm.server
+- best.ellie.StartupConfiguration
 - br.com.wiselabs.simplexity
 - cern.root.ROOT
 - com.bitwarden.desktop
@@ -11,19 +12,24 @@
 - com.github.finefindus.eyedropper
 - com.github.muriloventuroso.pdftricks
 - com.github.tchx84.Flatseal
-- com.jetbrains.IntelliJ-IDEA-Ultimate
+- com.jwestall.Forecast
 - com.openwall.John
 - com.pikatorrent.PikaTorrent
 - com.rafaelmardojai.SharePreview
 - com.rtosta.zapzap
 - com.usebottles.bottles
 - de.bund.ausweisapp.ausweisapp2
+- dev.edfloreshz.Calculator
+- dev.edfloreshz.Tasks
 - dev.geopjr.Archives
+- dev.heppen.webapps
 - dev.serebit.Waycheck
 - fr.handbrake.ghb
+- fr.sgued.bodev
 - io.github.alescdb.mailviewer
 - io.github.brunofin.Cohesion
 - io.github.bytezz.IPLookup
+- io.github.cosmic_utils.Examine
 - io.github.flattool.Ignition
 - io.github.flattool.Warehouse
 - io.github.flattool.Warehouse

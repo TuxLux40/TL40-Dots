@@ -15,7 +15,7 @@ Table of Contents
 2. Highlights
 
 - User identity (name and email)
-- Editor preference: `nano`
+- Editor preference: `micro`
 - Aliases: `st` (status), `co` (checkout), `br` (branch)
 - `pull.rebase = true` for rebasing local changes when pulling
 

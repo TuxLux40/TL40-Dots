@@ -24,6 +24,10 @@ Table of Contents
 - Starship prompt configuration. Symlinked by `scripts/postinstall/dotfile-symlinks.sh` to `~/.config/starship.toml`.
 - Provides a powerline-style prompt with Git, language runtimes, Docker context, and time.
 
+  1.3 `config/fish/config.fish`
+
+- Fish shell configuration. Symlinked by `scripts/postinstall/dotfile-symlinks.sh` to `~/.config/fish/config.fish`.
+
 ---
 
 2. Terminal
@@ -62,7 +66,7 @@ Table of Contents
 5.1 `config/system.yaml`
 
 - Comprehensive package list and configuration for blendOS tracks.
-- Symlinked to `/system.yaml` by `scripts/blendos/systemyaml-ymlink.sh` on blendOS systems.
+- Symlinked to `/system.yaml` by `scripts/blendos/systemyaml-symlink.sh` on blendOS systems.
 
 ---
 

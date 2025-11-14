@@ -80,6 +80,36 @@ bash ~/Projects/TL40-Dots/install.sh
 curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/install.sh | bash
 ```
 
+---
+
+13. podman-postinstall.sh
+
+13.1 Overview
+
+- Helper to enable podman socket activation (systemd or OpenRC) after package installation.
+- Ensures `podman.socket` is enabled for the system (if available) and can enable the user's rootless socket
+  with `loginctl enable-linger` where appropriate.
+
+  13.2 Prerequisites
+
+- `podman` installed (e.g., from `config/system.yaml`) and systemd or OpenRC installed and running.
+
+  13.3 Procedure
+
+```fish
+# Run as root to enable a system socket and (optionally) a user's rootless socket
+bash ~/Projects/TL40-Dots/scripts/pkg-scripts/podman-postinstall.sh --user "${SUDO_USER:-$(whoami)}"
+
+# Or as a user to enable user-level socket only
+bash ~/Projects/TL40-Dots/scripts/pkg-scripts/podman-postinstall.sh
+```
+
+13.4 Notes
+
+- The script is idempotent and safe to re-run.
+- On non-systemd systems (OpenRC), the script will attempt an `rc-update add podman default` and start the service if available.
+- If `podman.socket` is not present (e.g. special packaging), the script will warn and skip enabling the socket for that unit.
+
 Actions performed:
 
 - Install miscellaneous tools, Atuin, Tailscale, Starship, Zoxide, and Homebrew if missing.
