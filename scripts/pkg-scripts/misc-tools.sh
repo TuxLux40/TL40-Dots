@@ -66,7 +66,7 @@ arch_packages=(
     tailscale
     nodejs
     flatpak
-    linutil
+    tldr
 )
 
 fedora_packages=(
