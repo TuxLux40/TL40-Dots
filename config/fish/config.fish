@@ -27,6 +27,9 @@ if status is-interactive
 	if type -q tty
 		set -gx GPG_TTY (tty)
 	end
+
+    # Set xterm
+    export TERM=xterm-256color
 end
 
 # Load Homebrew environment if available
