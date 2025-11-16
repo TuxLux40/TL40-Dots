@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #############################
 # YubiKey-PAM Configuration
 #############################
@@ -31,9 +32,13 @@ PAM_FILES=("/etc/pam.d/login" "/etc/pam.d/sudo" "/etc/pam.d/gdm-password" "/etc/
 
 for file in "${PAM_FILES[@]}"; do
     if [ -f "$file" ]; then
-        # Insert the line before the first 'auth' line
-        sed -i "0,/^auth /s//${PAM_LINE}\n&/" "$file"
-        echo "Added PAM line to $file"
+        # Insert the line at the top of the file (idempotent)
+        if grep -qF "$PAM_LINE" "$file"; then
+            echo "PAM line already present in $file, skipping"
+        else
+            sed -i "1i ${PAM_LINE}" "$file"
+            echo "Added PAM line to $file (at top)"
+        fi
     else
         echo "File $file not found, skipping"
     fi

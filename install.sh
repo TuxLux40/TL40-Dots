@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Post-installation script to set up the environment
 # To be installed after the main installation process
@@ -6,10 +6,42 @@
 # See other scripts for OS/DE specific setups
 # Work in progress - use at your own risk
 
-set -eu
+set -euo pipefail
+
+# Spinner and animated step output
+spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\\'
+    while kill -0 $pid 2>/dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c] " "$spinstr"
+        spinstr=$temp${spinstr%$temp}
+        sleep $delay
+        printf "\b\b\b\b\b"
+    done
+    printf "     \b\b\b\b\b"
+}
+
+run_step() {
+    local stepname="$1"
+    shift
+    printf "%b%s...%b" "$YELLOW" "$stepname" "$NC"
+    ("$@") &
+    local pid=$!
+    spinner $pid
+    wait $pid
+    local status=$?
+    if [ $status -eq 0 ]; then
+        printf "%b%s%b\n" "$GREEN" "✔" "$NC"
+    else
+        printf "%b%s%b\n" "$RED" "✖" "$NC"
+    fi
+    return $status
+}
 
 # Source pretty output definitions
-. ./scripts/pretty-output.sh
+source ./scripts/pretty-output.sh
 
 # Directory variables
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
@@ -18,64 +50,39 @@ ROOT_DIR="${SCRIPT_DIR}"
 # Ensure Atuin config directory exists before any shell integrations touch it
 mkdir -p "${HOME}/.config/atuin"
 
-# Helper to run installation only if binary is missing
-run_if_missing() {
-    description="$1"
-    binary_name="$2"
-    shift 2
+# Source OS detection script
+source "${ROOT_DIR}/scripts/detect-os.sh"
 
-    printf '\n%b%b%b\n' "${GREEN}" "${description}" "${NC}"
-    if command -v "${binary_name}" >/dev/null 2>&1; then
-        printf '    %b%b %s already installed. Skipping.%b\n' "${YELLOW}" "${CHECK}" "${binary_name}" "${NC}"
-        return 0
-    fi
-
-    "$@"
-    printf '    %b%b Completed.%b\n' "${YELLOW}" "${CHECK}" "${NC}"
-}
-# Basic host info for logging
-OS_NAME=$(uname -s)
-OS_FAMILY="unknown"
-PKG_MANAGER="unknown"
-# Export so called scripts can re-use
-export OS_NAME OS_FAMILY PKG_MANAGER
-# Detecting operating system and package manager
+# Print detected OS info
 printf '\n%bTL40-Dots post-installation%b\n' "${BLUE}" "${NC}"
-printf '%bDetected:%b %s (package manager: %s)\n' "${YELLOW}" "${NC}" "${OS_NAME}" "${PKG_MANAGER}"
+printf '%bDetected:%b %s (distro: %s, package manager: %s)\n' "${YELLOW}" "${NC}" "$OS_TYPE" "$OS_DISTRO" "$PKG_MANAGER"
 
-#############################################
-# Running miscellaneous installation scripts#
-##############################################
-# run_if_missing "[1/6] Install miscellaneous tools" micro "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
 
-run_if_missing "[2/6] Install Fastfetch" fastfetch "${ROOT_DIR}/scripts/pkg-scripts/fastfetch-install.sh"
+# Animated install steps
+printf '\n%bInstalling packages and tools%b\n' "${BLUE}" "${NC}"
+run_step "Install miscellaneous tools" "${ROOT_DIR}/scripts/pkg-scripts/misc-tools.sh"
+run_step "Install Fastfetch" "${ROOT_DIR}/scripts/pkg-scripts/fastfetch-install.sh"
+run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
+run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
+run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
+run_step "Install Homebrew" "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 # Set Fish as default shell if installed
 if command -v fish >/dev/null 2>&1; then
     fish_path=$(command -v fish)
     if [ "$SHELL" != "$fish_path" ]; then
+        printf '\n%bSetting Fish as default shell%b\n' "${YELLOW}" "${NC}"
         chsh -s "$fish_path"
     fi
 fi
 
-run_if_missing "[3/6] Install Atuin shell history" atuin "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
-
-run_if_missing "[4/6] Install Tailscale" tailscale "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
-
-run_if_missing "[5/6] Install Starship prompt" starship "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh" --yes
-
-run_if_missing "[6/6] Install Homebrew" brew "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
-
-printf '\n%bSymlinking dotfiles%b\n' "${GREEN}" "${NC}"
-"${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
-printf '%b    ↳ All configs symlinked.%b\n' "${YELLOW}" "${NC}"
+printf '\n%bSymlinking dotfiles%b\n' "${BLUE}" "${NC}"
+run_step "Symlink configuration files" "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
 
 if command -v podman >/dev/null 2>&1; then
-    printf '\n%bPodman detected — enabling socket activation%b\n' "${GREEN}" "${NC}"
-    # If install was executed with sudo, prefer the sudo user; else use current
+    printf '\n%bPodman detected — enabling socket activation%b\n' "${YELLOW}" "${NC}"
     POSTINSTALL_USER=${SUDO_USER:-$(whoami)}
-    # Run the helper script (safe; prints info/warnings) — allow it to run as root
-    "${ROOT_DIR}/scripts/pkg-scripts/podman-postinstall.sh" --user "${POSTINSTALL_USER}" || printf '    %bFailed to enable podman socket activation.%b\n' "${YELLOW}" "${NC}"
+    "${ROOT_DIR}/scripts/pkg-scripts/podman-postinstall.sh" --user "${POSTINSTALL_USER}" || printf '    %bFailed to enable podman socket activation.%b\n' "${RED}" "${NC}"
 fi
 
 #####################
@@ -120,7 +127,30 @@ case "$choice" in
         ;;
 esac
 
-sleep 2
+##########################
+# Restore Flatpak apps   #
+##########################
+if command -v flatpak >/dev/null 2>&1; then
+    printf '\n%bRestore Flatpak applications?%b\n' "${GREEN}" "${NC}"
+    printf '  y) Yes, restore Flatpaks\n'
+    printf '  n) No, skip Flatpaks\n'
+    printf 'Selection (y/n): '
+    read -r flatpak_choice
+    
+    case "$flatpak_choice" in
+        y|Y)
+            run_step "Restore Flatpak applications" "${ROOT_DIR}/scripts/pkg-scripts/flatpaks-install.sh"
+            ;;
+        n|N)
+            printf '  %bSkipping Flatpak restore.%b\n' "${YELLOW}" "${NC}"
+            ;;
+        *)
+            printf '%bInvalid choice, skipping Flatpaks.%b\n' "${YELLOW}" "${NC}"
+            ;;
+    esac
+else
+    printf '\n%bFlatpak not installed, skipping.%b\n' "${YELLOW}" "${NC}"
+fi
 
 #########################
 # YubiKey configuration #
@@ -150,8 +180,5 @@ case "$configure_choice" in
         ;;
 esac
 
-##########################
-# Restoring Flatpak apps #
-##########################
-
+printf '\n%b✅ Installation complete!%b\n' "${GREEN}" "${NC}"
 printf '\n%b %bPost-installation script completed.%b\n' "${CHECK}" "${GREEN}" "${NC}"
