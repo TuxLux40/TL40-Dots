@@ -65,6 +65,9 @@ arch_packages=(
     tailscale
     nodejs
     flatpak
+    ttf-nerd-fonts-symbols
+    ttf-jetbrains-mono-nerd
+    ttf-meslo-nerd-font-powerlevel10k
 )
 
 fedora_packages=(
