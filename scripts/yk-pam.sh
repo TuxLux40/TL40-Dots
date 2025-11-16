@@ -43,6 +43,14 @@ for file in "${PAM_FILES[@]}"; do
         echo "File $file not found, skipping"
     fi
 done
+
+# Enabling and starting smartcard service
+printf "Enabling and starting pcscd service...\n"
+systemctl enable pcscd --now && systemctl start pcscd
+printf "pcscd service is enabled and started.\n"
+# Restarting the service to ensure it's running
+systemctl restart pcscd
+systemctl status pcscd --no-pager
 printf "PAM configuration complete.\n"
 ##################################
 # END: YubiKey-PAM Configuration #

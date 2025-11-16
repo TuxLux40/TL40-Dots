@@ -25,6 +25,7 @@ debian_packages=(
     flatpak
     fzf
     git
+    impala # WiFi TUI
     micro
     ninja
     nodejs
@@ -39,35 +40,36 @@ debian_packages=(
 )
 
 arch_packages=(
-    micro
-    trash-cli
-    fzf
-    zoxide
-    bat
-    git
-    python-pip
-    python
-    rust
-    unzip
-    curl
-    wget
-    systemctl-tui
-    archinstall
-    bluetui
-    systemctl-tui
-    cmake
-    ninja
-    base-devel
-    go
     aichat
-    fish
+    archinstall
+    base-devel
+    bat
+    bluetui
     chezmoi
-    tailscale
-    nodejs
+    cmake
+    curl
+    fish
     flatpak
-    ttf-nerd-fonts-symbols
+    fzf
+    git
+    go
+    impala # WiFi TUI
+    micro
+    ninja
+    nodejs
+    python
+    python-pip
+    rust
+    systemctl-tui
+    systemctl-tui
+    tailscale
+    trash-cli
     ttf-jetbrains-mono-nerd
     ttf-meslo-nerd-font-powerlevel10k
+    ttf-nerd-fonts-symbols
+    unzip
+    wget
+    zoxide
 )
 
 fedora_packages=(
