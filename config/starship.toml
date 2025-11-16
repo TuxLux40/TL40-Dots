@@ -13,15 +13,15 @@
 # Docker context, and time, ending with a right-rounded corner [].
 # Modules are placeholders that Starship replaces with actual data based on the current environment.
 format = """
-[](#3B4252)\
+[](#84926a)\
 $python\
 $username\
-[](bg:#434C5E fg:#3B4252)\
+[](bg:#4c4a45 fg:#84926a)\
 $directory\
-[](fg:#434C5E bg:#4C566A)\
+[](fg:#4c4a45 bg:#efb82a)\
 $git_branch\
 $git_status\
-[](fg:#4C566A bg:#86BBD8)\
+[](fg:#efb82a bg:#2c2e2a)\
 $c\
 $elixir\
 $elm\
@@ -32,11 +32,11 @@ $julia\
 $nodejs\
 $nim\
 $rust\
-[](fg:#86BBD8 bg:#06969A)\
+[](fg:#2c2e2a bg:#4c4a45)\
 $docker_context\
-[](fg:#06969A bg:#33658A)\
+[](fg:#4c4a45 bg:#2c2e2a)\
 $time\
-[ ](fg:#33658A)\
+[ ](fg:#2c2e2a)\
 """
 command_timeout = 5000
 # Disable the blank line at the start of the prompt
@@ -52,12 +52,12 @@ command_timeout = 5000
 # format = '[$user ]($style)' - Format string: displays username followed by space, styled with the defined style
 [username]
 show_always = true
-style_user = "bg:#3B4252"
-style_root = "bg:#3B4252"
+style_user = "fg:#ffffff bg:#84926a bold"
+style_root = "fg:#2c2e2a bg:#efb82a bold"
 format = '[$user ]($style)'
 
 [directory]
-style = "bg:#434C5E"
+style = "fg:#cdcfcc bg:#4c4a45"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -82,74 +82,74 @@ truncation_symbol = "…/"
 
 [c]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [docker_context]
 symbol = " "
-style = "bg:#06969A"
+style = "fg:#cdcfcc bg:#4c4a45"
 format = '[ $symbol $context ]($style)$path'
 
 [elixir]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [elm]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [git_branch]
 symbol = ""
-style = "bg:#4C566A"
+style = "fg:#2c2e2a bg:#efb82a"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bg:#4C566A"
+style = "fg:#2c2e2a bg:#efb82a"
 format = '[$all_status$ahead_behind ]($style)'
 
 [golang]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [haskell]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [java]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [julia]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [nodejs]
 symbol = ""
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [nim]
 symbol = " "
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [python]
-style = "bg:#3B4252"
+style = "fg:#cdcfcc bg:#84926a"
 format = '[(\($virtualenv\) )]($style)'
 
 [rust]
 symbol = ""
-style = "bg:#86BBD8"
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $symbol ($version) ]($style)'
 
 [time]
 disabled = false
-time_format = "%R"           # Hour:Minute Format
-style = "bg:#33658A"
+time_format = "%R"              # Hour:Minute Format
+style = "fg:#cdcfcc bg:#2c2e2a"
 format = '[ $time ]($style)'

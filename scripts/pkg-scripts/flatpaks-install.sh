@@ -18,8 +18,8 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="${SCRIPT_DIR%/scripts*}"
 
 DEFAULT_FILE="${REPO_ROOT}/output/flatpaks.md"
 MARKDOWN_FILE="${FLATPAKS_MD:-$DEFAULT_FILE}"
@@ -73,21 +73,17 @@ fi
 
 declare -A APP_REMOTE
 
-# Use awk to pair each app id with its remote.
+# Parse markdown file with format:
+# ## remote-name
+# - app.id
 mapfile -t parsed < <(awk '
-  BEGIN { pending="" }
-  /^- \*\*/ {
-     # Extract text inside (`...`)
-     if (match($0, /\(`[^`]+`\)/)) {
-        raw=substr($0, RSTART+2, RLENGTH-4); pending=raw; next
-     }
+  /^## / {
+    remote = $2
+    next
   }
-  /- Remote:/ {
-     if (pending != "") {
-        if (match($0, /- Remote: [A-Za-z0-9_.:-]+/)) {
-          rem=$0; sub(/.*- Remote: /, "", rem); printf "%s %s\n", pending, rem; pending="";
-        }
-     }
+  /^- / && remote != "" {
+    app = $2
+    print app " " remote
   }
 ' "$MARKDOWN_FILE")
 

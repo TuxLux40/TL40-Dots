@@ -1,4 +1,11 @@
 #!/bin/bash -e
+
+# Check if paru is already installed
+if command -v paru >/dev/null 2>&1; then
+    echo "paru is already installed."
+    exit 0
+fi
+
 # Install paru AUR helper
 set -e
 # Install base-devel group if not already installed

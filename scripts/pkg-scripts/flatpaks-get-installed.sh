@@ -3,9 +3,9 @@
 # Outputs a markdown file with Flatpak IDs grouped by remote
 
 set -euo pipefail
-# Outputs to /output/flatpaks.md
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
+# Outputs to output/flatpaks.md
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="${SCRIPT_DIR%/scripts*}"
 OUTPUT_DIR="${REPO_ROOT}/output"
 OUTPUT_FILE="${OUTPUT_DIR}/flatpaks.md"
 
