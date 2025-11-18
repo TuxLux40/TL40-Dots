@@ -48,6 +48,7 @@ arch_packages=(
     chezmoi
     cmake
     curl
+    dialog
     fish
     flatpak
     fzf

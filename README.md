@@ -12,6 +12,11 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 - Run commands from `fish` or `bash` (both are supported unless noted)
 - Most scripts are idempotent—rerun them if you need to sync state
 
+### 🧰 Interactive configurator
+
+- Launch `./start.sh` for a raspi-config style TUI (arrow-key navigation via `whiptail`/`dialog`).
+- Menu highlights: run the full postinstall stack, selectively link dotfiles, export package inventories, install helper package managers (Flatpak, Brew, cargo, paru), apply locale/shortcut presets, and still manage container or automation helpers from one place.
+
 ---
 
 ### 📦 Structure at a glance
@@ -40,7 +45,15 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 
 ### 🚀 Install
 
-For install run:
+**One-command bootstrap (recommended):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/TuxLux40/TL40-Dots/main/scripts/bootstrap/tuxlux-bootstrap.sh | bash
+```
+
+That script clones the repo into `~/git/TL40-Dots`, installs a `tuxlux` launcher into your PATH (preferring `/usr/local/bin`, falling back to `~/.local/bin`), and immediately opens the TUI configurator. From then on, just run `tuxlux` to reopen the menu.
+
+**Manual clone:**
 
 ```bash
 git clone https://github.com/TuxLux40/TL40-Dots.git && cd TL40-Dots && bash ./install.sh

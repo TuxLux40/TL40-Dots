@@ -7,35 +7,22 @@
 # The format is a multi-line string that concatenates these elements.
 
 # The 'format' key defines the prompt layout as a string with embedded modules and separators.
-# It starts with a left-rounded corner [] in color #3B4252, followed by Python and username modules.
+# It starts with a left-rounded corner [] in color #84926a, followed by OS logo, username on hostname.
 # Transitions to next sections with [] separators, changing background colors for visual distinction.
-# Includes Git-related modules ($git_branch, $git_status), programming language modules (e.g., $rust, $nodejs),
-# Docker context, and time, ending with a right-rounded corner [].
+# Includes directory, time, command duration with status indicator.
 # Modules are placeholders that Starship replaces with actual data based on the current environment.
 format = """
 [](#84926a)\
-$python\
+$os\
 $username\
+$hostname\
 [](bg:#4c4a45 fg:#84926a)\
 $directory\
 [](fg:#4c4a45 bg:#efb82a)\
-$git_branch\
-$git_status\
-[](fg:#efb82a bg:#2c2e2a)\
-$c\
-$elixir\
-$elm\
-$golang\
-$haskell\
-$java\
-$julia\
-$nodejs\
-$nim\
-$rust\
-[](fg:#2c2e2a bg:#4c4a45)\
-$docker_context\
-[](fg:#4c4a45 bg:#2c2e2a)\
 $time\
+[](fg:#efb82a bg:#2c2e2a)\
+$cmd_duration\
+$status\
 [ ](fg:#2c2e2a)\
 """
 command_timeout = 5000
@@ -151,5 +138,24 @@ format = '[ $symbol ($version) ]($style)'
 [time]
 disabled = false
 time_format = "%R"              # Hour:Minute Format
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#cdcfcc bg:#efb82a"
 format = '[ $time ]($style)'
+
+[os]
+disabled = false
+style = "fg:#cdcfcc bg:#84926a"
+format = '[🐧 ]($style)'
+
+[hostname]
+ssh_only = false
+style = "fg:#ffffff bg:#84926a"
+format = '[on $hostname ]($style)'
+
+[cmd_duration]
+min_time = 0
+style = "fg:#cdcfcc bg:#2c2e2a"
+format = '[took $duration ]($style)'
+
+[status]
+style = "fg:#cdcfcc bg:#2c2e2a"
+format = '[$symbol ]($style)'
