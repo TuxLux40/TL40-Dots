@@ -152,38 +152,38 @@ clients:
     api_base: https://api.x.ai/v1
     api_key: ${XAI_API_KEY}
 
-  # See https://learn.microsoft.com/en-us/azure/ai-services/openai/chatgpt-quickstart
-  - type: azure-openai
-    api_base: https://{RESOURCE}.openai.azure.com
-    api_key: ${AZURE_OPENAI_API_KEY}
-    models:
-      - name: gpt-4o # Model deployment name
-        max_input_tokens: 128000
-        supports_vision: true
-        supports_function_calling: true
+  # # See https://learn.microsoft.com/en-us/azure/ai-services/openai/chatgpt-quickstart
+  # - type: azure-openai
+  #   api_base: https://{RESOURCE}.openai.azure.com
+  #   api_key: ${AZURE_OPENAI_API_KEY}
+  #   models:
+  #     - name: gpt-4o # Model deployment name
+  #       max_input_tokens: 128000
+  #       supports_vision: true
+  #       supports_function_calling: true
 
-  # See https://developers.cloudflare.com/workers-ai/
-  - type: openai-compatible
-    name: cloudflare
-    api_base: https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/v1
-    api_key: ${CLOUDFLARE_API_KEY}
+  # # See https://developers.cloudflare.com/workers-ai/
+  # - type: openai-compatible
+  #   name: cloudflare
+  #   api_base: https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/v1
+  #   api_key: ${CLOUDFLARE_API_KEY}
 
-  # See https://github.com/marketplace/models
-  - type: openai-compatible
-    name: github
-    api_base: https://models.inference.ai.azure.com
-    api_key: ${GITHUB_API_KEY}
+  # # See https://github.com/marketplace/models
+  # - type: openai-compatible
+  #   name: github
+  #   api_base: https://models.inference.ai.azure.com
+  #   api_key: ${GITHUB_API_KEY}
 
-  # ----- RAG dedicated -----
+  # # ----- RAG dedicated -----
 
-  # See https://jina.ai
-  - type: openai-compatible
-    name: jina
-    api_base: https://api.jina.ai/v1
-    api_key: ${JINA_API_KEY}
+  # # See https://jina.ai
+  # - type: openai-compatible
+  #   name: jina
+  #   api_base: https://api.jina.ai/v1
+  #   api_key: ${JINA_API_KEY}
 
-  # See https://docs.voyageai.com/docs/introduction
-  - type: openai-compatible
-    name: voyageai
-    api_base: https://api.voyageai.com/v1
-    api_key: ${VOYAGEAI_API_KEY}
+  # # See https://docs.voyageai.com/docs/introduction
+  # - type: openai-compatible
+  #   name: voyageai
+  #   api_base: https://api.voyageai.com/v1
+  #   api_key: ${VOYAGEAI_API_KEY}
