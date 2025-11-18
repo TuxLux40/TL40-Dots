@@ -58,6 +58,8 @@ Table of Contents
   4.2 `config/aichat/config.yaml`
 
 - AIChat configuration. Copied to `~/.config/aichat/config.yaml` by `scripts/postinstall/dotfile-symlinks.sh` (not symlinked to avoid exposing secrets).
+- API keys are referenced as environment variables (e.g., `${OPENAI_API_KEY}`) and loaded from a local `.env` file in the repo root.
+- To keep secrets safe: Create a local `.env` file with your keys (ignored by git), and load it with `source .env` before running aichat.
 
 ---
 

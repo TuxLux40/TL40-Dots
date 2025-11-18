@@ -686,3 +686,4 @@ eval "$(atuin init bash)" # Initialize Atuin
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 . "$HOME/.atuin/bin/env"
+export GPG_TTY=$(tty)
