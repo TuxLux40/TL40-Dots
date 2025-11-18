@@ -23,6 +23,11 @@ if status is-interactive
 		atuin init fish | source
 	end
 
+	# Initialize direnv if available
+	if type -q direnv
+		direnv hook fish | source
+	end
+
 	# Set GPG_TTY for gpg-agent
 	if type -q tty
 		set -gx GPG_TTY (tty)

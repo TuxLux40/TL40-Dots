@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    # Expose locally; for Synology Reverse Proxy you can keep this or remove
+    ports:
+      - "${N8N_HTTP_PORT:-5678}:5678"
+    environment:
+      # Basics
+      - TZ=${TZ}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - N8N_PORT=5678
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+
+      # Database: use Synology MariaDB10
+      - DB_TYPE=mysql
+      - DB_MYSQLDB_DATABASE=${DB_NAME}
+      - DB_MYSQLDB_HOST=${DB_HOST}
+      - DB_MYSQLDB_PORT=${DB_PORT}
+      - DB_MYSQLDB_USER=${DB_USER}
+      - DB_MYSQLDB_PASSWORD=${DB_PASSWORD}
+
+      # Optional: trust proxies when running behind Synology reverse proxy
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_METRICS=false
+
+    volumes:
+      # Persist n8n data/config (adjust the host path to your Synology volume)
+      - "${N8N_DATA_DIR}:/home/node/.n8n"
+
+    # Prefer NetBIOS name; add a fallback host mapping for reliability
+    extra_hosts:
+      - "os93-nas:${DB_HOST_FALLBACK_IP}"
+
+    # If you run into permission issues, uncomment and set to your user/group on Synology
+    # user: "1026:100"
+
+networks:
+  default:
+    name: n8n_net
