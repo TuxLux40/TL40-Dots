@@ -201,3 +201,4 @@ function podman-clean
 	podman network prune -f
 	podman volume prune -f
 end
+eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
