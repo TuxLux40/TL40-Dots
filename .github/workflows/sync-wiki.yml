@@ -1,0 +1,60 @@
+name: Sync Repo Docs to Wiki
+
+on:
+    push:
+        branches:
+            - main
+            - master
+        paths:
+            - "docs/**"
+            - ".github/workflows/sync-wiki.yml"
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout main repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Checkout wiki repository
+              uses: actions/checkout@v4
+              with:
+                  repository: ${{ github.repository }}.wiki
+                  path: wiki-repo
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Sync repo documentation to wiki
+              run: |
+                  # Only sync specific repo-related docs, not personal troubleshooting guides
+                  # This preserves manually edited files in wiki
+                  
+                  if [ ! -d "docs" ]; then
+                    echo "No docs/ folder found, skipping sync"
+                    exit 0
+                  fi
+                  
+                  # Copy only repo documentation files
+                  # Adjust these based on what you keep in main repo
+                  cp -f docs/scripts.md wiki-repo/ 2>/dev/null || true
+                  cp -f docs/config.md wiki-repo/ 2>/dev/null || true
+                  cp -f docs/dotfiles.md wiki-repo/ 2>/dev/null || true
+                  cp -f docs/os-detection.md wiki-repo/ 2>/dev/null || true
+                  
+                  # Navigate to wiki repo
+                  cd wiki-repo
+
+                  # Configure git
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                  # Commit and push if there are changes
+                  git add scripts.md config.md dotfiles.md os-detection.md
+                  if git diff --staged --quiet; then
+                    echo "No changes to sync"
+                  else
+                    git commit -m "Sync wiki from main repository"
+                    git push origin master
+                  fi

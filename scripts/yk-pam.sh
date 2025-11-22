@@ -2,56 +2,62 @@
 #############################
 # YubiKey-PAM Configuration
 #############################
+# CAUTION: pam-u2f must be installed beforehand (via base-tools.sh)
+# If pam_u2f.so is missing, PAM will fail and lock you out of sudo/login!
 
-# Check if running as root, if not, restart with sudo
+# Ensure script runs as root (required for PAM config and systemctl)
+# This script uses 'sudo -u $SUDO_USER' to run pamu2fcfg as the actual user,
+# preventing the YubiKey from being registered for root instead of your user.
 if [ "$EUID" -ne 0 ]; then
     exec sudo "$0" "$@"
 fi
 
-# Setup Yubico Folder in Home Directory
-printf "Creating Yubico config directory...\n"
-mkdir -p ~/.config/yubico
-printf "Yubico config directory created at ~/.config/yubico\n"
+# Determine the actual user's home directory (not root's)
+# SUDO_USER contains the original user when script is run via sudo
+USER_HOME=$(eval echo ~${SUDO_USER:-$USER})
+YK_DIR="$USER_HOME/.config/yubico"
+KEY_FILE="$YK_DIR/u2f_keys"
 
-# Add security key auth file
-printf "Generating U2F keys configuration file...\n"
-pamu2fcfg > ~/.config/yubico/u2f_keys
-printf "U2F keys configuration file created at ~/.config/yubico/u2f_keys\n"
+# Create yubico config directory with proper ownership
+printf "Setting up yubico directory...\n"
+mkdir -p "$YK_DIR"
+chown -R ${SUDO_USER:-$USER}:${SUDO_USER:-$USER} "$YK_DIR"
 
-# Add the following line as the first 'auth' line in each file:
-# auth sufficient pam_u2f.so cue [cue_prompt=Tap YubiKey]
-# Add this line to the relevant PAM configuration files below:
-#   /etc/pam.d/login         – For console logins
-#   /etc/pam.d/sudo          – For sudo authentication
-#   /etc/pam.d/gdm-password  – For GNOME authentication
-#   /etc/pam.d/sshd          – SSH authentication against a local OpenSSH Server
+# Register YubiKey for the user (not root)
+# pamu2fcfg reads the YubiKey and creates a mapping: username:key_data
+printf "Generating U2F key for user '${SUDO_USER:-$USER}'...\n"
+if [ ! -s "$KEY_FILE" ]; then
+    # Run as actual user to ensure username in key file is correct
+    sudo -u "${SUDO_USER:-$USER}" pamu2fcfg > "$KEY_FILE"
+    chown ${SUDO_USER:-$USER}:${SUDO_USER:-$USER} "$KEY_FILE"
+    chmod 600 "$KEY_FILE"
+    echo "✓ YubiKey registered for ${SUDO_USER:-$USER}"
+else
+    echo "✓ Existing registration found, skipping"
+fi
 
-printf "Writing PAM configuration lines to appropriate files...\n"
-PAM_LINE="auth sufficient pam_u2f.so cue [cue_prompt=Tap YubiKey]"
-PAM_FILES=("/etc/pam.d/login" "/etc/pam.d/sudo" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd")
+# Update PAM configuration files to enable U2F authentication
+# 'sufficient' means: if YubiKey auth succeeds, no password needed
+# 'cue' displays the cue_prompt message to user
+printf "Configuring PAM files...\n"
+PAM_LINE="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
+PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd")
 
 for file in "${PAM_FILES[@]}"; do
-    if [ -f "$file" ]; then
-        # Insert the line at the top of the file (idempotent)
-        if grep -qF "$PAM_LINE" "$file"; then
-            echo "PAM line already present in $file, skipping"
-        else
-            sed -i "1i ${PAM_LINE}" "$file"
-            echo "Added PAM line to $file (at top)"
-        fi
-    else
-        echo "File $file not found, skipping"
-    fi
+    [ ! -f "$file" ] && continue
+    # Remove any existing pam_u2f lines to avoid duplicates
+    sed -i '/^auth.*pam_u2f\.so/d' "$file"
+    # Insert auth line right after PAM header
+    sed -i "/^#%PAM-1.0$/a ${PAM_LINE}" "$file"
+    echo "✓ Updated $file"
 done
 
-# Enabling and starting smartcard service
-printf "Enabling and starting pcscd service...\n"
-systemctl enable pcscd --now && systemctl start pcscd
-printf "pcscd service is enabled and started.\n"
-# Restarting the service to ensure it's running
+# Enable PC/SC Smart Card Daemon (required for YubiKey communication)
+printf "Enabling pcscd service...\n"
+systemctl enable --now pcscd
 systemctl restart pcscd
-systemctl status pcscd --no-pager
-printf "PAM configuration complete.\n"
+printf "\n✓ YubiKey PAM authentication configured successfully!\n"
+printf "Test with: sudo -K && sudo echo test\n"
 ##################################
 # END: YubiKey-PAM Configuration #
 ##################################

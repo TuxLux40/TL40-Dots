@@ -1,3 +1,4 @@
+#!/bin/bash
 # Configuring Linux DNS for Tailscale
 # Sourced from the official documentation: https://tailscale.com/kb/1188/linux-dns
 # Tailscale attempts to interoperate with any Linux DNS configuration it finds already present. Unfortunately, some are not entirely amenable to cooperatively managing the host's DNS configuration.
@@ -8,15 +9,15 @@
 # When NetworkManager sees that symlink is present, its default behavior is to use systemd-resolved and not take over the resolv.conf file.
 
 printf "Fixing /etc/resolv.conf to point to systemd-resolved stub resolver...\n"
-sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 printf "Fixed /etc/resolv.conf:\n"
 cat /etc/resolv.conf
 
 # After fixing, restart everything:
 printf "Restarting systemd-resolved, NetworkManager, and tailscaled services...\n"
-sudo systemctl restart systemd-resolved
-sudo systemctl restart NetworkManager
-sudo systemctl restart tailscaled
+systemctl restart systemd-resolved
+systemctl restart NetworkManager
+systemctl restart tailscaled
 printf "Services restarted.\n"
 
 # DHCP dhclient overwriting /etc/resolv.conf
