@@ -34,6 +34,7 @@ sudo pacman -S --noconfirm --needed \
     ninja \
     nodejs \
     npm \
+    pam-u2f \
     perf \
     pkg-config \
     python \
@@ -42,6 +43,7 @@ sudo pacman -S --noconfirm --needed \
     rsync \
     rust \
     screen \
+    seahorse \
     strace \
     tailscale \
     tmux \
