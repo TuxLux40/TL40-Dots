@@ -22,6 +22,56 @@ run_step() {
     fi
 }
 
+# Ask user whether to run, skip, or quit a step (minimal interactive wrapper)
+ask_run_step() {
+    local stepname="$1"; shift
+    local cmd=("$@")
+    printf '\n%bStep:%b %s\n' "$BLUE" "$NC" "$stepname"
+    local opts=("Run" "Skip" "Quit")
+    local sel
+    sel=$(select_option "${opts[@]}")
+    case "$sel" in
+        0) run_step "$stepname" "${cmd[@]}" ;;
+        1) printf "%bSkipped:%b %s\n" "$YELLOW" "$NC" "$stepname" ;;
+        2) printf "%bAborting at user request.%b\n" "$RED" "$NC"; exit 0 ;;
+    esac
+}
+
+select_option() {
+    local options=("$@")
+    local selected=0
+    local num_options=${#options[@]}
+    while true; do
+        for ((i=0; i<num_options; i++)); do
+            if [ $i -eq $selected ]; then
+                printf "\e[7m%s\e[0m\n" "${options[$i]}" >&2
+            else
+                printf "%s\n" "${options[$i]}" >&2
+            fi
+        done
+        read -s -n1 key
+        if [ "$key" = $'\e' ]; then
+            read -s -n1 key2
+            if [ "$key2" = '[' ]; then
+                read -s -n1 key3
+                if [ "$key3" = 'A' ]; then
+                    ((selected--))
+                    if [ $selected -lt 0 ]; then selected=$((num_options-1)); fi
+                elif [ "$key3" = 'B' ]; then
+                    ((selected++))
+                    if [ $selected -ge $num_options ]; then selected=0; fi
+                fi
+            fi
+        elif [ "$key" = $'\n' ] || [ "$key" = '' ]; then
+            break
+        fi
+        # move cursor up to redraw menu
+        tput cuu $num_options >&2
+    done
+    printf "\n" >&2
+    echo "$selected"
+}
+
 # Directory variables
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
 ROOT_DIR="${SCRIPT_DIR}"
@@ -37,15 +87,15 @@ printf '\n%bTL40-Dots post-installation%b\n' "${BLUE}" "${NC}"
 printf '%bDetected:%b %s (distro: %s, package manager: %s)\n' "${YELLOW}" "${NC}" "$OS_TYPE" "$OS_DISTRO" "$PKG_MANAGER"
 
 
-# Animated install steps
-printf '\n🔧 %bInstalling packages and tools%b\n' "${BLUE}" "${NC}"
-run_step "Install base tools" "${ROOT_DIR}/scripts/pkg-scripts/base-tools.sh"
-run_step "Install desktop packages" "${ROOT_DIR}/scripts/pkg-scripts/desktop-packages.sh"
-run_step "Install Fastfetch" "${ROOT_DIR}/scripts/pkg-scripts/fastfetch-install.sh"
-run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
-run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
-run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
-run_step "Install Homebrew" "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
+# Interactive install steps (each can be Run/Skip/Quit)
+printf '\n🔧 %bInstalling packages and tools (interactive)%b\n' "${BLUE}" "${NC}"
+ask_run_step "Install base tools" "${ROOT_DIR}/scripts/pkg-scripts/base-tools.sh"
+ask_run_step "Install desktop packages" "${ROOT_DIR}/scripts/pkg-scripts/desktop-packages.sh"
+ask_run_step "Install Fastfetch" "${ROOT_DIR}/scripts/pkg-scripts/fastfetch-install.sh"
+ask_run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
+ask_run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
+ask_run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
+ask_run_step "Install Homebrew" "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
 
 # Set Fish as default shell if installed
 if command -v fish >/dev/null 2>&1; then
@@ -56,13 +106,12 @@ if command -v fish >/dev/null 2>&1; then
     fi
 fi
 
-printf '\n🔗 %bSymlinking dotfiles%b\n' "${BLUE}" "${NC}"
-run_step "Symlink configuration files" "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
+printf '\n🔗 %bSymlinking dotfiles (interactive)%b\n' "${BLUE}" "${NC}"
+ask_run_step "Symlink configuration files" "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
 
 if command -v podman >/dev/null 2>&1; then
-    printf '\n🐳 %bPodman detected — enabling socket activation%b\n' "${YELLOW}" "${NC}"
     POSTINSTALL_USER=${SUDO_USER:-$(whoami)}
-    "${ROOT_DIR}/scripts/pkg-scripts/podman-postinstall.sh" --user "${POSTINSTALL_USER}" || printf '    🐳 %bFailed to enable podman socket activation.%b\n' "${RED}" "${NC}"
+    ask_run_step "Podman socket activation" "${ROOT_DIR}/scripts/pkg-scripts/podman-postinstall.sh" --user "${POSTINSTALL_USER}"
 fi
 
 #####################
@@ -81,39 +130,24 @@ no_restore() {
 }
 
 printf '\n⌨️ %bShortcut restore%b\n' "${GREEN}" "${NC}"
-printf '1) KDE\n2) GNOME\n3) None\nChoose: '
-read -r choice
-
-case "$choice" in
-    1) 
-        # Restore KDE shortcuts
-        kde_shortcuts 
-        ;;
-    2) 
-        # Restore GNOME shortcuts
-        gnome_shortcuts 
-        ;;
-    3) 
-        # Do not restore any shortcuts
-        no_restore 
-        ;;
-    *)
-        # Handle invalid selection
-    printf '%bInvalid selection.%b\n' "${YELLOW}" "${NC}"
-        exit 1
-        ;;
+options=("KDE" "GNOME" "None")
+selected=$(select_option "${options[@]}")
+case "$selected" in
+    0) kde_shortcuts ;;
+    1) gnome_shortcuts ;;
+    2) no_restore ;;
 esac
 
 ##########################
 # Restore Flatpak apps   #
 ##########################
 if command -v flatpak >/dev/null 2>&1; then
-    printf '\n📦 %bRestore Flatpaks?%b (y/n): ' "${GREEN}" "${NC}"
-    read -r flatpak_choice
-    case "$flatpak_choice" in
-        y|Y) run_step "Restore Flatpak applications" "${ROOT_DIR}/scripts/pkg-scripts/flatpak-restore.sh" ;;
-        n|N) printf '  📦 %bSkipping Flatpak restore.%b\n' "${YELLOW}" "${NC}" ;;
-        *) printf '📦 %bInvalid choice, skipping.%b\n' "${YELLOW}" "${NC}" ;;
+    printf '\n📦 %bRestore Flatpaks?%b\n' "${GREEN}" "${NC}"
+    options=("Yes" "No")
+    selected=$(select_option "${options[@]}")
+    case "$selected" in
+        0) run_step "Restore Flatpak applications" "${ROOT_DIR}/scripts/pkg-scripts/flatpak-restore.sh" ;;
+        1) printf '  📦 %bSkipping Flatpak restore.%b\n' "${YELLOW}" "${NC}" ;;
     esac
 else
     printf '\n📦 %bFlatpak not installed, skipping.%b\n' "${YELLOW}" "${NC}"
@@ -122,12 +156,12 @@ fi
 #########################
 # YubiKey configuration #
 #########################
-printf '\n🔐 %bConfigure YubiKey now?%b (y/n): ' "${GREEN}" "${NC}"
-read -r configure_choice
-case "$configure_choice" in
-    y|Y) "${ROOT_DIR}/scripts/yk-pam.sh" ;;
-    n|N) printf '  🔐 %bRun yk-pam.sh later.%b\n' "${YELLOW}" "${NC}" ;;
-    *) printf '🔐 %bInvalid choice.%b\n' "${YELLOW}" "${NC}"; exit 1 ;;
+printf '\n🔐 %bConfigure YubiKey now?%b\n' "${GREEN}" "${NC}"
+options=("Yes" "No")
+selected=$(select_option "${options[@]}")
+case "$selected" in
+    0) "${ROOT_DIR}/scripts/yk-pam.sh" ;;
+    1) printf '  🔐 %bRun yk-pam.sh later.%b\n' "${YELLOW}" "${NC}" ;;
 esac
 
 printf '\n✅ %bInstallation complete%b\n' "${GREEN}" "${NC}"

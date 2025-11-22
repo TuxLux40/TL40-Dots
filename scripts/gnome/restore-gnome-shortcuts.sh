@@ -19,15 +19,18 @@ log_warn() { echo "${WARN} ${RED}$*${NC}"; }
 # Flags
 DRY_RUN=false
 BACKUP=true
+PRUNE_MISSING=false
 while [[ -n ${1-} ]]; do
     case "$1" in
         --dry-run) DRY_RUN=true ;;
         --no-backup) BACKUP=false ;;
+        --prune-missing) PRUNE_MISSING=true ;;
         -h|--help)
             cat <<EOF
-Usage: $(basename "$0") [--dry-run] [--no-backup]
-    --dry-run   Print intended gsettings changes without applying them
-    --no-backup Skip writing backup files before changes
+Usage: $(basename "$0") [--dry-run] [--no-backup] [--prune-missing]
+    --dry-run        Print intended gsettings changes without applying them
+    --no-backup      Skip writing backup files before changes
+    --prune-missing  Remove keybindings whose command binaries are missing
 EOF
             exit 0
             ;;
@@ -98,6 +101,8 @@ SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/cust
 SHORTCUTS['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/']='name:Hardware Info|command:hardinfo2|binding:<Super>i'
 
 # Apply each shortcut in the declared order for determinism
+missing_paths=()
+missing_cmds=()
 for path in "${CUSTOM_KEYBINDINGS[@]}"; do
     if [[ -z "${SHORTCUTS[${path}]+_}" ]]; then
         log_warn "No shortcut data defined for ${path} — skipping."
@@ -113,6 +118,12 @@ for path in "${CUSTOM_KEYBINDINGS[@]}"; do
     cmd_bin="${command_value%% *}"
     if ! command -v "${cmd_bin}" >/dev/null 2>&1; then
         log_warn "Command not found in PATH: ${cmd_bin} (for ${path})"
+        missing_paths+=("${path}")
+        missing_cmds+=("${cmd_bin}")
+        # If pruning we skip applying this binding now
+        if [[ ${PRUNE_MISSING} == true ]]; then
+            continue
+        fi
     fi
 
     if [[ ${DRY_RUN} == true ]]; then
@@ -123,5 +134,55 @@ for path in "${CUSTOM_KEYBINDINGS[@]}"; do
         gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"${path}" binding "${binding_value}"
     fi
 done
+
+if (( ${#missing_paths[@]} )); then
+    echo "${WARN} Missing command summary:" | sed 's/$/\n/'
+    # Deduplicate commands
+    declare -A seen
+    for i in "${!missing_cmds[@]}"; do
+        cmd="${missing_cmds[$i]}"
+        path="${missing_paths[$i]}"
+        if [[ -z "${seen[$cmd]+_}" ]]; then
+            echo "  - ${cmd} (bound at ${path})"
+            seen[$cmd]=1
+        fi
+    done
+    echo "Install hints (Arch/Flatpak examples):"
+    for cmd in "${!seen[@]}"; do
+        case "$cmd" in
+            guake)
+                echo "  pacman -S guake"
+                ;;
+            yubico-authenticator)
+                echo "  pacman -S yubico-authenticator  # or: flatpak install com.yubico.yubikey.authenticator"
+                ;;
+            signal-desktop)
+                if [[ -f "scripts/pkg-scripts/signal-install.sh" ]]; then
+                    echo "  ./scripts/pkg-scripts/signal-install.sh  # repo script"
+                else
+                    echo "  pacman -S signal-desktop"
+                fi
+                ;;
+            hardinfo2)
+                echo "  pacman -S hardinfo2  # if unavailable use: pacman -S hardinfo"
+                ;;
+            *) echo "  (No predefined hint for ${cmd})" ;;
+        esac
+    done
+    if [[ ${PRUNE_MISSING} == true ]]; then
+        # Rebuild keybinding list without missing paths and apply
+        pruned_list="["
+        for p in "${CUSTOM_KEYBINDINGS[@]}"; do
+            skip=false
+            for mp in "${missing_paths[@]}"; do [[ "$p" == "$mp" ]] && skip=true && break; done
+            if [[ $skip == false ]]; then pruned_list+="'${p}', "; fi
+        done
+        pruned_list="${pruned_list%, }]"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "${pruned_list}" || true
+        log_info "Pruned ${#missing_paths[@]} missing keybinding(s)."
+    else
+        log_info "Run with --prune-missing to remove bindings with absent commands."
+    fi
+fi
 
 log_ok "GNOME keyboard shortcuts restored."
