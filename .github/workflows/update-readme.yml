@@ -1,0 +1,86 @@
+name: Update README on Changes
+
+on:
+    push:
+        branches:
+            - main
+            - master
+        paths:
+            - "output/**"
+            - "scripts/**"
+            - "config/**"
+            - "docs/**"
+            - "install.sh"
+            - ".github/workflows/update-readme.yml"
+
+jobs:
+    update-readme:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Check for relevant changes
+              id: changes
+              run: |
+                  # Get the list of changed files
+                  CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
+
+                  # Check if any output files were generated
+                  if echo "$CHANGED_FILES" | grep -q "^output/"; then
+                    echo "readme_needs_update=true" >> $GITHUB_OUTPUT
+                    echo "change_type=output_files" >> $GITHUB_OUTPUT
+                  fi
+
+                  # Check if scripts were modified
+                  if echo "$CHANGED_FILES" | grep -q "^scripts/"; then
+                    echo "readme_needs_update=true" >> $GITHUB_OUTPUT
+                    echo "change_type=scripts" >> $GITHUB_OUTPUT
+                  fi
+
+                  # Check if docs were updated
+                  if echo "$CHANGED_FILES" | grep -q "^docs/"; then
+                    echo "readme_needs_update=true" >> $GITHUB_OUTPUT
+                    echo "change_type=docs" >> $GITHUB_OUTPUT
+                  fi
+
+                  # Default to false if no conditions met
+                  if [ -z "$readme_needs_update" ]; then
+                    echo "readme_needs_update=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Update README
+              if: steps.changes.outputs.readme_needs_update == 'true'
+              run: |
+                  echo "Detected changes in: ${{ steps.changes.outputs.change_type }}"
+
+                  # Example: Update README timestamp or section
+                  # You can customize this based on what sections need updating
+
+                  # Check if README has a "Last Updated" section and update it
+                  if grep -q "<!-- Updated:" README.md; then
+                    sed -i "s/<!-- Updated:.* -->/<!-- Updated: $(date -u '+%Y-%m-%d %H:%M UTC') -->/g" README.md
+                  else
+                    # Add timestamp at the end of README if not present
+                    echo "" >> README.md
+                    echo "<!-- Updated: $(date -u '+%Y-%m-%d %H:%M UTC') -->" >> README.md
+                  fi
+
+            - name: Commit and push changes
+              if: steps.changes.outputs.readme_needs_update == 'true'
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                  # Check if there are actual changes to commit
+                  if git diff --quiet; then
+                    echo "No changes to commit"
+                    exit 0
+                  fi
+
+                  git add README.md
+                  git commit -m "chore: update README following ${{ steps.changes.outputs.change_type }} changes [skip ci]"
+                  git push
