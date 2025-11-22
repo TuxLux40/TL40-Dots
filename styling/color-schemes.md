@@ -10,6 +10,17 @@
 | #cdcfcc | (205,207,204) |
 | #2c2e2a | (44,46,42)    |
 
+### Prompt-friendly adaptive blend
+
+| Role               | Hex     | RGB           |
+| ------------------ | ------- | ------------- |
+| Primary segment bg | #7f8f4f | (127,143,79)  |
+| Accent segment bg  | #d8a028 | (216,160,40)  |
+| Neutral segment bg | #66635a | (102,99,90)   |
+| Deep segment bg    | #3f4139 | (63,65,57)    |
+| Light foreground   | #f7f6ef | (247,246,239) |
+| Dark foreground    | #171910 | (23,25,16)    |
+
 ## Cyberpunk 2077 title card colors Color Palette
 
 | Hex     | RGB          |

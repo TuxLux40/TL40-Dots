@@ -13,15 +13,16 @@
 # Docker context, and time, ending with a right-rounded corner [].
 # Modules are placeholders that Starship replaces with actual data based on the current environment.
 format = """
-[](#84926a)\
+[](#7f8f4f)\
+$os\
 $python\
 $username\
-[](bg:#4c4a45 fg:#84926a)\
+[](bg:#66635a fg:#7f8f4f)\
 $directory\
-[](fg:#4c4a45 bg:#efb82a)\
+[](fg:#66635a bg:#d8a028)\
 $git_branch\
 $git_status\
-[](fg:#efb82a bg:#2c2e2a)\
+[](fg:#d8a028 bg:#3f4139)\
 $c\
 $elixir\
 $elm\
@@ -32,11 +33,11 @@ $julia\
 $nodejs\
 $nim\
 $rust\
-[](fg:#2c2e2a bg:#4c4a45)\
+[](fg:#3f4139 bg:#66635a)\
 $docker_context\
-[](fg:#4c4a45 bg:#2c2e2a)\
+[](fg:#66635a bg:#3f4139)\
 $time\
-[ ](fg:#2c2e2a)\
+[ ](fg:#3f4139)\
 """
 command_timeout = 5000
 # Disable the blank line at the start of the prompt
@@ -52,12 +53,12 @@ command_timeout = 5000
 # format = '[$user ]($style)' - Format string: displays username followed by space, styled with the defined style
 [username]
 show_always = true
-style_user = "fg:#ffffff bg:#84926a bold"
-style_root = "fg:#2c2e2a bg:#efb82a bold"
+style_user = "fg:#171910 bg:#7f8f4f bold"
+style_root = "fg:#171910 bg:#d8a028 bold"
 format = '[$user ]($style)'
 
 [directory]
-style = "fg:#cdcfcc bg:#4c4a45"
+style = "fg:#171910 bg:#66635a"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -69,6 +70,7 @@ truncation_symbol = "…/"
 "Downloads" = " "
 "Music" = " "
 "Pictures" = " "
+".config" = " "
 # Keep in mind that the order matters. For example:
 # "Important Documents" = "  "
 # will not be replaced, because "Documents" was already substituted before.
@@ -82,74 +84,139 @@ truncation_symbol = "…/"
 
 [c]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [docker_context]
 symbol = " "
-style = "fg:#cdcfcc bg:#4c4a45"
+style = "fg:#171910 bg:#66635a"
 format = '[ $symbol $context ]($style)$path'
 
 [elixir]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [elm]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [git_branch]
 symbol = ""
-style = "fg:#2c2e2a bg:#efb82a"
+style = "fg:#171910 bg:#d8a028"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "fg:#2c2e2a bg:#efb82a"
+style = "fg:#171910 bg:#d8a028"
 format = '[$all_status$ahead_behind ]($style)'
 
 [golang]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [haskell]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [java]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [julia]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [nodejs]
 symbol = ""
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [nim]
 symbol = " "
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [python]
-style = "fg:#cdcfcc bg:#84926a"
+style = "fg:#171910 bg:#7f8f4f"
 format = '[(\($virtualenv\) )]($style)'
 
 [rust]
 symbol = ""
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [time]
 disabled = false
 time_format = "%R"              # Hour:Minute Format
-style = "fg:#cdcfcc bg:#2c2e2a"
+style = "fg:#f7f6ef bg:#3f4139"
 format = '[ $time ]($style)'
+
+[os]
+disabled = false
+style = "fg:#171910 bg:#7f8f4f"
+format = '[$symbol ]($style)'
+
+[os.symbols]
+AIX = "🐧"
+AlmaLinux = "🐧"
+Alpaquita = "🐧"
+Alpine = "🐧"
+ALTLinux = "🐧"
+Amazon = "🐧"
+Android = "🐧"
+AOSC = "🐧"
+Arch = "🐧"
+Artix = "🐧"
+Bluefin = "🐧"
+CachyOS = "🐧"
+CentOS = "🐧"
+Cygwin = "🪟"
+Debian = "🐧"
+DragonFly = "🐧"
+Elementary = "🐧"
+Emscripten = "🐧"
+EndeavourOS = "🐧"
+Fedora = "🐧"
+FreeBSD = "🐧"
+Garuda = "🐧"
+Gentoo = "🐧"
+HardenedBSD = "🐧"
+Illumos = "🐧"
+Ios = "🍎"
+Kali = "🐧"
+Linux = "🐧"
+Mabox = "🐧"
+Macos = "🍎"
+Manjaro = "🐧"
+Mariner = "🐧"
+MidnightBSD = "🐧"
+Mint = "🐧"
+NetBSD = "🐧"
+NixOS = "🐧"
+Nobara = "🐧"
+OpenBSD = "🐧"
+OpenCloudOS = "🐧"
+openEuler = "🐧"
+openSUSE = "🐧"
+OracleLinux = "🐧"
+Pop = "🐧"
+RaspberryPiOS = "🐧"
+Raspbian = "🐧"
+Redhat = "🐧"
+RedHatEnterprise = "🐧"
+Redox = "🐧"
+RockyLinux = "🐧"
+Solus = "🐧"
+SUSE = "🐧"
+Ubuntu = "🐧"
+Ultramarine = "🐧"
+Uos = "🐧"
+Void = "🐧"
+Zorin = "🐧"
+Unknown = "❓"
+Windows = "🪟"
