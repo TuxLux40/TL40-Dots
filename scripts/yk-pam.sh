@@ -3,9 +3,11 @@
 # YubiKey-PAM Configuration
 #############################
 # CAUTION: pam-u2f must be installed beforehand (via base-tools.sh)
-# Otherwise PAM misconfiguration can lock you out of the system!
+# If pam_u2f.so is missing, PAM will fail and lock you out of sudo/login!
 
 # Ensure script runs as root (required for PAM config and systemctl)
+# This script uses 'sudo -u $SUDO_USER' to run pamu2fcfg as the actual user,
+# preventing the YubiKey from being registered for root instead of your user.
 if [ "$EUID" -ne 0 ]; then
     exec sudo "$0" "$@"
 fi

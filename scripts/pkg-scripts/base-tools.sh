@@ -43,7 +43,6 @@ sudo pacman -S --noconfirm --needed \
     rsync \
     rust \
     screen \
-    seahorse \
     strace \
     tailscale \
     tmux \
