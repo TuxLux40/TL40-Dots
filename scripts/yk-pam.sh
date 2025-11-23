@@ -41,7 +41,7 @@ fi
 # 'cue' displays the cue_prompt message to user
 printf "Configuring PAM files...\n"
 PAM_LINE="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
-PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd")
+PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd" "/etc/pam.d/login" "/etc/pam.d/su" "/etc/pam.d/polkit-1")
 
 for file in "${PAM_FILES[@]}"; do
     [ ! -f "$file" ] && continue
@@ -57,7 +57,7 @@ printf "Enabling pcscd service...\n"
 systemctl enable --now pcscd
 systemctl restart pcscd
 printf "\n✓ YubiKey PAM authentication configured successfully!\n"
-printf "Test with: sudo -K && sudo echo test\n"
+printf "Test with: sudo -K && sudo echo Test successful!\n"
 ##################################
 # END: YubiKey-PAM Configuration #
 ##################################

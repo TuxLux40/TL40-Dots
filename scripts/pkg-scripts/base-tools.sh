@@ -22,9 +22,11 @@ sudo pacman -S --noconfirm --needed \
     gcc \
     gdb \
     git \
+    github-cli \
     go \
     htop \
     jq \
+    just \
     llvm \
     ltrace \
     make \
@@ -37,6 +39,9 @@ sudo pacman -S --noconfirm --needed \
     pam-u2f \
     perf \
     pkg-config \
+    podman \
+    podman-compose \
+    podman-docker \
     python \
     python-pip \
     ripgrep \
