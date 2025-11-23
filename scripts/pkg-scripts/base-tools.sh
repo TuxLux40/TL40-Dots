@@ -22,9 +22,11 @@ sudo pacman -S --noconfirm --needed \
     gcc \
     gdb \
     git \
+    github-cli \
     go \
     htop \
     jq \
+    just \
     llvm \
     ltrace \
     make \

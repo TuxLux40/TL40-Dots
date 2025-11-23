@@ -16,6 +16,7 @@ paru -S --noconfirm --needed \
     proton-pass-bin \
     protonmail-bridge \
     seahorse \
+    signal-desktop-beta \
     steam \
     visual-studio-code-bin \
     zed
