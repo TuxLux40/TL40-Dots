@@ -12,6 +12,7 @@
 # Includes Git-related modules ($git_branch, $git_status), programming language modules (e.g., $rust, $nodejs),
 # Docker context, and time, ending with a right-rounded corner [].
 # Modules are placeholders that Starship replaces with actual data based on the current environment.
+# Currently, the Master Chief color scheme is used as defined in /styling/color-schemes.md
 format = """
 [](#7f8f4f)\
 $os\
