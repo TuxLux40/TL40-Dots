@@ -96,6 +96,7 @@ ask_run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atui
 ask_run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
 ask_run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
 ask_run_step "Install Homebrew" "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
+ask_run_step "Install OpenRGB udev rules" "${ROOT_DIR}/scripts/openrgb-udev-install.sh"
 
 # Set Fish as default shell if installed
 if command -v fish >/dev/null 2>&1; then
@@ -108,6 +109,7 @@ fi
 
 printf '\n🔗 %bSymlinking dotfiles (interactive)%b\n' "${BLUE}" "${NC}"
 ask_run_step "Symlink configuration files" "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
+ask_run_step "Symlink NAS shares" "${ROOT_DIR}/scripts/postinstall/nas-symlinks.sh"
 
 if command -v podman >/dev/null 2>&1; then
     POSTINSTALL_USER=${SUDO_USER:-$(whoami)}

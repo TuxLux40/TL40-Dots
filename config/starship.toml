@@ -183,7 +183,7 @@ format = '[ $duration]($style)'
 
 [time]
 disabled = false
-time_format = "%R"              # Hour:Minute Format
+time_format = "%T"              # Hour:Minute:Second Format
 style = "fg:#ffffff bg:#3f4139"
 format = '[ $time ]($style)'
 
