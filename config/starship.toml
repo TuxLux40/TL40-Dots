@@ -7,7 +7,7 @@
 # The format is a multi-line string that concatenates these elements.
 
 # The 'format' key defines the prompt layout as a string with embedded modules and separators.
-# It starts with a left-rounded corner [] in color #3B4252, followed by Python and username modules.
+# It starts with a left-rounded corner [] in color #7f8f4f, followed by Python and username modules.
 # Transitions to next sections with [] separators, changing background colors for visual distinction.
 # Includes Git-related modules ($git_branch, $git_status), programming language modules (e.g., $rust, $nodejs),
 # Docker context, and time, ending with a right-rounded corner [].
@@ -38,6 +38,7 @@ $rust\
 [](fg:#3f4139 bg:#66635a)\
 $docker_context\
 [](fg:#66635a bg:#3f4139)\
+$cmd_duration\
 $time\
 [ ](fg:#3f4139)\
 """
@@ -55,22 +56,22 @@ command_timeout = 5000
 # format = '[$user ]($style)' - Format string: displays username followed by space, styled with the defined style
 [username]
 show_always = true
-style_user = "fg:#171910 bg:#7f8f4f bold"
-style_root = "fg:#171910 bg:#d8a028 bold"
+style_user = "fg:#ffffff bg:#7f8f4f bold"
+style_root = "fg:#ffffff bg:#d8a028 bold"
 format = '[$user ]($style)'
 
 [hostname]
 ssh_only = false
-style = "fg:#171910 bg:#7f8f4f"
+style = "fg:#ffffff bg:#7f8f4f"
 format = '[on $hostname ]($style)'
 
 [localip]
 ssh_only = true
-style = "fg:#171910 bg:#7f8f4f"
+style = "fg:#ffffff bg:#7f8f4f"
 format = '[ $localipv4 ]($style)'
 
 [directory]
-style = "fg:#171910 bg:#66635a"
+style = "fg:#ffffff bg:#66635a"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -97,81 +98,101 @@ truncation_symbol = "…/"
 
 [c]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [docker_context]
 symbol = " "
-style = "fg:#171910 bg:#66635a"
+style = "fg:#ffffff bg:#66635a"
 format = '[ $symbol $context ]($style)$path'
 
 [elixir]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [elm]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [git_branch]
 symbol = ""
-style = "fg:#171910 bg:#d8a028"
+style = "fg:#ffffff bg:#d8a028"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "fg:#171910 bg:#d8a028"
+style = "fg:#ffffff bg:#d8a028"
 format = '[$all_status$ahead_behind ]($style)'
 
 [golang]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [haskell]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [java]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [julia]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [nodejs]
 symbol = ""
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [nim]
 symbol = " "
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
+format = '[ $symbol ($version) ]($style)'
+
+[php]
+symbol = " "
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
 
 [python]
-style = "fg:#171910 bg:#7f8f4f"
+symbol = ""
+style = "fg:#ffffff bg:#7f8f4f"
 format = '[(\($virtualenv\) )]($style)'
 
 [rust]
 symbol = ""
-style = "fg:#f7f6ef bg:#3f4139"
+style = "fg:#ffffff bg:#3f4139"
 format = '[ $symbol ($version) ]($style)'
+
+[direnv]
+symbol = ""
+style = "fg:#ffffff bg:#3f4139"
+format = '[ $symbol ($version) ]($style)'
+
+[cmd_duration]
+style = "fg:#ffffff bg:#3f4139"
+min_time = 1
+format = '[ $duration]($style)'
 
 [time]
 disabled = false
 time_format = "%R"              # Hour:Minute Format
-style = "fg:#f7f6ef bg:#3f4139"
-format = '[ $time ]($style)'
+style = "fg:#ffffff bg:#3f4139"
+format = '[ $time ]($style)'
+
+[status]
+style = "fg:#ffffff bg:#3f4139"
+format = '[ $symbol ($version) ]($style)'
 
 [os]
 disabled = false
-style = "fg:#171910 bg:#7f8f4f"
+style = "fg:#ffffff bg:#7f8f4f"
 format = '[$symbol ]($style)'
 
 [os.symbols]

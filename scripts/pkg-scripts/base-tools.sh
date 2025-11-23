@@ -39,6 +39,9 @@ sudo pacman -S --noconfirm --needed \
     pam-u2f \
     perf \
     pkg-config \
+    podman \
+    podman-compose \
+    podman-docker \
     python \
     python-pip \
     ripgrep \
