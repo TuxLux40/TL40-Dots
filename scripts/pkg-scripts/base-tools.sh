@@ -9,6 +9,7 @@ sudo pacman -S --noconfirm --needed \
     archinstall \
     automake \
     autoconf \
+    azure-cli \
     base-devel \
     bat \
     btop \
@@ -42,6 +43,7 @@ sudo pacman -S --noconfirm --needed \
     podman \
     podman-compose \
     podman-docker \
+    powershell-bin \
     python \
     python-pip \
     ripgrep \
