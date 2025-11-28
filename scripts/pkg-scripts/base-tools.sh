@@ -15,6 +15,7 @@ sudo pacman -S --noconfirm --needed \
     btop \
     cargo \
     clang \
+    clblast \
     cmake \
     curl \
     fish \
