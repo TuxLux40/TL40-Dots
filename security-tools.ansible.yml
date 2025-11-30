@@ -1,0 +1,83 @@
+---
+- name: Install and configure security tools
+  hosts: all
+  become: true
+
+  vars:
+    lynis_repo: "https://packages.cisofy.com/community/lynis/deb/"
+    lynis_key_url: "https://packages.cisofy.com/keys/cisofy-software-public.key"
+
+  tasks:
+    - name: Install Lynis (Debian/Ubuntu)
+      apt:
+        name: lynis
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Lynis (Fedora)
+      dnf:
+        name: lynis
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Install Lynis (Arch)
+      pacman:
+        name: lynis
+        state: present
+      when: ansible_distribution == "Archlinux"
+
+    - name: Ensure AppArmor is installed (Debian/Ubuntu)
+      apt:
+        name: apparmor
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure AppArmor is enabled
+      service:
+        name: apparmor
+        state: started
+        enabled: true
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure SELinux is installed (Fedora)
+      dnf:
+        name: libselinux-utils
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Ensure SELinux is enforcing (Fedora)
+      command: setenforce 1
+      when: ansible_distribution == "Fedora"
+
+    - name: Install Suricata (Debian/Ubuntu)
+      apt:
+        name: suricata
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Suricata (Fedora)
+      dnf:
+        name: suricata
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Install Suricata (Arch)
+      pacman:
+        name: suricata
+        state: present
+      when: ansible_distribution == "Archlinux"
+
+    - name: Ensure Suricata is enabled and running
+      service:
+        name: suricata
+        state: started
+        enabled: true
+
+    - name: Run Lynis audit
+      command: lynis audit system
+      register: lynis_audit
+      ignore_errors: true
+
+    - name: Show Lynis audit results
+      debug:
+        var: lynis_audit.stdout

@@ -202,3 +202,6 @@ function podman-clean
 	podman volume prune -f
 end
 eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
+# Created by `pipx` on 2025-11-30 21:13:37
+set PATH $PATH /home/oliver/.local/bin

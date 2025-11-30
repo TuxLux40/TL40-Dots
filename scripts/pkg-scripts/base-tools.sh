@@ -31,6 +31,7 @@ sudo pacman -S --noconfirm --needed \
     just \
     llvm \
     ltrace \
+    lynis \
     make \
     meson \
     micro \
@@ -47,6 +48,7 @@ sudo pacman -S --noconfirm --needed \
     powershell-bin \
     python \
     python-pip \
+    python-pipx \
     ripgrep \
     rsync \
     rust \
