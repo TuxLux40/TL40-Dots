@@ -1,42 +1,27 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-echo "Flatpak Restore"
-
-# Scope: default system; set FLATPAK_SCOPE=user to use --user
-SCOPE_FLAG="--system"
-if [ "${FLATPAK_SCOPE:-system}" = "user" ]; then
-  SCOPE_FLAG="--user"
-fi
-
-# Temp for GPG key
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT
-FLATHUB_KEY="$TMPDIR/flathub.gpg"
-curl -fsSL https://dl.flathub.org/repo/flathub.gpg -o "$FLATHUB_KEY"
-
-# Add flathub remote (noninteractive)
-if ! flatpak remote-list | awk '{print $1}' | grep -qx flathub; then
-  flatpak remote-add $SCOPE_FLAG --if-not-exists --gpg-import="$FLATHUB_KEY" flathub https://dl.flathub.org/repo/
-fi
-
-# Optional flathub-beta
-if [ "${FLATHUB_BETA:-0}" = "1" ]; then
-  if ! flatpak remote-list | awk '{print $1}' | grep -qx flathub-beta; then
-    flatpak remote-add $SCOPE_FLAG --if-not-exists --gpg-import="$FLATHUB_KEY" flathub-beta https://dl.flathub.org/beta-repo/
-  fi
-fi
-
-# Restore from list
-RESTORE_LIST="${1:-}"
-if [ -n "$RESTORE_LIST" ] && [ -f "$RESTORE_LIST" ]; then
-  while IFS= read -r app; do
-    [ -z "$app" ] && continue
-    flatpak install $SCOPE_FLAG -y "$app" || true
-  done < "$RESTORE_LIST"
-else
-  echo "Usage: flatpak-restore.sh /path/to/flatpak-list.txt"
-fi
-
-echo "Done."
+# Flatpak Restore Script
+# Generated on Mo 1. Dez 23:43:23 CET 2025
+flatpak remote-add --if-not-exists --user "flathub" "https://dl.flathub.org/repo/" --title="Flathub"
+flatpak remote-add --if-not-exists --user "appcenter" "https://flatpak.elementary.io/repo" --title="AppCenter"
+flatpak remote-add --if-not-exists --user "cosmic" "https://apt.pop-os.org/cosmic/" --title="COSMIC"
+# Import COSMIC GPG key and enable verification
+__cosmic_keyfile="$(mktemp)"
+curl -fsSL https://apt.pop-os.org/cosmic/cosmic.flatpakrepo | awk -F= '/^GPGKey=/{print $2}' | base64 -d > "$__cosmic_keyfile"
+flatpak remote-modify cosmic --gpg-import="$__cosmic_keyfile"
+rm -f "$__cosmic_keyfile"
+flatpak remote-modify cosmic --gpg-verify
+flatpak remote-add --if-not-exists --user "fedora" "oci+https://registry.fedoraproject.org" --title="Fedora"
+flatpak remote-add --if-not-exists --user "flathub" "https://dl.flathub.org/repo/" --title="Flathub"
+flatpak remote-add --if-not-exists --user "gnome-nightly" "https://nightly.gnome.org/repo/" --title="GNOME Nightly"
+flatpak remote-add --if-not-exists --user "webkit-sdk" "http://software.igalia.com/webkit-sdk-repo/" --title="WebKit Developer SDK"
+flatpak install --assumeyes --user flathub "best.ellie.StartupConfiguration"
+flatpak install --assumeyes --user flathub "com.bktus.gpgfrontend"
+flatpak install --assumeyes --user flathub "com.jwestall.Forecast"
+flatpak install --assumeyes --user flathub "com.ktechpit.torrhunt"
+flatpak install --assumeyes --user flathub "com.mattjakeman.ExtensionManager"
+flatpak install --assumeyes --user flathub "dev.heppen.webapps"
+flatpak install --assumeyes --user flathub "io.github.flattool.Warehouse"
+flatpak install --assumeyes --user flathub "io.github.zarestia_dev.rclone-manager"
+flatpak install --assumeyes --user flathub "io.gitlab.adhami3310.Impression"
+flatpak install --assumeyes --user flathub "org.gnome.Firmware"
+flatpak install --assumeyes --user flathub "org.libreoffice.LibreOffice"
+flatpak install --assumeyes --user flathub "org.virt_manager.virt-manager"

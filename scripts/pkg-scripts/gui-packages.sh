@@ -84,10 +84,10 @@ AUR_PKGS=(
     masterpdfeditor-free microsoft-edge-stable-bin mission-center obs-studio-stable
     octopi openrgb paperwork pdfarranger php-imagick podman-desktop
     powershell-editor-services proton-mail-bin proton-pass-bin protonmail-bridge
-    qemu-emulators-full redshift refind refind-btrfs rpi-imager scratch
+    qemu-emulators-full rpi-imager scratch
     signal-desktop-beta spytrap-adb surge-xt sweethome3d
     ttf-meslo-nerd-font-powerlevel10k visual-studio-code-bin
-    yubico-authenticator-bin zed
+    yubico-authenticator-bin zed zapzap win11-gtk-theme-git win11-icon-theme-git
 )
 
 INSTALL_AUR_PKGS=()
