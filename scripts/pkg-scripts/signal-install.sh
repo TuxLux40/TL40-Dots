@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # Source pretty output definitions
-source ../../scripts/pretty-output.sh
+source ../../scripts/lib/pretty-output.sh
 
 # NOTE: These instructions only work for 64-bit Debian-based Linux distributions such as Ubuntu, Mint etc.
 

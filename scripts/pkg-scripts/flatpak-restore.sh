@@ -1,31 +1,42 @@
-# Flatpak Restore Script
-# Generated on Sa 22. Nov 00:22:49 CET 2025
-flatpak remote-add --if-not-exists --user "flathub" "https://dl.flathub.org/repo/" --title="Flathub"
-flatpak remote-add --if-not-exists --user "appcenter" "https://flatpak.elementary.io/repo" --title="AppCenter"
-flatpak remote-add --if-not-exists --user "cosmic" "https://apt.pop-os.org/cosmic/" --title="COSMIC"
-flatpak remote-add --if-not-exists --user "fedora" "oci+https://registry.fedoraproject.org" --title="Fedora"
-flatpak remote-add --if-not-exists --user "flathub" "https://dl.flathub.org/repo/" --title="Flathub"
-flatpak remote-add --if-not-exists --user "flathub-beta" "https://dl.flathub.org/beta-repo/" --title="Flathub beta"
-flatpak remote-add --if-not-exists --user "gnome-nightly" "https://nightly.gnome.org/repo/" --title="GNOME Nightly"
-flatpak remote-add --if-not-exists --user "webkit-sdk" "http://software.igalia.com/webkit-sdk-repo/" --title="WebKit Developer SDK"
-flatpak install --assumeyes --user flathub "at.ssh_mitm.server"
-flatpak install --assumeyes --user flathub "at.ssh_mitm.server"
-flatpak install --assumeyes --user flathub "best.ellie.StartupConfiguration"
-flatpak install --assumeyes --user flathub-beta "com.bitwarden.desktop"
-flatpak install --assumeyes --user flathub "com.bitwarden.desktop"
-flatpak install --assumeyes --user flathub "com.calibre_ebook.calibre"
-flatpak install --assumeyes --user flathub "com.calibre_ebook.calibre"
-flatpak install --assumeyes --user flathub "com.github.IsmaelMartinez.teams_for_linux"
-flatpak install --assumeyes --user flathub "com.github.IsmaelMartinez.teams_for_linux"
-flatpak install --assumeyes --user flathub "com.jwestall.Forecast"
-flatpak install --assumeyes --user flathub-beta "com.usebottles.bottles"
-flatpak install --assumeyes --user flathub "com.usebottles.bottles"
-flatpak install --assumeyes --user flathub "dev.edfloreshz.CosmicTweaks"
-flatpak install --assumeyes --user flathub "fr.sgued.bodev"
-flatpak install --assumeyes --user flathub "fr.sgued.bodev"
-flatpak install --assumeyes --user flathub "io.github.cosmic_utils.Examine"
-flatpak install --assumeyes --user flathub "io.github.flattool.Warehouse"
-flatpak install --assumeyes --user flathub "net.portswigger.BurpSuite-Community"
-flatpak install --assumeyes --user flathub "net.portswigger.BurpSuite-Community"
-flatpak install --assumeyes --user flathub "org.gnome.baobab"
-flatpak install --assumeyes --user flathub "org.gnupg.GPA"
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Flatpak Restore"
+
+# Scope: default system; set FLATPAK_SCOPE=user to use --user
+SCOPE_FLAG="--system"
+if [ "${FLATPAK_SCOPE:-system}" = "user" ]; then
+  SCOPE_FLAG="--user"
+fi
+
+# Temp for GPG key
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+FLATHUB_KEY="$TMPDIR/flathub.gpg"
+curl -fsSL https://dl.flathub.org/repo/flathub.gpg -o "$FLATHUB_KEY"
+
+# Add flathub remote (noninteractive)
+if ! flatpak remote-list | awk '{print $1}' | grep -qx flathub; then
+  flatpak remote-add $SCOPE_FLAG --if-not-exists --gpg-import="$FLATHUB_KEY" flathub https://dl.flathub.org/repo/
+fi
+
+# Optional flathub-beta
+if [ "${FLATHUB_BETA:-0}" = "1" ]; then
+  if ! flatpak remote-list | awk '{print $1}' | grep -qx flathub-beta; then
+    flatpak remote-add $SCOPE_FLAG --if-not-exists --gpg-import="$FLATHUB_KEY" flathub-beta https://dl.flathub.org/beta-repo/
+  fi
+fi
+
+# Restore from list
+RESTORE_LIST="${1:-}"
+if [ -n "$RESTORE_LIST" ] && [ -f "$RESTORE_LIST" ]; then
+  while IFS= read -r app; do
+    [ -z "$app" ] && continue
+    flatpak install $SCOPE_FLAG -y "$app" || true
+  done < "$RESTORE_LIST"
+else
+  echo "Usage: flatpak-restore.sh /path/to/flatpak-list.txt"
+fi
+
+echo "Done."

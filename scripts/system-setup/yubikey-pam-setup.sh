@@ -26,6 +26,16 @@ chown -R ${SUDO_USER:-$USER}:${SUDO_USER:-$USER} "$YK_DIR"
 # Register YubiKey for the user (not root)
 # pamu2fcfg reads the YubiKey and creates a mapping: username:key_data
 printf "Generating U2F key for user '${SUDO_USER:-$USER}'...\n"
+
+# Check if pamu2fcfg is installed
+if ! command -v pamu2fcfg &> /dev/null; then
+    echo "ERROR: pamu2fcfg not found! Installing pam-u2f..."
+    pacman -S --noconfirm pam-u2f || {
+        echo "ERROR: Failed to install pam-u2f. Please install it manually: sudo pacman -S pam-u2f"
+        exit 1
+    }
+fi
+
 if [ ! -s "$KEY_FILE" ]; then
     # Run as actual user to ensure username in key file is correct
     sudo -u "${SUDO_USER:-$USER}" pamu2fcfg > "$KEY_FILE"

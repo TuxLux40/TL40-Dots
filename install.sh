@@ -9,7 +9,7 @@
 set -euo pipefail
 
 # Source pretty output definitions
-source ./scripts/pretty-output.sh
+source ./scripts/lib/pretty-output.sh
 
 run_step() {
     local stepname="$1"
@@ -80,7 +80,7 @@ ROOT_DIR="${SCRIPT_DIR}"
 mkdir -p "${HOME}/.config/atuin"
 
 # Source OS detection script
-source "${ROOT_DIR}/scripts/detect-os.sh"
+source "${ROOT_DIR}/scripts/lib/detect-os.sh"
 
 # Print detected OS info
 printf '\n%bTL40-Dots post-installation%b\n' "${BLUE}" "${NC}"
@@ -96,7 +96,7 @@ ask_run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atui
 ask_run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
 ask_run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
 ask_run_step "Install Homebrew" "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
-ask_run_step "Install OpenRGB udev rules" "${ROOT_DIR}/scripts/openrgb-udev-install.sh"
+ask_run_step "Install OpenRGB udev rules" "${ROOT_DIR}/scripts/hardware/openrgb-udev-install.sh"
 
 # Set Fish as default shell if installed
 if command -v fish >/dev/null 2>&1; then
@@ -124,7 +124,7 @@ kde_shortcuts() {
 }
 
 gnome_shortcuts() {
-    run_step "Restore GNOME shortcuts" "${ROOT_DIR}/scripts/gnome/restore-gnome-shortcuts.sh"
+    run_step "Restore GNOME shortcuts" "${ROOT_DIR}/scripts/desktop/gnome/restore-gnome-shortcuts.sh"
 }
 
 no_restore() {
@@ -162,7 +162,7 @@ printf '\n🔐 %bConfigure YubiKey now?%b\n' "${GREEN}" "${NC}"
 options=("Yes" "No")
 selected=$(select_option "${options[@]}")
 case "$selected" in
-    0) "${ROOT_DIR}/scripts/yk-pam.sh" ;;
+    0) "${ROOT_DIR}/scripts/system-setup/yubikey-pam-setup.sh" ;;
     1) printf '  🔐 %bRun yk-pam.sh later.%b\n' "${YELLOW}" "${NC}" ;;
 esac
 
