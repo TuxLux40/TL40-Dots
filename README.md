@@ -16,25 +16,34 @@ TL40-Dots bundles reproducible shell environments, desktop tweaks, and automatio
 
 ### 📦 Structure at a glance
 
-- `config/` — terminal, shell, prompt, and app configs
-- `docs/` — deep dives on scripts and setup rationale
-- `docker/` — homelab service Docker compose stacks
+- `config/` — terminal, shell, prompt, and app configs (including container compose files)
 - `git/` — user-level Git configuration
-- `misc/` — helper assets (themes, udev rules, etc.)
-- `output/` — generated exports (Flatpak lists, GNOME mappings)
-- `scripts/` — post-install automation, Docker services, DE tooling
+- `misc/` — helper assets (udev rules, etc.)
+- `output/` — generated exports (Flatpak lists, GNOME mappings, package lists)
+- `scripts/` — post-install automation, system setup, desktop environment tooling
+  - `desktop/` — GNOME and KDE specific scripts
+  - `distro/` — distribution-specific configurations
+  - `fixes/` — system fixes and workarounds
+  - `hardware/` — hardware-specific setup scripts
+  - `lib/` — shared library functions
+  - `pkg-scripts/` — package installation scripts
+  - `postinstall/` — post-installation configuration
+  - `system-setup/` — system-level setup scripts
+- `styling/` — color schemes and theming configs
+- `ansible/` — Ansible playbooks for automation
+- `security-tools.ansible.yml` — security tools setup playbook
 
 ---
 
-### 📚 Documentation map
+### 📚 Key scripts and features
 
-- YubiKey + sudo: `docs/yubikey-pam-u2f.md`
-- Script catalogue: `docs/scripts.md`
-- Config reference: `docs/config.md`
-- Generated outputs: `docs/output.md`
-- Miscellaneous notes: `docs/misc.md`
-- Git setup: `docs/git.md`
-- Copilot agent instructions: `.github/copilot-instructions.md`
+- **YubiKey PAM setup:** `scripts/system-setup/yk-pam.sh`
+- **Package management:** Scripts in `scripts/pkg-scripts/` for installing base tools, desktop packages, Homebrew, etc.
+- **Desktop environment:** GNOME and KDE shortcuts and configurations in `scripts/desktop/`
+- **System fixes:** AppArmor optimization, Tailscale DNS fix, Raspberry Pi HDMI fix in `scripts/fixes/`
+- **Hardware setup:** OpenRGB udev rules, AMD Vulkan setup in `scripts/hardware/`
+- **Container configs:** Docker Compose files for various services in `config/containers/`
+- **Security:** ClamAV and Wazuh configurations via Ansible playbook
 
 ---
 

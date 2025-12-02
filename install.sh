@@ -91,7 +91,6 @@ printf '%bDetected:%b %s (distro: %s, package manager: %s)\n' "${YELLOW}" "${NC}
 printf '\n🔧 %bInstalling packages and tools (interactive)%b\n' "${BLUE}" "${NC}"
 ask_run_step "Install base tools" "${ROOT_DIR}/scripts/pkg-scripts/base-tools.sh"
 ask_run_step "Install desktop packages" "${ROOT_DIR}/scripts/pkg-scripts/desktop-packages.sh"
-ask_run_step "Install Fastfetch" "${ROOT_DIR}/scripts/pkg-scripts/fastfetch-install.sh"
 ask_run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
 ask_run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
 ask_run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
@@ -162,7 +161,7 @@ printf '\n🔐 %bConfigure YubiKey now?%b\n' "${GREEN}" "${NC}"
 options=("Yes" "No")
 selected=$(select_option "${options[@]}")
 case "$selected" in
-    0) "${ROOT_DIR}/scripts/system-setup/yubikey-pam-setup.sh" ;;
+    0) "${ROOT_DIR}/scripts/system-setup/yk-pam.sh" ;;
     1) printf '  🔐 %bRun yk-pam.sh later.%b\n' "${YELLOW}" "${NC}" ;;
 esac
 
