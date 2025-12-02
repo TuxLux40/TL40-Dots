@@ -50,7 +50,7 @@ echo "Installing GUI applications from official repositories..."
 
 OFFICIAL_PKGS=(
     gimp gnome-boxes gparted libreoffice-fresh lmms mousepad mpv obs-studio
-    qalculate-gtk retroarch seahorse shotcut steam vlc vlc-plugins-extra
+    qalculate-gtk retroarch seahorse shotcut steam vlc vlc-plugins-extra yubikey-personalization-gui
 )
 
 INSTALL_PKGS=()

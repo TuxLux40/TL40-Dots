@@ -32,22 +32,22 @@ echo "Installing CLI tools from official repositories..."
 OFFICIAL_PKGS=(
     aichat aircrack-ng ansible archinstall arpwatch atuin automake autoconf
     azure-cli base-devel bat bind borg borgmatic btop cargo clang clblast
-    cmake composer cryptsetup curl davfs2 debtap diffutils diskonaut dnsmasq
+    cmake composer cryptsetup curl davfs2 diffutils diskonaut dnsmasq
     duf fastfetch fish flatpak flatpak-builder flawfinder flawz fsarchiver
-    fzf gcc gdb git github-cli glances go gpg-tui gradle grim gum hardinfo2
-    htop hwinfo jq just kismet less llvm lnav ltrace lynis make maven meld
-    meson metasploit micro nano nbtscan ncdu neovim netctl nfs-utils nikto
-    ninja nmap nodejs npm nvtop openssh pam-u2f paru pavucontrol pcsc-tools
+    fzf gcc gdb git github-cli glances go gpg-tui grim gum hardinfo2
+    htop jq just kismet less llvm lnav ltrace lynis make maven meld
+    meson micro nano nbtscan ncdu netctl nfs-utils nikto
+    ninja nmap nodejs npm openssh pam-u2f paru pavucontrol pcsc-tools
     perf perl pkg-config podman podman-compose podman-docker promtail pv
     python python-pip python-pipx python-virtualenv python-yubico ranger
-    reaver reflector ripgrep rsync ruby rust samba sbctl scrcpy screen
-    shellcheck slurp smartmontools snapper sniffnet spoofdpi sshfs stack
+    reaver ripgrep rsync ruby rust samba sbctl scrcpy screen
+    shellcheck slurp smartmontools snapper sniffnet sshfs 
     starship step-ca step-cli strace sudo tailscale tcpdump tcpflow termshark
     testdisk tmux trash-cli tree tui-journal ttf-jetbrains-mono-nerd
-    ttf-nerd-fonts-symbols ufw ugrep unrar unzip uv valgrind veracrypt
+    ttf-nerd-fonts-symbols ufw ugrep unrar unzip uv valgrind 
     virt-manager wget which whois wiki-tui wireguard-tools wireshark-cli
     yarn yq yt-dlp yubico-c-client yubico-pam yubico-piv-tool yubikey-manager
-    yubikey-personalization yubikey-personalization-gui yubikey-touch-detector
+    yubikey-personalization  yubikey-touch-detector
     zoxide
 )
 
@@ -77,8 +77,8 @@ echo "Installing CLI tools from AUR..."
 AUR_PKGS=(
     azcopy bundletool copilot-cli-bin gpart lazydocker lazygit linutil-bin
     multitail ocrmypdf ollama-docs ollama-rocm pam-duress pam-gnupg pdf2img-c
-    pdf2png pdf2svg pdfbox pdfcrack pdfgrep pdfutil powershell-bin
-    ssh-manager-tui sshutils stown superfile tuibox tuifimanager tuner
+    pdf2png pdf2svg pdfbox pdfcrack pdfgrep pdfutil powershell-bin nvtop
+    ssh-manager-tui sshutils stown superfile tuibox tuifimanager tuner veracrypt gradle metasploit hwinfo
 )
 
 INSTALL_AUR_PKGS=()
