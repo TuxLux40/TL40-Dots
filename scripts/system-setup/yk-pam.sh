@@ -29,7 +29,7 @@ printf "Generating U2F key for user '${SUDO_USER:-$USER}'...\n"
 
 # Check if pam-u2f is installed
 if ! command -v pamu2fcfg &> /dev/null; then
-    echo "ERROR: pam-u2f not found! Installing pam-u2f..."
+    echo "ERROR: pam-u2f not found. Installing pam-u2f..."
     pacman -S --noconfirm pam-u2f || {
         echo "ERROR: Failed to install pam-u2f. Please install it manually: sudo pacman -S pam-u2f"
         exit 1
@@ -50,16 +50,41 @@ fi
 # 'sufficient' means: if YubiKey auth succeeds, no password needed
 # 'cue' displays the cue_prompt message to user
 printf "Configuring PAM files...\n"
-PAM_LINE="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
-PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd" "/etc/pam.d/login" "/etc/pam.d/su" "/etc/pam.d/polkit-1")
 
-for file in "${PAM_FILES[@]}"; do
+# Passwordless U2F (keep existing behavior): applies to non-display-manager targets
+PAM_LINE_PASSWORDLESS="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
+PASSWORDLESS_FILES=(
+    "/etc/pam.d/sudo"
+    "/etc/pam.d/login"
+    "/etc/pam.d/sshd"
+    "/etc/pam.d/su"
+    "/etc/pam.d/polkit-1"
+)
+
+for file in "${PASSWORDLESS_FILES[@]}"; do
     [ ! -f "$file" ] && continue
-    # Remove any existing pam_u2f lines to avoid duplicates
     sed -i '/^auth.*pam_u2f\.so/d' "$file"
-    # Insert auth line right after PAM header
-    sed -i "/^#%PAM-1.0$/a ${PAM_LINE}" "$file"
-    echo "✓ Updated $file"
+    sed -i "/^#%PAM-1.0$/a ${PAM_LINE_PASSWORDLESS}" "$file"
+    echo "✓ Updated (passwordless) $file"
+done
+
+# 2FA for display managers and lockscreens: require password + YubiKey (so KWallet can unlock)
+PAM_LINE_2FA="auth required pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
+DISPLAY_MANAGER_FILES=(
+    "/etc/pam.d/gdm-password"
+    "/etc/pam.d/sddm"
+    "/etc/pam.d/sddm-autologin"
+    # Lockscreen PAM files (KDE/Plasma uses system-login)
+    "/etc/pam.d/system-login"
+    "/etc/pam.d/system-local-login"
+    "/etc/pam.d/screen"
+)
+
+for file in "${DISPLAY_MANAGER_FILES[@]}"; do
+    [ ! -f "$file" ] && continue
+    sed -i '/^auth.*pam_u2f\.so/d' "$file"
+    sed -i "/^#%PAM-1.0$/a ${PAM_LINE_2FA}" "$file"
+    echo "✓ Updated (2FA) $file"
 done
 
 # Enable PC/SC Smart Card Daemon (required for YubiKey communication)
