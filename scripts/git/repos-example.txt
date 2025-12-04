@@ -1,0 +1,11 @@
+# GitHub repositories to mirror to Gitea
+# Format: owner/repository (one per line)
+# Lines starting with # are ignored
+
+# Example repositories:
+# torvalds/linux
+# microsoft/vscode
+# golang/go
+
+# Add your repositories below:
+
