@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../TL40-Dots.wiki"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
