@@ -1,6 +1,7 @@
 #!/bin/bash
 # Configuring Linux DNS for Tailscale
 # Sourced from the official documentation: https://tailscale.com/kb/1188/linux-dns
+# Must be run with root privileges.
 # Tailscale attempts to interoperate with any Linux DNS configuration it finds already present. Unfortunately, some are not entirely amenable to cooperatively managing the host's DNS configuration.
 
 # Common problems
@@ -8,9 +9,15 @@
 # If you're using both NetworkManager and systemd-resolved (as in common in many distros), you'll want to make sure that /etc/resolv.conf is a symlink to /run/systemd/resolve/stub-resolv.conf. That should be the default. If not,
 # When NetworkManager sees that symlink is present, its default behavior is to use systemd-resolved and not take over the resolv.conf file.
 
-printf "Fixing /etc/resolv.conf to point to systemd-resolved stub resolver...\n"
+# Automatically elevate to root if not already running as root
+if [ "$EUID" -ne 0 ]; then
+  printf "Not running as root. Elevating privileges using sudo...\n"
+  exec sudo bash "$0" "$@"
+fi
+
+printf "Symlinking /etc/resolv.conf to systemd-resolved stub resolver...\n"
 ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-printf "Fixed /etc/resolv.conf:\n"
+printf "Done\n"
 cat /etc/resolv.conf
 
 # After fixing, restart everything:
