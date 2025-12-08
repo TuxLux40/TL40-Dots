@@ -3,11 +3,9 @@
 # YubiKey-PAM Configuration
 #############################
 # CAUTION: pam-u2f must be installed beforehand (via base-tools.sh)
-# If pam_u2f.so is missing, PAM will fail and lock you out of sudo/login!
+# If pam_u2f.so is missing, PAM will fail and lock you out of sudo/login
 
-# Ensure script runs as root (required for PAM config and systemctl)
-# This script uses 'sudo -u $SUDO_USER' to run pamu2fcfg as the actual user,
-# preventing the YubiKey from being registered for root instead of your user.
+# Ensure script runs as root (required for PAM config and systemctl) by using 'sudo -u $SUDO_USER' to run pamu2fcfg as the actual user, preventing the YubiKey from being registered for root instead of your user.
 if [ "$EUID" -ne 0 ]; then
     exec sudo "$0" "$@"
 fi
@@ -50,41 +48,16 @@ fi
 # 'sufficient' means: if YubiKey auth succeeds, no password needed
 # 'cue' displays the cue_prompt message to user
 printf "Configuring PAM files...\n"
+PAM_LINE="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
+PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd" "/etc/pam.d/login" "/etc/pam.d/su" "/etc/pam.d/polkit-1" "/etc/pam.d/sddm" "/etc/pam.d/lightdm" "/etc/pam.d/common-auth" "/etc/pam.d/sddm-greeter" "/etc/pam.d/system-auth")
 
-# Passwordless U2F (keep existing behavior): applies to non-display-manager targets
-PAM_LINE_PASSWORDLESS="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
-PASSWORDLESS_FILES=(
-    "/etc/pam.d/sudo"
-    "/etc/pam.d/login"
-    "/etc/pam.d/sshd"
-    "/etc/pam.d/su"
-    "/etc/pam.d/polkit-1"
-)
-
-for file in "${PASSWORDLESS_FILES[@]}"; do
+for file in "${PAM_FILES[@]}"; do
     [ ! -f "$file" ] && continue
+    # Remove any existing pam_u2f lines to avoid duplicates
     sed -i '/^auth.*pam_u2f\.so/d' "$file"
-    sed -i "/^#%PAM-1.0$/a ${PAM_LINE_PASSWORDLESS}" "$file"
-    echo "✓ Updated (passwordless) $file"
-done
-
-# 2FA for display managers and lockscreens: require password + YubiKey (so KWallet can unlock)
-PAM_LINE_2FA="auth required pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
-DISPLAY_MANAGER_FILES=(
-    "/etc/pam.d/gdm-password"
-    "/etc/pam.d/sddm"
-    "/etc/pam.d/sddm-autologin"
-    # Lockscreen PAM files (KDE/Plasma uses system-login)
-    "/etc/pam.d/system-login"
-    "/etc/pam.d/system-local-login"
-    "/etc/pam.d/screen"
-)
-
-for file in "${DISPLAY_MANAGER_FILES[@]}"; do
-    [ ! -f "$file" ] && continue
-    sed -i '/^auth.*pam_u2f\.so/d' "$file"
-    sed -i "/^#%PAM-1.0$/a ${PAM_LINE_2FA}" "$file"
-    echo "✓ Updated (2FA) $file"
+    # Insert auth line right after PAM header
+    sed -i "/^#%PAM-1.0$/a ${PAM_LINE}" "$file"
+    echo "✓ Updated $file"
 done
 
 # Enable PC/SC Smart Card Daemon (required for YubiKey communication)

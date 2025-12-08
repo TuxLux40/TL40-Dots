@@ -9,8 +9,7 @@ services:
       - /volume1/docker/ollama:/root/.ollama
     ports:
       - "11434:11434"
-    networks:
-      - ollama-network
+    network_mode: bridge
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
@@ -23,17 +22,10 @@ services:
     ports:
       - ${OPEN_WEBUI_PORT-3000}:8080
     environment:
-      - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY=xxx'
+      - "OLLAMA_BASE_URL=http://ollama:11434"
+      - "WEBUI_SECRET_KEY=9a7f3c1e5d2b4a68c0f1e2d3b4a596871b2c3d4e5f607182a4b5c6d7e8f90123"
+      - "ENABLE_OLLAMA_API=true"
+      - "ENABLE_OPENAI_API=false"
     extra_hosts:
       - host.docker.internal:host-gateway
-    networks:
-      - ollama-network
-
-networks:
-  ollama-network:
-    driver: bridge
-
-volumes:
-  ollama:
-  open-webui:
+    network_mode: bridge
