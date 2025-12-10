@@ -43,7 +43,7 @@ $cmd_duration\
 $time\
 [ ](fg:#3f4139)\
 """
-command_timeout = 5000
+
 # Disable the blank line at the start of the prompt
 # add_newline = false
 

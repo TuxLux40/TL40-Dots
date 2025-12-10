@@ -91,7 +91,6 @@ alias pics 'cd ~/Pictures'
 alias vids 'cd ~/Videos'
 alias music 'cd ~/Music'
 alias desk 'cd ~/Desktop'
-alias projects 'cd ~/Projects'
 # Edit this fish config file
 alias efish 'micro ~/.config/fish/config.fish'
 # alias to show the date
