@@ -1,20 +1,6 @@
-# Starship configuration file for customizing the shell prompt in the terminal.
-# Based on Chris Titus's configuration: https://github.com/ChrisTitusTech/mybash/tree/main
-# This TOML file defines the overall format of the prompt, using a series of modules
-# separated by powerline-style symbols (e.g., , , ) with custom background and foreground colors.
-# Each module (like $python, $directory) displays relevant information if available.
-# Colors are defined in hex format (e.g., #3B4252 for Nord theme-inspired palette).
-# The format is a multi-line string that concatenates these elements.
-
-# The 'format' key defines the prompt layout as a string with embedded modules and separators.
-# It starts with a left-rounded corner [] in color #7f8f4f, followed by Python and username modules.
-# Transitions to next sections with [] separators, changing background colors for visual distinction.
-# Includes Git-related modules ($git_branch, $git_status), programming language modules (e.g., $rust, $nodejs),
-# Docker context, and time, ending with a right-rounded corner [].
-# Modules are placeholders that Starship replaces with actual data based on the current environment.
-# Currently, the Master Chief color scheme is used as defined in /styling/color-schemes.md
+# Format of the prompt
 format = """
-[](#7f8f4f)\
+[░▒▓](#7f8f4f)\
 $os\
 $python\
 $username\
@@ -41,20 +27,9 @@ $docker_context\
 [](fg:#66635a bg:#3f4139)\
 $cmd_duration\
 $time\
-[ ](fg:#3f4139)\
+[ ](fg:#3f4139)
 """
-
-# Disable the blank line at the start of the prompt
-# add_newline = false
-
-# You can also replace your username with a neat symbol like  to save some space
-# Configuration for the username module in Starship prompt
-# This module displays the current username in the prompt
-# [username] - Section defining username display settings
-# show_always = true - Always display the username, even for the default user
-# style_user = "bg:#3B4252" - Background color style for regular users (Nord theme color)
-# style_root = "bg:#3B4252" - Background color style for root user (same as regular user)
-# format = '[$user ]($style)' - Format string: displays username followed by space, styled with the defined style
+# Module configurations
 [username]
 show_always = true
 style_user = "fg:#ffffff bg:#7f8f4f bold"
@@ -62,7 +37,7 @@ style_root = "fg:#ffffff bg:#d8a028 bold"
 format = '[$user ]($style)'
 
 [hostname]
-ssh_only = false
+ssh_only = true
 style = "fg:#ffffff bg:#7f8f4f"
 format = '[on $hostname ]($style)'
 
@@ -77,25 +52,14 @@ format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-# Here is how you can shorten some long paths by text replacement
-# similar to mapped_locations in Oh My Posh:
 [directory.substitutions]
 "Documents" = "󰈙 "
 "Downloads" = " "
 "Music" = " "
 "Pictures" = " "
 ".config" = " "
-"NAS" = " "
-# Keep in mind that the order matters. For example:
-# "Important Documents" = "  "
-# will not be replaced, because "Documents" was already substituted before.
-# So either put "Important Documents" before "Documents" or use the substituted version:
-# "Important  " = "  "
-
-# Configuration for the Python module in Starship prompt
-# This module displays the current Python environment in the prompt
-# [python] - Section defining Python display settings
-# style = "bg:#3B4252" - Background color style for the Python module (Nord theme color)
+".gnupg" = "󰌾 "
+".ssh" = "󰌾 "
 
 [c]
 symbol = " "
@@ -179,13 +143,13 @@ format = '[ $symbol ($version) ]($style)'
 [cmd_duration]
 style = "fg:#ffffff bg:#3f4139"
 min_time = 1
-format = '[ $duration]($style)'
+format = '[ 󰔟 $duration]($style)'
 
 [time]
 disabled = false
 time_format = "%T"              # Hour:Minute:Second Format
 style = "fg:#ffffff bg:#3f4139"
-format = '[ $time ]($style)'
+format = '[  $time ]($style)'
 
 [status]
 style = "fg:#ffffff bg:#3f4139"
@@ -194,64 +158,154 @@ format = '[ $symbol ($version) ]($style)'
 [os]
 disabled = false
 style = "fg:#ffffff bg:#7f8f4f"
-format = '[$symbol ]($style)'
+format = '[ $symbol ]($style)'
+
+[aws]
+symbol = " "
+
+[buf]
+symbol = " "
+
+[bun]
+symbol = " "
+
+[cpp]
+symbol = " "
+
+[cmake]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[crystal]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[deno]
+symbol = " "
+
+[fennel]
+symbol = " "
+
+[fortran]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[gcloud]
+symbol = " "
+
+[git_commit]
+tag_symbol = '  '
+
+[gradle]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[kotlin]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nix_shell]
+symbol = " "
+
+[ocaml]
+symbol = " "
 
 [os.symbols]
-AIX = ""
-AlmaLinux = ""
-Alpaquita = ""
-Alpine = ""
-ALTLinux = ""
-Amazon = ""
-Android = ""
-AOSC = ""
-Arch = ""
-Artix = ""
-Bluefin = ""
-CachyOS = ""
-CentOS = ""
-Cygwin = "󰨡"
-Debian = ""
-DragonFly = ""
-Elementary = ""
-Emscripten = ""
-EndeavourOS = ""
-Fedora = ""
-FreeBSD = ""
-Garuda = ""
-Gentoo = ""
-HardenedBSD = ""
-Illumos = ""
-Ios = ""
-Kali = ""
-Linux = ""
-Mabox = ""
-Macos = ""
-Manjaro = ""
-Mariner = ""
-MidnightBSD = ""
-Mint = ""
-NetBSD = ""
-NixOS = ""
-Nobara = ""
-OpenBSD = ""
-OpenCloudOS = ""
-openEuler = ""
-openSUSE = ""
-OracleLinux = ""
-Pop = ""
-RaspberryPiOS = ""
-Raspbian = ""
-Redhat = ""
-RedHatEnterprise = ""
-Redox = ""
-RockyLinux = ""
-Solus = ""
-SUSE = ""
-Ubuntu = ""
-Ultramarine = ""
-Uos = ""
-Void = ""
-Zorin = ""
-Unknown = "❓"
-Windows = "󰨡"
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+AOSC = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
+
+[package]
+symbol = "󰏗 "
+
+[perl]
+symbol = " "
+
+[pijul_channel]
+symbol = " "
+
+[pixi]
+symbol = "󰏗 "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[scala]
+symbol = " "
+
+[swift]
+symbol = " "
+
+[xmake]
+symbol = " "
+
+[zig]
+symbol = " "
