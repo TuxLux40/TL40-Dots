@@ -1,5 +1,8 @@
+# add_newline = false
+# continuation_prompt = "[▸▹ ](dimmed white)"
+
 # Format of the prompt
-format = """
+format = """($git_metrics)\n\
 [░▒▓](#7f8f4f)\
 $os\
 $python\
@@ -30,6 +33,9 @@ $time\
 [ ](fg:#3f4139)
 """
 # Module configurations
+[fill]
+symbol = ' 󰫈󰋙 '
+
 [username]
 show_always = true
 style_user = "fg:#ffffff bg:#7f8f4f bold"
