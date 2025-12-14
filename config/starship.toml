@@ -2,7 +2,7 @@
 # continuation_prompt = "[▸▹ ](dimmed white)"
 
 # Format of the prompt
-format = """($git_metrics)\n\
+format = """\
 [░▒▓](#7f8f4f)\
 $os\
 $python\
