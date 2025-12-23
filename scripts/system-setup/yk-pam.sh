@@ -56,8 +56,17 @@ for file in "${PAM_FILES[@]}"; do
     [ ! -f "$file" ] && continue
     # Remove any existing pam_u2f lines to avoid duplicates
     sed -i '/^auth.*pam_u2f\.so/d' "$file"
-    # Insert auth line right after PAM header
-    sed -i "/^#%PAM-1.0$/a ${PAM_LINE}" "$file"
+
+    # Insert the U2F line as early as possible in the auth stack. Prefer after the header if present;
+    # otherwise before the first auth line; fallback: prepend.
+    if grep -q '^#%PAM-1.0' "$file"; then
+        sed -i "/^#%PAM-1.0$/a ${PAM_LINE}" "$file"
+    elif grep -q '^auth' "$file"; then
+        sed -i "/^auth/ i ${PAM_LINE}" "$file"
+    else
+        sed -i "1i ${PAM_LINE}" "$file"
+    fi
+
     echo "✓ Updated $file"
 done
 
@@ -79,7 +88,6 @@ printf "Starting pcscd service...\n"
 systemctl start --now pcscd
 printf "\n✓ PC/SC Smart Card Daemon started successfully. Running test...\n"
 sudo -K && sudo echo Test successful
-printf "Test successful\n"
 ##################################
 # END: YubiKey-PAM Configuration #
 ##################################
