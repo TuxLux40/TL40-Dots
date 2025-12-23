@@ -45,11 +45,12 @@ else
 fi
 
 # Update PAM configuration files to enable U2F authentication
-# 'sufficient' means: if YubiKey auth succeeds, no password needed
+# 'sufficient' means: if YubiKey auth succeeds, no password needed (but password still works as fallback)
+# 'required' would mean: YubiKey is mandatory (dangerous - locks you out if YubiKey unavailable)
 # 'cue' displays the cue_prompt message to user
 printf "Configuring PAM files...\n"
 PAM_LINE="auth sufficient pam_u2f.so authfile=$KEY_FILE cue cue_prompt=Tap YubiKey"
-PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd" "/etc/pam.d/login" "/etc/pam.d/su" "/etc/pam.d/polkit-1" "/etc/pam.d/sddm" "/etc/pam.d/lightdm" "/etc/pam.d/common-auth" "/etc/pam.d/sddm-greeter" "/etc/pam.d/system-auth")
+PAM_FILES=("/etc/pam.d/sudo" "/etc/pam.d/login" "/etc/pam.d/gdm-password" "/etc/pam.d/sshd" "/etc/pam.d/su" "/etc/pam.d/polkit-1" "/etc/pam.d/sddm" "/etc/pam.d/lightdm" "/etc/pam.d/common-auth" "/etc/pam.d/sddm-greeter" "/etc/pam.d/system-auth" "/etc/pam.d/system-login")
 
 for file in "${PAM_FILES[@]}"; do
     [ ! -f "$file" ] && continue
@@ -59,6 +60,17 @@ for file in "${PAM_FILES[@]}"; do
     sed -i "/^#%PAM-1.0$/a ${PAM_LINE}" "$file"
     echo "✓ Updated $file"
 done
+
+# Verify keyring integration in SDDM for auto-unlock
+printf "\nVerifying keyring integration...\n"
+if [ -f "/etc/pam.d/sddm" ]; then
+    if ! grep -q "pam_gnome_keyring.so" /etc/pam.d/sddm; then
+        echo "⚠ Warning: GNOME Keyring PAM module not found in /etc/pam.d/sddm"
+        echo "   Keyrings may not auto-unlock on login. Consider adding pam_gnome_keyring.so"
+    else
+        echo "✓ Keyring auto-unlock configured"
+    fi
+fi
 
 # Enable PC/SC Smart Card Daemon (required for YubiKey communication)
 printf "Enabling pcscd service...\n"
