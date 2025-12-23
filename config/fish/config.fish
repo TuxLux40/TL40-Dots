@@ -35,6 +35,9 @@ if status is-interactive
 
     # Set xterm
     export TERM=xterm-256color
+
+	# Add Cargo to PATH
+	export PATH="$PATH:/home/oliver/.cargo/bin"
 end
 
 # Load Homebrew environment if available
