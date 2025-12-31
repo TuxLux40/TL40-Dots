@@ -1,0 +1,42 @@
+MenuBar=Disabled
+
+[CompactMode]
+PreviewSize=80
+
+[ContextMenu]
+ShowCopyMoveMenu=true
+ShowViewMode=false
+
+[General]
+ConfirmClosingMultipleTabs=false
+RememberOpenedTabs=false
+ShowFullPath=true
+ShowFullPathInTitlebar=true
+ShowStatusBar=FullWidth
+ShowZoomSlider=true
+Version=202
+ViewPropsTimestamp=2025,12,2,22,29,30.693
+
+[InformationPanel]
+previewsAutoPlay=true
+showHovered=false
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
+ToolBarsMovable=Enabled
+
+[MainWindow][Toolbar mainToolBar]
+ToolButtonStyle=IconOnly
+
+[Notification Messages]
+warnAboutRisksBeforeActingAsAdmin=false
+
+[PreviewSettings]
+Plugins=ffmpegthumbnailer,appimagethumbnail,audiothumbnail,glycin-heif,papers,evince,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,heif,imagethumbnail,glycin-image-rs,jpegthumbnail,glycin-jxl,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,gsf-office,com.system76.CosmicPlayer,totem,opendocumentthumbnail,xreader,glycin-svg,svgthumbnail,gnome-font-viewer,webp-pixbuf
+
+[Toolbar mainToolBar]
+ToolButtonStyle=IconOnly

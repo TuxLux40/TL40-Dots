@@ -32,11 +32,11 @@ echo "Installing CLI tools from official repositories..."
 OFFICIAL_PKGS=(
     aichat aircrack-ng ansible archinstall arpwatch atuin automake autoconf
     azure-cli base-devel bat bind borg borgmatic btop cargo clang clblast
-    cmake composer cryptsetup curl davfs2 diffutils diskonaut dnsmasq
+    cmake composer cronie cryptsetup curl davfs2 diffutils diskonaut dnsmasq
     duf fastfetch fish flatpak flatpak-builder flawfinder flawz fsarchiver
     fzf gcc gdb git github-cli glances go gpg-tui grim gum hardinfo2
-    htop jq just kismet less llvm lnav ltrace lynis make maven meld
-    meson micro nano nbtscan ncdu netctl nfs-utils nikto
+    htop jq just kismet konsave less llvm lnav ltrace lynis make maven meld
+    meson micro nano nbtscan ncdu netctl nfs-utils
     ninja nmap nodejs npm openssh pam-u2f paru pavucontrol pcsc-tools
     perf perl pkg-config podman podman-compose podman-docker promtail pv
     python python-pip python-pipx python-virtualenv python-yubico ranger
