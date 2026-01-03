@@ -16,13 +16,16 @@ fi
 echo "Linking dotfiles with GNU Stow..."
 cd "$REPO_ROOT"
 
-# Link all config packages to ~/.config (except kde, containers and clamav) - they will be handled separately
+# Remove existing configs (repo is source of truth)
+echo "Removing existing configs..."
+rm -rf ~/.config/{atuin,cosmic,fastfetch,fish,ghostty,starship.toml}
+
+# Link all config packages to ~/.config (except kde, containers and clamav)
 EXCLUDE_PACKAGES=("kde" "containers" "clamav" "aichat" "system.yaml")
 
 for package_dir in config/*/; do
     package=$(basename "$package_dir")
     
-    # Skip excluded packages and files
     skip=false
     for excluded in "${EXCLUDE_PACKAGES[@]}"; do
         if [[ "$package" == "$excluded" ]]; then
@@ -36,17 +39,22 @@ for package_dir in config/*/; do
     fi
     
     echo "Linking $package..."
-    stow -d config -t "$XDG_CONFIG_HOME" --override='.*' "$package" 2>/dev/null || echo "  Warning: Could not link $package"
+    stow -d config -t "$XDG_CONFIG_HOME" "$package" || echo "  Warning: Could not link $package"
 done
 
-# Link/copy individual config files in root of config/
+# Link starship and copy aichat
 ln -sf "$REPO_ROOT/config/starship.toml" "$XDG_CONFIG_HOME/starship.toml"
 mkdir -p "$XDG_CONFIG_HOME/aichat" && cp -f "$REPO_ROOT/config/aichat/config.yaml" "$XDG_CONFIG_HOME/aichat/config.yaml"
 
 # Link KDE configs using stow (only if KDE is installed)
 if command -v plasmashell &> /dev/null || command -v plasma-desktop &> /dev/null; then
     echo "Linking KDE configs..."
-    stow -d config -t "$XDG_CONFIG_HOME" --override='.*' kde
+    # Remove existing KDE configs first
+    cd "$XDG_CONFIG_HOME"
+    find . -maxdepth 1 -type f \( -name "*.rc" -o -name "kdeglobals" -o -name "plasma-*" \) -delete
+    rm -rf kdedefaults xsettingsd
+    cd "$REPO_ROOT"
+    stow -d config -t "$XDG_CONFIG_HOME" kde
     echo "  KDE configs linked"
 else
     echo "  KDE not detected, skipping KDE configs"
