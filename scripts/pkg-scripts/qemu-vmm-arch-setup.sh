@@ -1,4 +1,7 @@
 #!/bin/bash
+# QEMU and Virtual Machine Manager setup script for Arch Linux
+# Sourced from https://wiki.cachyos.org/virtualization/qemu_and_vmm_setup/
+
 set -e
 # Install packages
 sudo pacman -S qemu-full virt-manager swtpm --needed --noconfirm
