@@ -56,3 +56,12 @@ git clone https://github.com/TuxLux40/TL40-Dots.git && cd TL40-Dots && bash ./in
 ```
 
 > The post-install entrypoint auto-detects your distro, selects the right package manager, then walks through all dependent scripts with friendly logging.
+
+Or run the new Ansible workflow (local machine):
+
+```bash
+ansible-galaxy collection install community.general ansible.posix
+ansible-playbook -K -i localhost, ansible/site.yml --tags "cli,gui,dotfiles,nas,flatpak"
+```
+
+Key tags: `cli`/`gui` (packages), `dotfiles`, `nas`, `podman`, `tailscale`, `flatpak`, `gnome`, `openrgb`, `homebrew`, `yubikey`. Optional variables: `ts_authkey` for Tailscale auth, `install_homebrew=true`, `tailscale_use_script=true`, `register_u2f=true` (interactive key touch).

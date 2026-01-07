@@ -5,142 +5,201 @@
   gather_facts: false
 
   vars:
+    aur_builder: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
     official_pkgs_cli:
+      - aichat
       - aircrack-ng
+      - ansible
+      - archinstall
       - arpwatch
       - atuin
-      - bcg729
+      - autoconf
+      - automake
+      - azure-cli
+      - base-devel
+      - bat
+      - bind
       - borg
       - borgmatic
-      - ccid
-      - chezmoi
+      - btop
+      - cargo
+      - clang
+      - clblast
+      - cmake
       - composer
+      - cronie
+      - cryptsetup
+      - curl
       - davfs2
-      - debtap
-      - dma
+      - diffutils
+      - diskonaut
+      - dnsmasq
+      - duf
+      - fastfetch
+      - fish
+      - flatpak
+      - flatpak-builder
       - flawfinder
+      - flawz
+      - fsarchiver
+      - fzf
+      - gcc
+      - gdb
+      - git
+      - github-cli
+      - glances
+      - go
       - gpg-tui
       - grim
       - gum
       - hardinfo2
-      - hwloc
-      - iperf3
-      - java-environment-common
-      - java-runtime-common
-      - jdk-openjdk
+      - htop
+      - jq
+      - just
       - kismet
-      - libev
-      - libluv
-      - libutf8proc
-      - libvterm
-      - libwebsockets
-      - libzip
-      - lksctp-tools
+      - konsave
+      - less
+      - llvm
       - lnav
-      - lua53
-      - lua51-lpeg
-      - mariadb-libs
+      - ltrace
+      - lynis
+      - make
       - maven
-      - metasploit
-      - msgpack-c
-      - namcap
+      - meld
+      - meson
+      - micro
+      - nano
       - nbtscan
-      - net-tools
-      - nikto
+      - ncdu
+      - netctl
+      - nfs-utils
+      - ninja
       - nmap
-      - pcsc-perl
+      - nodejs
+      - npm
+      - openssh
+      - pam-u2f
+      - paru
+      - pavucontrol
       - pcsc-tools
-      - perl-json
-      - perl-mime-charset
-      - perl-net-ssleay
-      - perl-unicode-linebreak
-      - perl-yaml-tiny
-      - php
-      - po4a
-      - postgresql-libs
+      - perf
+      - perl
+      - pkg-config
+      - podman
+      - podman-compose
+      - podman-docker
       - promtail
-      - python-boolean.py
-      - python-configobj
-      - python-distlib
-      - python-dulwich
-      - python-fastbencode
-      - python-license-expression
-      - python-merge3
-      - python-msgpack
-      - python-patiencediff
-      - python-pyelftools
-      - python-pyserial
-      - python-pyscard
-      - python-pyusb
+      - pv
+      - python
+      - python-pip
+      - python-pipx
       - python-virtualenv
-      - python-websockets
       - python-yubico
-      - qt5-base
-      - qt5-translations
       - ranger
       - reaver
-      - rpmextract
+      - ripgrep
+      - rsync
       - ruby
-      - ruby-bundler
-      - rubygems
+      - rust
       - samba
       - sbctl
       - scrcpy
+      - screen
       - shellcheck
       - slurp
+      - smartmontools
+      - snapper
       - sniffnet
-      - stack
+      - sshfs
       - starship
       - step-ca
       - step-cli
-      - superfile
-      - sysbench
+      - strace
+      - sudo
+      - tailscale
       - tcpdump
       - tcpflow
       - termshark
       - testdisk
-      - tree-sitter
-      - tree-sitter-c
-      - tree-sitter-lua
-      - tree-sitter-markdown
-      - tree-sitter-query
-      - tree-sitter-vim
-      - tree-sitter-vimdoc
+      - tmux
+      - trash-cli
+      - tree
       - tui-journal
+      - ttf-jetbrains-mono-nerd
+      - ttf-nerd-fonts-symbols
+      - ufw
+      - ugrep
+      - unrar
+      - unzip
       - uv
-      - ventoy-bin
-      - veracrypt
+      - valgrind
+      - virt-manager
+      - wget
+      - which
+      - whois
+      - wiki-tui
       - wireguard-tools
       - wireshark-cli
-      - wiki-tui
-      - wireless_tools
+      - yarn
+      - yq
       - yt-dlp
-      - yubico-c
       - yubico-c-client
       - yubico-pam
+      - yubico-piv-tool
       - yubikey-manager
       - yubikey-personalization
-      - yubikey-personalization-gui
       - yubikey-touch-detector
+      - zoxide
 
-    aur_pkgs_cli: []
+    aur_pkgs_cli:
+      - azcopy
+      - bundletool
+      - copilot-cli-bin
+      - gpart
+      - gradle
+      - hwinfo
+      - lazydocker
+      - lazygit
+      - linutil-bin
+      - metasploit
+      - multitail
+      - nvtop
+      - ocrmypdf
+      - ollama-docs
+      - ollama-rocm
+      - pam-duress
+      - pam-gnupg
+      - pdf2img-c
+      - pdf2png
+      - pdf2svg
+      - pdfbox
+      - pdfcrack
+      - pdfgrep
+      - pdfutil
+      - powershell-bin
+      - ssh-manager-tui
+      - sshutils
+      - stown
+      - superfile
+      - tuibox
+      - tuifimanager
+      - tuner
+      - veracrypt
 
     official_pkgs_gui:
       - gimp
-      - gnome-boxes
       - gparted
       - libreoffice-fresh
       - lmms
       - mousepad
       - mpv
       - obs-studio
-      - qalculate-gtk
       - retroarch
-      - seahorse
       - shotcut
       - steam
       - vlc
       - vlc-plugins-extra
+      - yubikey-personalization-gui
 
     aur_pkgs_gui:
       - android-file-transfer
@@ -176,9 +235,6 @@
       - proton-pass-bin
       - protonmail-bridge
       - qemu-emulators-full
-      - redshift
-      - refind
-      - refind-btrfs
       - rpi-imager
       - scratch
       - signal-desktop-beta
@@ -191,10 +247,50 @@
       - zed
 
   tasks:
+    - name: Ensure base-devel and git are present for AUR work
+      community.general.pacman:
+        name:
+          - base-devel
+          - git
+        state: present
+        extra_args: --needed
+      tags: [cli, gui]
+
     - name: Ensure pacman database is up to date
       community.general.pacman:
         update_cache: true
       tags: [cli, gui]
+
+    - name: Check if paru is installed
+      ansible.builtin.command: paru -V
+      register: paru_check
+      changed_when: false
+      failed_when: false
+      become: false
+      tags: [cli, gui]
+
+    - name: Install paru AUR helper
+      when: paru_check.rc != 0
+      tags: [cli, gui]
+      block:
+        - name: Clone paru repository
+          ansible.builtin.git:
+            repo: https://aur.archlinux.org/paru.git
+            dest: /tmp/paru-build
+            update: true
+            force: true
+          become: false
+          become_user: "{{ aur_builder }}"
+
+        - name: Build and install paru
+          ansible.builtin.command: makepkg -si --noconfirm
+          args:
+            chdir: /tmp/paru-build
+          become: false
+          become_user: "{{ aur_builder }}"
+          register: paru_makepkg
+          changed_when: paru_makepkg.rc == 0
+          failed_when: paru_makepkg.rc != 0
 
     - name: Install CLI official packages
       community.general.pacman:
@@ -241,6 +337,8 @@
       register: aur_cli_results
       changed_when: "aur_cli_results.rc == 0"
       failed_when: false
+      become: false
+      become_user: "{{ aur_builder }}"
       tags: [cli]
 
     - name: Install AUR packages (GUI)
@@ -255,6 +353,8 @@
         - not (item == 'obs-studio-stable' and obs_studio_q.rc == 0)
         - not (item == 'obs-studio' and obs_studio_stable_q.rc == 0)
         - not (item == 'dotnet-sdk-bin' and dotnet_host_q.rc == 0)
+      become: false
+      become_user: "{{ aur_builder }}"
       tags: [gui]
 
     - name: Summary - skipped GUI AUR due to conflicts

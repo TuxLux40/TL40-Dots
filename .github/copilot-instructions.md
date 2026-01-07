@@ -1,35 +1,12 @@
 # Copilot Instructions for TL40-Dots
 
-## Big Picture Architecture
-- **Dotfiles repo** for reproducible Linux workstation and homelab setups across distros (Arch, Debian, Fedora).
-- `install.sh` orchestrates: detects OS/package manager, runs `scripts/pkg-scripts/*` installers, symlinks configs via `scripts/postinstall/dotfile-symlinks.sh`, prompts for desktop shortcuts/YubiKey.
-- Configs in `config/` are authoritative; scripts ensure workstation matches these (e.g., `config/fish/config.fish` symlinked to `~/.config/fish/config.fish`).
-- Homelab services use Docker Compose in `config/containers/` assuming NAS paths like `/volume1/docker/...`; `*-run.yaml` are reference snippets, not runnable.
-
-## Key Workflows
-- **Full bootstrap**: `bash ./install.sh` (interactive; sets Fish as default shell, installs tools like Starship/Atuin/Tailscale).
-- **Partial re-run**: Direct script calls, e.g., `bash scripts/pkg-scripts/base-tools.sh` for packages, `bash scripts/postinstall/dotfile-symlinks.sh --force` to overwrite existing links.
-- **Flatpaks**: `bash scripts/pkg-scripts/flatpak-restore.sh --dry-run` uses `output/flatpaks.md`; supports `--list`, custom `FLATPAKS_MD`.
-- **GNOME/KDE**: Scripts read/write `output/gnome_*` deterministically (e.g., `scripts/gnome/restore-gnome-shortcuts.sh`).
-- **YubiKey**: `fish scripts/yk-pam.sh` creates `~/pam_u2f_backup.tgz` backup; diagnostics via `scripts/sudo_diag.sh`.
-
-## Project-Specific Patterns
-- **Shell scripts**: Use `/usr/bin/env bash`, `set -euo pipefail`; idempotent with `command -v` checks; temp dirs with `trap 'rm -rf "$tmp_dir"' EXIT` (see `scripts/pkg-scripts/base-tools.sh::install_nerd_font`).
-- **Symlinking**: Safe configs symlinked (e.g., `config/starship.toml` -> `~/.config/starship.toml`); sensitive ones copied (e.g., `config/aichat/config.yaml` -> `~/.config/aichat/config.yaml`).
-- **Package detection**: Source `/etc/os-release`; arrays like `debian_packages=(micro trash-cli ...)`; install via `sudo apt/pacman/dnf` (see `scripts/pkg-scripts/base-tools.sh`).
-- **Homebrew**: Appends shellenv to `~/.bashrc` and `~/.config/fish/config.fish`; maintain both when modifying.
-- **Docker**: Expect NAS mounts; share `docker.sock`; call out host-specific paths inline; use env vars for config (e.g., `${N8N_DATA_DIR}` in `config/containers/n8n/docker-compose.yml`).
-- **Output generation**: Scripts both read from and write to `output/` for reproducibility (e.g., `scripts/pkg-scripts/arch-pkgs-extract.sh` updates `output/arch-packages.md`).
-
-## Integration Points
-- **Fish as interactive shell**: Wrap Bash commands with `bash ...` in docs; avoid heredocs, prefer `printf`/`echo`.
-- **XDG compliance**: Use `$XDG_CONFIG_HOME` (default `~/.config`); ensure dirs exist before linking.
-- **Distros**: Support Arch (pacman), Debian/Ubuntu (apt), Fedora (dnf); export `OS_FAMILY`/`PKG_MANAGER` for sub-scripts.
-- **Desktop environments**: KDE/GNOME helpers export structured data to `output/`; new scripts should follow (e.g., `scripts/kde/kde-shortcuts-export.sh`).
-- **Containers**: Compose files use env vars for host-specific settings; assume Synology NAS with MariaDB, reverse proxy; include `extra_hosts` for reliability.
-
-## Working Expectations
-- **Idempotence**: Scripts re-runnable after partial failure; add preflight checks, not assumptions.
-- **Documentation**: Update `docs/*.md` (e.g., `docs/scripts.md`, `docs/config.md`) when behavior changes; refresh `output/` via scripts.
-- **Safety**: Backups for PAM changes (YubiKey); `--dry-run` flags; warn on overwrites without `--force`.
-- **Rationale**: Reference `docs/` for why decisions (e.g., symlink policy in `docs/dotfile-symlinks.md`).
+- **What this repo is**: Arch-centric dotfiles and automation to bootstrap a workstation: install packages, symlink configs, restore desktop shortcuts, and optionally configure YubiKey PAM.
+- **Primary entrypoint**: `bash install.sh` runs interactively, using [install.sh](../install.sh) to offer steps (package installs, symlinks, shortcuts, Flatpaks, YubiKey). It sources [scripts/lib/detect-os.sh](../scripts/lib/detect-os.sh) but currently assumes pacman/paru flows; it still references `base-tools.sh`/`desktop-packages.sh` which are missing—swap to [scripts/pkg-scripts/cli-packages.sh](../scripts/pkg-scripts/cli-packages.sh) and [scripts/pkg-scripts/gui-packages.sh](../scripts/pkg-scripts/gui-packages.sh) before using.
+- **Package installation (Arch/paru)**: [scripts/pkg-scripts/cli-packages.sh](../scripts/pkg-scripts/cli-packages.sh) installs a large CLI stack via pacman and then paru AUR; run [scripts/pkg-scripts/paru-install.sh](../scripts/pkg-scripts/paru-install.sh) first if paru is absent. [scripts/pkg-scripts/gui-packages.sh](../scripts/pkg-scripts/gui-packages.sh) installs desktop apps with basic conflict guards (obs-studio vs obs-studio-stable, dotnet-sdk-bin). [scripts/pkg-scripts/podman-postinstall.sh](../scripts/pkg-scripts/podman-postinstall.sh) enables podman sockets (systemd/OpenRC) and supports `--user`. [scripts/pkg-scripts/homebrew-install.sh](../scripts/pkg-scripts/homebrew-install.sh) installs Homebrew and appends `brew shellenv` to both bash and fish configs.
+- **Flatpaks**: [scripts/pkg-scripts/flatpak-restore.sh](../scripts/pkg-scripts/flatpak-restore.sh) is a generated list of `flatpak remote-add`/`flatpak install` commands (duplicates flathub add) with no dry-run or pruning; run manually when Flatpak is available.
+- **Dotfile linking**: [scripts/postinstall/dotfile-symlinks.sh](../scripts/postinstall/dotfile-symlinks.sh) uses GNU Stow from config/ into `$XDG_CONFIG_HOME`, first deleting existing dirs/files (atuin, fastfetch, fish, ghostty, starship.toml). It skips kde/containers/clamav/aichat/system.yaml, then symlinks starship.toml explicitly and copies config/aichat/config.yaml. KDE configs link only if plasmashell/plasma-desktop exists; ClamAV configs link into /etc/clamav via sudo. [scripts/postinstall/nas-symlinks.sh](../scripts/postinstall/nas-symlinks.sh) force-links /mnt/nas paths into home directories—ensure mounts exist.
+- **Desktop shortcuts**: [scripts/desktop/gnome/restore-gnome-shortcuts.sh](../scripts/desktop/gnome/restore-gnome-shortcuts.sh) sets GNOME media-key custom bindings, supports `--dry-run`, `--no-backup`, `--prune-missing`, and writes backups under output/. Commands referenced (guake, code, ghostty, signal-desktop, etc.) must exist or will be warned/pruned.
+- **YubiKey PAM**: [scripts/system-setup/yk-pam.sh](../scripts/system-setup/yk-pam.sh) must run as root; installs pam-u2f if missing, writes `u2f_keys` under `~/.config/yubico` for `SUDO_USER`, injects `auth sufficient pam_u2f.so ...` into multiple PAM stacks, and enables pcscd. Warn users about lockout risk if pam_u2f is absent.
+- **Logging/color helpers**: [scripts/lib/pretty-output.sh](../scripts/lib/pretty-output.sh) centralizes INFO/ERROR symbols and ANSI colors used by installers; keep in sync if adding steps to [install.sh](../install.sh).
+- **Upstream/vendor content**: [config/containers](../config/containers) holds upstream compose assets and docs (e.g., glance README) that act as references rather than managed code.
+- **General expectations**: Scripts favor `/usr/bin/env bash`, `set -e`/pipefail, and idempotent reruns. Package installers are Arch-first (pacman/paru names); if extending to other distros, guard pacman usage or add per-distro branches.

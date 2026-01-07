@@ -1,0 +1,625 @@
+---
+- import_playbook: packages.yml
+
+- name: TL40 post-install automation
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+
+  vars:
+    repo_root: "{{ playbook_dir | dirname }}"
+    target_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    target_home: "{{ (ansible_env.SUDO_USER | default('')) | length > 0 | ternary('/home/' + ansible_env.SUDO_USER, lookup('env','HOME')) }}"
+    config_root: "{{ lookup('env','XDG_CONFIG_HOME') | default(target_home + '/.config', true) }}"
+    exclude_configs:
+      - kde
+      - containers
+      - clamav
+      - aichat
+      - system.yaml
+    nas_links:
+      - { src: "/mnt/nas/Photos", dest: "{{ target_home }}/Pictures/Photos" }
+      - { src: "/mnt/nas/04_Pics", dest: "{{ target_home }}/Pictures/04_Pics" }
+      - {
+          src: "/mnt/nas/03_Videos",
+          dest: "{{ target_home }}/Videos/03_Videos",
+        }
+      - {
+          src: "/mnt/nas/01_Documents",
+          dest: "{{ target_home }}/Documents/01_Documents",
+        }
+      - {
+          src: "/mnt/nas/99_Unsorted",
+          dest: "{{ target_home }}/Documents/99_Unsorted",
+        }
+      - { src: "/mnt/nas/09_eBooks", dest: "{{ target_home }}/09_eBooks" }
+      - { src: "/mnt/nas/06_IT", dest: "{{ target_home }}/IT/06_IT" }
+      - { src: "/mnt/nas/13_Gaming", dest: "{{ target_home }}/13_Gaming" }
+    flatpak_remotes:
+      - {
+          name: "flathub",
+          url: "https://dl.flathub.org/repo/",
+          title: "Flathub",
+        }
+      - {
+          name: "appcenter",
+          url: "https://flatpak.elementary.io/repo",
+          title: "AppCenter",
+        }
+      - {
+          name: "fedora",
+          url: "oci+https://registry.fedoraproject.org",
+          title: "Fedora",
+        }
+      - {
+          name: "gnome-nightly",
+          url: "https://nightly.gnome.org/repo/",
+          title: "GNOME Nightly",
+        }
+      - {
+          name: "webkit-sdk",
+          url: "http://software.igalia.com/webkit-sdk-repo/",
+          title: "WebKit Developer SDK",
+        }
+    flatpak_apps:
+      - { name: "app.devsuite.Manuals" }
+      - { name: "app.drey.Dialect" }
+      - { name: "app.grayjay.Grayjay" }
+      - { name: "ar.xjuan.Cambalache" }
+      - { name: "best.ellie.StartupConfiguration" }
+      - { name: "com.bktus.gpgfrontend" }
+      - { name: "com.cassidyjames.butler" }
+      - { name: "com.freerdp.FreeRDP" }
+      - { name: "com.github.IsmaelMartinez.teams_for_linux" }
+      - { name: "com.github.LongSoft.UEFITool" }
+      - { name: "com.github.finefindus.eyedropper" }
+      - { name: "com.github.iwalton3.jellyfin-media-player" }
+      - { name: "com.github.marhkb.Pods" }
+      - { name: "com.github.phase1geo.minder" }
+      - { name: "com.github.tchx84.Flatseal" }
+      - { name: "com.github.wwmm.easyeffects" }
+      - { name: "com.google.EarthPro" }
+      - { name: "com.jwestall.Forecast" }
+      - { name: "com.ktechpit.torrhunt" }
+      - { name: "com.mattjakeman.ExtensionManager" }
+      - { name: "com.ml4w.dotfilesinstaller" }
+      - { name: "com.openwall.John" }
+      - { name: "com.ranfdev.DistroShelf" }
+      - { name: "com.stremio.Stremio" }
+      - { name: "com.sweethome3d.Sweethome3d" }
+      - { name: "com.system76.Popsicle" }
+      - { name: "de.lernsoftware_filius.Filius" }
+      - { name: "dev.cappsy.CosmicExtAppletLogoMenu" }
+      - { name: "dev.deedles.Trayscale" }
+      - { name: "dev.heppen.webapps" }
+      - { name: "io.appflowy.AppFlowy" }
+      - { name: "io.github.BuddySirJava.SSH-Studio" }
+      - { name: "io.github.brunofin.Cohesion" }
+      - { name: "io.github.flattool.Warehouse" }
+      - { name: "io.github.qwersyk.Newelle" }
+      - { name: "io.github.realmazharhussain.GdmSettings" }
+      - { name: "io.github.ronniedroid.concessio" }
+      - { name: "io.github.theforceengine.tfe" }
+      - { name: "io.github.vmkspv.netsleuth" }
+      - { name: "io.github.zarestia_dev.rclone-manager" }
+      - { name: "io.gitlab.adhami3310.Impression" }
+      - { name: "it.fabiodistasio.AntaresSQL" }
+      - { name: "it.mijorus.gearlever" }
+      - { name: "me.iepure.devtoolbox" }
+      - { name: "net.code_industry.MasterPDFEditor" }
+      - { name: "net.portswigger.BurpSuite-Community" }
+      - { name: "net.sourceforge.roccat.roccat-tools" }
+      - { name: "org.bleachbit.BleachBit" }
+      - { name: "org.cockpit_project.CockpitClient" }
+      - { name: "org.fkoehler.KTailctl" }
+      - { name: "org.freac.freac" }
+      - { name: "org.freecad.FreeCAD" }
+      - { name: "org.fritzing.Fritzing" }
+      - { name: "org.gnome.Firmware" }
+      - { name: "org.gnome.GHex" }
+      - { name: "org.gnome.Snapshot" }
+      - { name: "org.gnome.World.PikaBackup" }
+      - { name: "org.gnome.baobab" }
+      - { name: "org.gnome.dspy" }
+      - { name: "org.gramps_project.Gramps" }
+      - { name: "org.kde.kdenlive" }
+      - { name: "org.kde.kgeotag" }
+      - { name: "org.libreoffice.LibreOffice" }
+      - { name: "org.librepcb.LibrePCB" }
+      - { name: "org.virt_manager.virt-manager" }
+    gnome_shortcuts:
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/",
+          name: "Terminal",
+          command: "guake",
+          binding: "<Super>x",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/",
+          name: "Text Editor",
+          command: "flatpak run org.gnome.gitlab.cheywood.Buffer/x86_64/stable",
+          binding: "<Super>t",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/",
+          name: "VS Code",
+          command: "code",
+          binding: "<Super>c",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/",
+          name: "Yubikey Authenticator",
+          command: "yubico-authenticator",
+          binding: "<Super>y",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/",
+          name: "Files",
+          command: "nautilus --new-window",
+          binding: "<Super>f",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/",
+          name: "Ghostty",
+          command: "ghostty",
+          binding: "<Alt><Super>x",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/",
+          name: "Signal",
+          command: "signal-desktop",
+          binding: "<Super>m",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/",
+          name: "WhatsApp",
+          command: "flatpak run com.rtosta.zapzap",
+          binding: "<Alt><Super>m",
+        }
+      - {
+          path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/",
+          name: "Hardware Info",
+          command: "hardinfo2",
+          binding: "<Super>i",
+        }
+    ts_authkey: "{{ lookup('env','TS_AUTHKEY') | default('', true) }}"
+    install_homebrew: false
+    tailscale_use_script: false
+    register_u2f: false
+
+  tasks:
+    - name: Ensure config root exists
+      ansible.builtin.file:
+        path: "{{ config_root }}"
+        state: directory
+        mode: "0755"
+      become: false
+      tags: [dotfiles]
+
+    - name: Discover config packages
+      ansible.builtin.find:
+        paths: "{{ repo_root }}/config"
+        file_type: directory
+        depth: 1
+      register: config_dirs
+      become: false
+      tags: [dotfiles]
+
+    - name: Select config packages to link
+      ansible.builtin.set_fact:
+        config_packages: "{{ config_dirs.files | map(attribute='path') | map('basename') | difference(exclude_configs) }}"
+      tags: [dotfiles]
+
+    - name: Remove conflicting configs before linking
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ config_root }}/atuin"
+        - "{{ config_root }}/cosmic"
+        - "{{ config_root }}/fastfetch"
+        - "{{ config_root }}/fish"
+        - "{{ config_root }}/ghostty"
+        - "{{ config_root }}/starship.toml"
+      become: false
+      tags: [dotfiles]
+
+    - name: Symlink config packages into XDG config home
+      ansible.builtin.file:
+        src: "{{ repo_root }}/config/{{ item }}"
+        dest: "{{ config_root }}/{{ item }}"
+        state: link
+        force: true
+      loop: "{{ config_packages }}"
+      become: false
+      tags: [dotfiles]
+
+    - name: Link starship config file
+      ansible.builtin.file:
+        src: "{{ repo_root }}/config/starship.toml"
+        dest: "{{ config_root }}/starship.toml"
+        state: link
+        force: true
+      become: false
+      tags: [dotfiles]
+
+    - name: Copy aichat config (non-symlink)
+      ansible.builtin.copy:
+        src: "{{ repo_root }}/config/aichat/config.yaml"
+        dest: "{{ config_root }}/aichat/config.yaml"
+        mode: "0644"
+      become: false
+      tags: [dotfiles]
+
+    - name: Check for KDE binaries
+      ansible.builtin.command: command -v plasmashell
+      register: plasmashell_check
+      changed_when: false
+      failed_when: false
+      become: false
+      tags: [dotfiles]
+
+    - name: Clean KDE configs when Plasma is present
+      when: plasmashell_check.rc == 0
+      tags: [dotfiles]
+      block:
+        - name: Remove top-level KDE rc files
+          ansible.builtin.find:
+            paths: "{{ config_root }}"
+            patterns:
+              - "*.rc"
+              - "plasma-*"
+            depth: 1
+          register: kde_files
+          become: false
+
+        - name: Delete old KDE rc files
+          ansible.builtin.file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ kde_files.files }}"
+          become: false
+
+        - name: Link KDE configs
+          ansible.builtin.file:
+            src: "{{ repo_root }}/config/kde"
+            dest: "{{ config_root }}/kde"
+            state: link
+            force: true
+          become: false
+
+    - name: Link ClamAV configs to /etc
+      ansible.builtin.file:
+        path: /etc/clamav
+        state: directory
+        mode: "0755"
+      tags: [dotfiles]
+
+    - name: Symlink ClamAV config files
+      ansible.builtin.file:
+        src: "{{ item }}"
+        dest: "/etc/clamav/{{ item | basename }}"
+        state: link
+        force: true
+      with_fileglob:
+        - "{{ repo_root }}/config/clamav/*.conf"
+      tags: [dotfiles]
+
+    - name: Ensure NAS target directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ target_home }}/Pictures"
+        - "{{ target_home }}/Videos"
+        - "{{ target_home }}/Documents"
+        - "{{ target_home }}/IT"
+      become: false
+      tags: [nas]
+
+    - name: Create NAS symlinks
+      ansible.builtin.file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+        force: true
+      loop: "{{ nas_links }}"
+      become: false
+      tags: [nas]
+
+    - name: Enable podman socket (system)
+      ansible.builtin.systemd:
+        name: podman.socket
+        state: started
+        enabled: true
+      when: ansible_service_mgr == 'systemd'
+      tags: [podman]
+
+    - name: Enable user podman socket
+      ansible.builtin.systemd:
+        name: podman.socket
+        state: started
+        enabled: true
+        scope: user
+      become: false
+      when: ansible_service_mgr == 'systemd'
+      tags: [podman]
+
+    - name: Enable linger for podman user
+      ansible.builtin.command: "loginctl enable-linger {{ target_user }}"
+      register: linger_result
+      changed_when: linger_result.rc == 0
+      failed_when: false
+      when: ansible_service_mgr == 'systemd'
+      tags: [podman]
+
+    - name: Install Tailscale via package manager (best effort)
+      ansible.builtin.package:
+        name: tailscale
+        state: present
+      register: tailscale_pkg
+      failed_when: false
+      tags: [tailscale]
+
+    - name: Install Tailscale via upstream script (opt-in)
+      ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
+      args:
+        executable: /bin/bash
+      when: tailscale_use_script | bool
+      tags: [tailscale]
+
+    - name: Check for tailscale binary
+      ansible.builtin.command: command -v tailscale
+      register: tailscale_check
+      changed_when: false
+      failed_when: false
+      tags: [tailscale]
+
+    - name: Enable tailscaled service
+      ansible.builtin.systemd:
+        name: tailscaled
+        state: started
+        enabled: true
+      when:
+        - ansible_service_mgr == 'systemd'
+        - tailscale_check.rc == 0
+      tags: [tailscale]
+
+    - name: Allow IP forwarding for Tailscale
+      ansible.posix.sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: true
+      loop:
+        - { name: "net.ipv4.ip_forward", value: "1" }
+        - { name: "net.ipv6.conf.all.forwarding", value: "1" }
+      when: tailscale_check.rc == 0
+      tags: [tailscale]
+
+    - name: Bring Tailscale up using auth key (optional)
+      ansible.builtin.command: tailscale up --ssh --accept-routes --authkey="{{ ts_authkey }}"
+      when:
+        - ts_authkey | length > 0
+        - tailscale_check.rc == 0
+      register: tailscale_up
+      changed_when: tailscale_up.rc == 0
+      failed_when: false
+      tags: [tailscale]
+
+    - name: Set Tailscale operator to target user
+      ansible.builtin.command: tailscale set --operator="{{ target_user }}"
+      register: tailscale_operator
+      changed_when: tailscale_operator.rc == 0
+      failed_when: false
+      when: tailscale_check.rc == 0
+      tags: [tailscale]
+
+    - name: Check for Flatpak
+      ansible.builtin.command: command -v flatpak
+      register: flatpak_check
+      changed_when: false
+      failed_when: false
+      become: false
+      tags: [flatpak]
+
+    - name: Check for Atuin binary
+      ansible.builtin.command: command -v atuin
+      register: atuin_check
+      changed_when: false
+      failed_when: false
+      become: false
+      tags: [dotfiles]
+
+    - name: Import history into Atuin (best effort)
+      ansible.builtin.command: atuin import auto
+      become: false
+      when: atuin_check.rc == 0
+      register: atuin_import
+      changed_when: atuin_import.rc == 0
+      failed_when: false
+      tags: [dotfiles]
+
+    - name: Add Flatpak remotes for user
+      community.general.flatpak_remote:
+        name: "{{ item.name }}"
+        state: present
+        flatpakrepo_url: "{{ item.url }}"
+        title: "{{ item.title }}"
+        method: user
+      loop: "{{ flatpak_remotes }}"
+      become: false
+      when: flatpak_check.rc == 0
+      tags: [flatpak]
+
+    - name: Install Flatpak applications (user scope)
+      community.general.flatpak:
+        name: "{{ item.name }}"
+        remote: "{{ item.remote | default('flathub') }}"
+        method: user
+        state: present
+      loop: "{{ flatpak_apps }}"
+      register: flatpak_result
+      failed_when: false
+      become: false
+      when: flatpak_check.rc == 0
+      tags: [flatpak]
+
+    - name: Check for gsettings
+      ansible.builtin.command: command -v gsettings
+      register: gsettings_check
+      changed_when: false
+      failed_when: false
+      become: false
+      tags: [gnome]
+
+    - name: Set GNOME custom keybindings list
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+        value: "[{{ gnome_shortcuts | map(attribute='path') | map('quote') | join(', ') }}]"
+      become: false
+      when:
+        - gnome_shortcuts | length > 0
+        - gsettings_check.rc == 0
+      tags: [gnome]
+
+    - name: Apply GNOME shortcuts
+      community.general.dconf:
+        key: "{{ item.path }}name"
+        value: "'{{ item.name }}'"
+      loop: "{{ gnome_shortcuts }}"
+      become: false
+      when: gsettings_check.rc == 0
+      tags: [gnome]
+
+    - name: Apply GNOME shortcut commands
+      community.general.dconf:
+        key: "{{ item.path }}command"
+        value: "'{{ item.command }}'"
+      loop: "{{ gnome_shortcuts }}"
+      become: false
+      when: gsettings_check.rc == 0
+      tags: [gnome]
+
+    - name: Apply GNOME shortcut bindings
+      community.general.dconf:
+        key: "{{ item.path }}binding"
+        value: "'{{ item.binding }}'"
+      loop: "{{ gnome_shortcuts }}"
+      become: false
+      when: gsettings_check.rc == 0
+      tags: [gnome]
+
+    - name: Install OpenRGB udev rules
+      ansible.builtin.get_url:
+        url: https://openrgb.org/releases/release_0.9/60-openrgb.rules
+        dest: /usr/lib/udev/rules.d/60-openrgb.rules
+        mode: "0644"
+      tags: [openrgb]
+
+    - name: Reload udev rules for OpenRGB
+      ansible.builtin.command: udevadm control --reload-rules
+      register: udev_reload
+      changed_when: udev_reload.rc == 0
+      tags: [openrgb]
+
+    - name: Trigger udev rules
+      ansible.builtin.command: udevadm trigger
+      register: udev_trigger
+      changed_when: udev_trigger.rc == 0
+      tags: [openrgb]
+
+    - name: Install Homebrew (optional)
+      ansible.builtin.shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      args:
+        executable: /bin/bash
+      when: install_homebrew | bool
+      become: false
+      tags: [homebrew]
+
+    - name: Ensure YubiKey directory exists for user
+      ansible.builtin.file:
+        path: "{{ target_home }}/.config/yubico"
+        state: directory
+        mode: "0700"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+      when: register_u2f | bool
+      tags: [yubikey]
+
+    - name: Register U2F key (requires physical touch)
+      ansible.builtin.command: pamu2fcfg
+      args:
+        chdir: "{{ target_home }}/.config/yubico"
+      become: false
+      become_user: "{{ target_user }}"
+      when: register_u2f | bool
+      register: u2f_register
+      changed_when: u2f_register.rc == 0
+      failed_when: false
+      tags: [yubikey]
+
+    - name: Write U2F mapping file
+      ansible.builtin.copy:
+        dest: "{{ target_home }}/.config/yubico/u2f_keys"
+        content: "{{ target_user }}:{{ u2f_register.stdout | trim }}\n"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0600"
+      when:
+        - register_u2f | bool
+        - u2f_register.stdout is defined
+      tags: [yubikey]
+
+    - name: Remove existing pam_u2f lines
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^auth.*pam_u2f\.so'
+        state: absent
+      loop:
+        - /etc/pam.d/sudo
+        - /etc/pam.d/login
+        - /etc/pam.d/gdm-password
+        - /etc/pam.d/sshd
+        - /etc/pam.d/su
+        - /etc/pam.d/polkit-1
+        - /etc/pam.d/sddm
+        - /etc/pam.d/lightdm
+        - /etc/pam.d/common-auth
+        - /etc/pam.d/sddm-greeter
+        - /etc/pam.d/system-auth
+        - /etc/pam.d/system-login
+      when: register_u2f | bool
+      tags: [yubikey]
+
+    - name: Insert pam_u2f configuration
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        insertafter: "^#%PAM-1.0"
+        regexp: '^auth sufficient pam_u2f\.so'
+        line: "auth sufficient pam_u2f.so authfile={{ target_home }}/.config/yubico/u2f_keys cue cue_prompt=Tap YubiKey"
+      loop:
+        - /etc/pam.d/sudo
+        - /etc/pam.d/login
+        - /etc/pam.d/gdm-password
+        - /etc/pam.d/sshd
+        - /etc/pam.d/su
+        - /etc/pam.d/polkit-1
+        - /etc/pam.d/sddm
+        - /etc/pam.d/lightdm
+        - /etc/pam.d/common-auth
+        - /etc/pam.d/sddm-greeter
+        - /etc/pam.d/system-auth
+        - /etc/pam.d/system-login
+      when: register_u2f | bool
+      tags: [yubikey]
+
+    - name: Enable pcscd for YubiKey
+      ansible.builtin.systemd:
+        name: pcscd
+        state: started
+        enabled: true
+      when: register_u2f | bool
+      tags: [yubikey]
