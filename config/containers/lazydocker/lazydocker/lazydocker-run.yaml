@@ -1,6 +1,0 @@
-# docker-run command for lazydocker (idempotent)
-# TESTED AND WORKING
-sudo docker run --rm -it -v \
-                       /var/run/docker.sock:/var/run/docker.sock \
-                       -v /volume1/docker/lazydocker:/.config/jesseduffield/lazydocker \
-                       lazyteam/lazydocker

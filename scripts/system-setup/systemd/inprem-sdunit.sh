@@ -3,9 +3,6 @@
 # It is assumed that Input Remapper is already installed
 # Work in progress
 
-# Source pretty output definitions
-source ./pretty-output.sh
-
 # Create the systemd user service file
 mkdir -p "$HOME/.config/systemd/user"
 cat > "$HOME/.config/systemd/user/input-remapper.service" << EOF

@@ -1,0 +1,19 @@
+# Pacman hook to disable the problematic kcm_about-distro module after kinfocenter updates
+# This prevents KInfoCenter crashes in KDE Plasma 6.5.5
+#
+# Installation:
+#   sudo cp misc/kinfocenter-crash-fix.hook /etc/pacman.d/hooks/
+#
+# Removal:
+#   sudo rm /etc/pacman.d/hooks/kinfocenter-crash-fix.hook
+
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = kinfocenter
+
+[Action]
+Description = Applying KInfoCenter crash workaround (disabling kcm_about-distro)...
+When = PostTransaction
+Exec = /bin/sh -c 'if [ -f /usr/lib/qt6/plugins/plasma/kcms/kcm_about-distro.so ]; then mv /usr/lib/qt6/plugins/plasma/kcms/kcm_about-distro.so /usr/lib/qt6/plugins/plasma/kcms/kcm_about-distro.so.disabled && echo "KInfoCenter crash workaround applied."; fi'
