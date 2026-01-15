@@ -1,5 +1,5 @@
 # Flatpak Restore Script
-# Generated on Do 15. Jan 00:00:00 CET 2026
+# Generated on Do 15. Jan 01:00:00 CET 2026
 flatpak remote-add --if-not-exists --user "flathub" "https://dl.flathub.org/repo/" --title="Flathub"
 flatpak remote-add --if-not-exists --user "flathub" "https://dl.flathub.org/repo/" --title="Flathub"
 flatpak remote-add --if-not-exists --user "webkit-sdk" "http://software.igalia.com/webkit-sdk-repo/" --title="WebKit Developer SDK"
