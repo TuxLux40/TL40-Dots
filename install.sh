@@ -1,168 +1,210 @@
-#!/usr/bin/env bash
+#! /bin/sh -e
 
-# Post-installation script to set up the environment
-# To be installed after the main installation process
-# Only for OS/DE independent programs and configurations
-# See other scripts for OS/DE specific setups
-# Work in progress - use at your own risk
+# Dotfiles bootstrap.
+#
+# Standalone  (curl | sh)  : clones repo to $DOTFILES_DIR then stows.
+# In-repo    (./install.sh) : stows from current checkout.
+# Linutil-compat            : leaves dotfiles/ layout untouched so linutil's
+#                             built-in dotfiles-setup.sh works against a clone.
 
-set -euo pipefail
+REPO_URL="${DOTFILES_REPO:-https://github.com/TuxLux40/dotfiles.git}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 
-# Source pretty output definitions
-source ./scripts/lib/pretty-output.sh
+# --- helpers --------------------------------------------------------------
+RC='\033[0m'; RED='\033[31m'; YELLOW='\033[33m'; CYAN='\033[36m'; GREEN='\033[32m'
 
-run_step() {
-    local stepname="$1"
-    shift
-    printf "%b%s...%b" "$YELLOW" "$stepname" "$NC"
-    if ("$@"); then
-        printf "%b%s%b\n" "$GREEN" "✔" "$NC"
-    else
-        printf "%b%s%b\n" "$RED" "✖" "$NC"
-    fi
+msg()  { printf "%b\n" "${CYAN}==>${RC} $*"; }
+warn() { printf "%b\n" "${YELLOW}warn:${RC} $*" >&2; }
+die()  { printf "%b\n" "${RED}error:${RC} $*" >&2; exit 1; }
+
+command_exists() {
+    for cmd in "$@"; do
+        command -v "$cmd" >/dev/null 2>&1 || return 1
+    done
+    return 0
 }
 
-# Ask user whether to run, skip, or quit a step (minimal interactive wrapper)
-ask_run_step() {
-    local stepname="$1"; shift
-    local cmd=("$@")
-    printf '\n%bStep:%b %s\n' "$BLUE" "$NC" "$stepname"
-    local opts=("Run" "Skip" "Quit")
-    local sel
-    sel=$(select_option "${opts[@]}")
-    case "$sel" in
-        0) run_step "$stepname" "${cmd[@]}" ;;
-        1) printf "%bSkipped:%b %s\n" "$YELLOW" "$NC" "$stepname" ;;
-        2) printf "%bAborting at user request.%b\n" "$RED" "$NC"; exit 0 ;;
-    esac
-}
-
-select_option() {
-    local options=("$@")
-    local selected=0
-    local num_options=${#options[@]}
-    while true; do
-        for ((i=0; i<num_options; i++)); do
-            if [ $i -eq $selected ]; then
-                printf "\e[7m%s\e[0m\n" "${options[$i]}" >&2
-            else
-                printf "%s\n" "${options[$i]}" >&2
-            fi
-        done
-        read -s -n1 key
-        if [ "$key" = $'\e' ]; then
-            read -s -n1 key2
-            if [ "$key2" = '[' ]; then
-                read -s -n1 key3
-                if [ "$key3" = 'A' ]; then
-                    ((selected--))
-                    if [ $selected -lt 0 ]; then selected=$((num_options-1)); fi
-                elif [ "$key3" = 'B' ]; then
-                    ((selected++))
-                    if [ $selected -ge $num_options ]; then selected=0; fi
-                fi
-            fi
-        elif [ "$key" = $'\n' ] || [ "$key" = '' ]; then
+# Detect privilege-escalation tool (sudo / doas). Root gets a no-op.
+if [ "$(id -u)" = "0" ]; then
+    ESCALATION_TOOL="env"
+else
+    ESCALATION_TOOL=""
+    for _tool in sudo doas; do
+        if command_exists "$_tool"; then
+            ESCALATION_TOOL="$_tool"
             break
         fi
-        # move cursor up to redraw menu
-        tput cuu $num_options >&2
     done
-    printf "\n" >&2
-    echo "$selected"
+    [ -z "$ESCALATION_TOOL" ] && die "no supported escalation tool (sudo/doas)"
+fi
+
+# Detect package manager (same probe order as linutil).
+PACKAGER=""
+for _pm in nala apt-get dnf pacman zypper apk xbps-install eopkg; do
+    if command_exists "$_pm"; then
+        PACKAGER="$_pm"
+        break
+    fi
+done
+[ -z "$PACKAGER" ] && die "no supported package manager"
+
+# --- pkg installers -------------------------------------------------------
+pkg_install() {
+    # $1 = binary to check, $2.. = package name(s) per pm
+    _bin="$1"; shift
+    command_exists "$_bin" && return 0
+    msg "installing $_bin"
+    case "$PACKAGER" in
+        pacman)       $ESCALATION_TOOL "$PACKAGER" -S --needed --noconfirm "$@" ;;
+        apt-get|nala) $ESCALATION_TOOL "$PACKAGER" install -y "$@" ;;
+        dnf)          $ESCALATION_TOOL "$PACKAGER" install -y "$@" ;;
+        zypper)       $ESCALATION_TOOL "$PACKAGER" install -y "$@" ;;
+        apk)          $ESCALATION_TOOL "$PACKAGER" add "$@" ;;
+        xbps-install) $ESCALATION_TOOL "$PACKAGER" -Sy "$@" ;;
+        eopkg)        $ESCALATION_TOOL "$PACKAGER" install -y "$@" ;;
+        *)            $ESCALATION_TOOL "$PACKAGER" install -y "$@" ;;
+    esac
 }
 
-# Directory variables
-SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
-ROOT_DIR="${SCRIPT_DIR}"
+# --- args -----------------------------------------------------------------
+WITH_CLAMAV=0
+WITH_SFTP=0
+WITH_NAS=0
+NAS_PATH=""
+DRY_RUN=0
+ADOPT=0
 
-# Ensure Atuin config directory exists before any shell integrations touch it
-mkdir -p "${HOME}/.config/atuin"
+usage() {
+    cat <<EOF
+Usage: install.sh [options]
 
-# Source OS detection script
-source "${ROOT_DIR}/scripts/lib/detect-os.sh"
+  --dry-run     Preview stow actions (stow -n), install nothing.
+  --adopt       Adopt existing local configs INTO the repo (local wins,
+                repo gets dirty with local versions). Default: repo wins —
+                local files replaced with repo versions.
+  --clamav      Also stow clamav package to /etc/clamav (needs root).
+  --sftp        Run sftp-setup.sh after stowing.
+  --nas [PATH]  Run symlink-nas.sh after stowing (optional NAS root).
+  -h, --help    Show this message.
 
-# Print detected OS info
-printf '\n%bTL40-Dots post-installation%b\n' "${BLUE}" "${NC}"
-printf '%bDetected:%b %s (distro: %s, package manager: %s)\n' "${YELLOW}" "${NC}" "$OS_TYPE" "$OS_DISTRO" "$PKG_MANAGER"
+Env:
+  DOTFILES_REPO  Git URL (default: $REPO_URL)
+  DOTFILES_DIR   Clone target if running via curl | sh (default: \$HOME/.dotfiles)
+EOF
+}
 
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --dry-run) DRY_RUN=1; shift ;;
+        --adopt)   ADOPT=1;   shift ;;
+        --clamav)  WITH_CLAMAV=1; shift ;;
+        --sftp)    WITH_SFTP=1;   shift ;;
+        --nas)
+            WITH_NAS=1; shift
+            # Optional path arg (skip if next token is another flag or absent).
+            case "${1:-}" in
+                ""|-*) ;;
+                *) NAS_PATH="$1"; shift ;;
+            esac
+            ;;
+        -h|--help) usage; exit 0 ;;
+        *) die "unknown arg: $1 (try --help)" ;;
+    esac
+done
 
-# Interactive install steps (each can be Run/Skip/Quit)
-printf '\n🔧 %bInstalling packages and tools (interactive)%b\n' "${BLUE}" "${NC}"
-ask_run_step "Install base tools" "${ROOT_DIR}/scripts/pkg-scripts/base-tools.sh"
-ask_run_step "Install desktop packages" "${ROOT_DIR}/scripts/pkg-scripts/desktop-packages.sh"
-ask_run_step "Install Atuin shell history" "${ROOT_DIR}/scripts/pkg-scripts/atuin-install.sh"
-ask_run_step "Install Tailscale" "${ROOT_DIR}/scripts/pkg-scripts/tailscale-install.sh"
-ask_run_step "Install Starship prompt" "${ROOT_DIR}/scripts/pkg-scripts/starship-install.sh"
-ask_run_step "Install Homebrew" "${ROOT_DIR}/scripts/pkg-scripts/homebrew-install.sh"
-ask_run_step "Install OpenRGB udev rules" "${ROOT_DIR}/scripts/hardware/openrgb-udev-install.sh"
+# --- locate repo ----------------------------------------------------------
+SCRIPT_DIR=""
+if [ -n "${BASH_SOURCE:-}" ]; then
+    SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$BASH_SOURCE")" && pwd)"
+elif [ -f "$0" ] && [ "$0" != "sh" ] && [ "$0" != "-sh" ]; then
+    SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd 2>/dev/null)" || SCRIPT_DIR=""
+fi
 
-# Set Fish as default shell if installed
-if command -v fish >/dev/null 2>&1; then
-    fish_path=$(command -v fish)
-    if [ "$SHELL" != "$fish_path" ]; then
-        printf '\n🐠 %bSetting Fish as default shell%b\n' "${YELLOW}" "${NC}"
-        chsh -s "$fish_path"
+REPO_ROOT=""
+if [ -n "$SCRIPT_DIR" ] && [ -d "$SCRIPT_DIR/dotfiles" ]; then
+    REPO_ROOT="$SCRIPT_DIR"
+elif [ -d "./dotfiles" ] && [ -f "./install.sh" ]; then
+    REPO_ROOT="$(pwd)"
+fi
+
+if [ -z "$REPO_ROOT" ]; then
+    # curl | sh mode: clone.
+    pkg_install git git
+    if [ -d "$DOTFILES_DIR/.git" ]; then
+        msg "updating existing clone at $DOTFILES_DIR"
+        git -C "$DOTFILES_DIR" pull --ff-only
+    elif [ -e "$DOTFILES_DIR" ]; then
+        die "$DOTFILES_DIR exists and is not a git checkout"
+    else
+        msg "cloning $REPO_URL -> $DOTFILES_DIR"
+        git clone --depth=1 "$REPO_URL" "$DOTFILES_DIR"
+    fi
+    REPO_ROOT="$DOTFILES_DIR"
+fi
+
+[ -d "$REPO_ROOT/dotfiles" ] || die "no dotfiles/ dir under $REPO_ROOT"
+
+# --- install stow (first, before anything else touches $HOME) -------------
+pkg_install stow stow
+
+# --- stow ------------------------------------------------------------------
+# Always pass --adopt so stow never chokes on pre-existing real files. With
+# default mode we git-restore the repo afterwards so adopted content is
+# discarded and symlinks resolve to the repo's tracked versions (repo wins).
+# With --adopt we skip the restore, leaving the adopted local files in the
+# repo working tree for the user to review/commit (local wins).
+STOW_FLAGS="-v --adopt"
+[ "$DRY_RUN" -eq 1 ] && STOW_FLAGS="$STOW_FLAGS -n"
+
+msg "stowing packages from $REPO_ROOT/dotfiles -> $HOME"
+cd "$REPO_ROOT/dotfiles"
+
+for _pkg in */; do
+    _pkg="${_pkg%/}"
+    case "$_pkg" in
+        clamav) continue ;;   # handled below (root target)
+    esac
+    [ -d "$_pkg" ] || continue
+    printf "%b\n" "${CYAN}--${RC} $_pkg"
+    # shellcheck disable=SC2086
+    stow $STOW_FLAGS -t "$HOME" "$_pkg" || warn "stow failed for $_pkg"
+done
+
+if [ "$WITH_CLAMAV" -eq 1 ] && [ -d "clamav" ]; then
+    msg "stowing clamav -> /etc"
+    # shellcheck disable=SC2086
+    $ESCALATION_TOOL stow $STOW_FLAGS -t /etc clamav || warn "stow failed for clamav"
+fi
+
+cd - >/dev/null
+
+# Default (no --adopt): repo is source of truth. Discard anything stow
+# adopted so every symlink resolves to the tracked repo version.
+if [ "$ADOPT" -eq 0 ] && [ "$DRY_RUN" -eq 0 ]; then
+    if [ -d "$REPO_ROOT/.git" ]; then
+        msg "restoring repo (local versions discarded, repo is source of truth)"
+        git -C "$REPO_ROOT" restore dotfiles/ 2>/dev/null || \
+            git -C "$REPO_ROOT" checkout -- dotfiles/ 2>/dev/null || \
+            warn "git restore failed — symlinks may point to adopted local content"
+        [ "$WITH_CLAMAV" -eq 1 ] && git -C "$REPO_ROOT" restore dotfiles/clamav 2>/dev/null || true
+    else
+        warn "$REPO_ROOT is not a git checkout; cannot restore repo versions"
     fi
 fi
 
-printf '\n🔗 %bSymlinking dotfiles (interactive)%b\n' "${BLUE}" "${NC}"
-ask_run_step "Symlink configuration files" "${ROOT_DIR}/scripts/postinstall/dotfile-symlinks.sh"
-ask_run_step "Symlink NAS shares" "${ROOT_DIR}/scripts/postinstall/nas-symlinks.sh"
-
-if command -v podman >/dev/null 2>&1; then
-    POSTINSTALL_USER=${SUDO_USER:-$(whoami)}
-    ask_run_step "Podman socket activation" "${ROOT_DIR}/scripts/pkg-scripts/podman-postinstall.sh" --user "${POSTINSTALL_USER}"
+# --- opt-in extras --------------------------------------------------------
+if [ "$WITH_SFTP" -eq 1 ]; then
+    msg "running sftp-setup.sh"
+    sh "$REPO_ROOT/sftp-setup.sh"
 fi
 
-#####################
-# Restore shortcuts #
-#####################
-kde_shortcuts() {
-    printf '  ⌨️ %bKDE shortcuts export available.%b\n' "${YELLOW}" "${NC}"
-}
-
-gnome_shortcuts() {
-    run_step "Restore GNOME shortcuts" "${ROOT_DIR}/scripts/desktop/gnome/restore-gnome-shortcuts.sh"
-}
-
-no_restore() {
-    printf '  ⌨️ %bNo shortcuts restored.%b\n' "${YELLOW}" "${NC}"
-}
-
-printf '\n⌨️ %bShortcut restore%b\n' "${GREEN}" "${NC}"
-options=("KDE" "GNOME" "None")
-selected=$(select_option "${options[@]}")
-case "$selected" in
-    0) kde_shortcuts ;;
-    1) gnome_shortcuts ;;
-    2) no_restore ;;
-esac
-
-##########################
-# Restore Flatpak apps   #
-##########################
-if command -v flatpak >/dev/null 2>&1; then
-    printf '\n📦 %bRestore Flatpaks?%b\n' "${GREEN}" "${NC}"
-    options=("Yes" "No")
-    selected=$(select_option "${options[@]}")
-    case "$selected" in
-        0) run_step "Restore Flatpak applications" "${ROOT_DIR}/scripts/pkg-scripts/flatpak-restore.sh" ;;
-        1) printf '  📦 %bSkipping Flatpak restore.%b\n' "${YELLOW}" "${NC}" ;;
-    esac
-else
-    printf '\n📦 %bFlatpak not installed, skipping.%b\n' "${YELLOW}" "${NC}"
+if [ "$WITH_NAS" -eq 1 ]; then
+    msg "running symlink-nas.sh"
+    _nas_args=""
+    [ "$DRY_RUN" -eq 1 ] && _nas_args="--dry-run"
+    [ -n "$NAS_PATH" ] && _nas_args="$_nas_args --nas $NAS_PATH"
+    # shellcheck disable=SC2086
+    bash "$REPO_ROOT/symlink-nas.sh" $_nas_args
 fi
 
-#########################
-# YubiKey configuration #
-#########################
-printf '\n🔐 %bConfigure YubiKey now?%b\n' "${GREEN}" "${NC}"
-options=("Yes" "No")
-selected=$(select_option "${options[@]}")
-case "$selected" in
-    0) "${ROOT_DIR}/scripts/system-setup/yk-pam.sh" ;;
-    1) printf '  🔐 %bRun yk-pam.sh later.%b\n' "${YELLOW}" "${NC}" ;;
-esac
-
-printf '\n✅ %bInstallation complete%b\n' "${GREEN}" "${NC}"
+printf "%b\n" "${GREEN}done.${RC}"
