@@ -156,6 +156,27 @@ pkg_install stow stow
 STOW_FLAGS="-v --adopt"
 [ "$DRY_RUN" -eq 1 ] && STOW_FLAGS="$STOW_FLAGS -n"
 
+# In default (repo-wins) mode, stow --adopt can't absorb pre-existing
+# symlinks that point elsewhere (e.g. another dotfiles repo) — it aborts
+# with "not owned by stow". Pre-remove those symlinks so stow proceeds.
+# Real files are left alone; --adopt handles them and git restore discards
+# the adopted content afterwards.
+clean_foreign_symlinks() {
+    _pkg_dir="$1"; _target_root="$2"; _sudo="$3"
+    [ -d "$_pkg_dir" ] || return 0
+    find "$_pkg_dir" \( -type f -o -type l \) -print | while IFS= read -r _f; do
+        _rel="${_f#"$_pkg_dir"/}"
+        _t="$_target_root/$_rel"
+        if [ -L "$_t" ]; then
+            if [ "$DRY_RUN" -eq 1 ]; then
+                msg "would unlink foreign symlink: $_t"
+            else
+                $_sudo rm -f "$_t"
+            fi
+        fi
+    done
+}
+
 msg "stowing packages from $REPO_ROOT/dotfiles -> $HOME"
 cd "$REPO_ROOT/dotfiles"
 
@@ -166,12 +187,14 @@ for _pkg in */; do
     esac
     [ -d "$_pkg" ] || continue
     printf "%b\n" "${CYAN}--${RC} $_pkg"
+    [ "$ADOPT" -eq 0 ] && clean_foreign_symlinks "$_pkg" "$HOME" ""
     # shellcheck disable=SC2086
     stow $STOW_FLAGS -t "$HOME" "$_pkg" || warn "stow failed for $_pkg"
 done
 
 if [ "$WITH_CLAMAV" -eq 1 ] && [ -d "clamav" ]; then
     msg "stowing clamav -> /etc"
+    [ "$ADOPT" -eq 0 ] && clean_foreign_symlinks "clamav" "/etc" "$ESCALATION_TOOL"
     # shellcheck disable=SC2086
     $ESCALATION_TOOL stow $STOW_FLAGS -t /etc clamav || warn "stow failed for clamav"
 fi
