@@ -14,7 +14,7 @@
   _wpid: 407C
   brightness_control: 100
   change-host: null
-  divert-gkeys: false
+  divert-gkeys: true
   divert-keys: {209: 0, 210: 0}
   m-key-leds: {1: false, 2: false, 4: false}
   mr-key-led: false
