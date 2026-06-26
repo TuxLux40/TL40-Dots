@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Solaar
+Exec=solaar --window=hide
+Icon=solaar
+Comment=Logitech device manager
+X-KDE-AutostartEnabled=true
