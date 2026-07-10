@@ -3,6 +3,7 @@
 # ── PATH ─────────────────────────────────────────────────────────────────────
 fish_add_path ~/.cargo/bin
 fish_add_path ~/.local/bin
+fish_add_path ~/.local/npm/bin
 fish_add_path ~/.grok/bin
 
 # ── Homebrew ─────────────────────────────────────────────────────────────────
@@ -196,3 +197,8 @@ function podman-clean
     podman network prune -f
     podman volume prune -f
 end
+
+# Added by LM Studio CLI (lms)
+set -gx PATH $PATH /home/oliver/.lmstudio/bin
+# End of LM Studio CLI section
+

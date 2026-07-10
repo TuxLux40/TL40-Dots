@@ -1,0 +1,13 @@
+[Unit]
+Description=Apply G915 RGB profiles (white P1, icy breathe P2)
+After=graphical-session.target
+Requires=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/python3 %h/.config/systemd/user/g915-profiles.py
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target

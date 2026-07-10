@@ -1,11 +1,16 @@
-- 1.1.19
+- 1.1.20
 - _NAME: G915 WIRELESS RGB MECHANICAL GAMING KEYBOARD
   _absent: [hi-res-scroll, lowres-scroll-mode, hires-smooth-invert, hires-smooth-resolution, hires-scroll-mode, scroll-ratchet, scroll-ratchet-torque, smart-shift,
     thumb-scroll-invert, thumb-scroll-mode, report_rate_extended, pointer_speed, dpi, dpi_extended, speed-change, backlight, backlight_level, backlight_duration_hands_out,
-    backlight_duration_hands_in, backlight_duration_powered, backlight-timed, led_control, led_zone_, fn-swap, reprogrammable-keys, persistent-remappable-keys,
-    disable-keyboard-keys, force-sensing, crown-smooth, divert-crown, multiplatform, gesture2-gestures, gesture2-divert, gesture2-params, haptic-level,
-    haptic-play, sidetone, equalizer, adc_power_management]
+    backlight_duration_hands_in, backlight_duration_powered, backlight-timed, led_control, led_zone_, fn-swap, persistent-remappable-keys, disable-keyboard-keys,
+    force-sensing, crown-smooth, divert-crown, multiplatform, gesture2-gestures, gesture2-divert, gesture2-params, analog-button-tuning, haptic-level, haptic-play,
+    sidetone, equalizer, adc_power_management, headset-eco-mode, headset-do-not-disturb, headset-mic-mute, headset-mic-snr, headset-ai-nr, headset-ai-nr-level,
+    headset-sidetone, headset-mic-gain, headset-mix-balance, headset-auto-sleep, headset-onboard-eq, headset-eq-active-preset, headset-advanced-eq, headset_led_control,
+    headset-onboard-effect, headset_per_zone_lighting, headset-signature-startup, headset-signature-shutdown, headset-signature-passive, logivoice-nr-state,
+    logivoice-ng-state, logivoice-comp-state, logivoice-deesser-state, logivoice-depopper-state, logivoice-limiter-state, logivoice-hpf-state, rgb_startup_animation,
+    rgb_shutdown_animation, reprogrammable-keys]
   _battery: 4097
+  _config_cookie: [75, 142]
   _modelId: B354407CC33E
   _sensitive: {change-host: false, divert-gkeys: false, divert-keys: false, onboard_profiles: true, report_rate: false, rgb_control: true, rgb_zone_1: true,
     rgb_zone_2: true}
@@ -27,6 +32,9 @@
     95: -1, 96: -1, 97: -1, 98: -1, 99: -1, 100: -1, 101: -1, 102: -1, 103: -1, 104: -1, 105: -1, 106: -1, 107: -1, 108: -1, 109: -1, 110: -1, 111: -1,
     153: -1, 155: -1, 156: -1, 157: -1, 158: -1, 180: -1, 181: -1, 182: -1, 183: -1, 184: -1, 210: -1}
   report_rate: 1
-  rgb_control: 1
-  rgb_zone_1: !LEDEffectSetting {ID: 1, color: 16777215, intensity: 0, period: 100, ramp: 0, speed: 0}
-  rgb_zone_2: !LEDEffectSetting {ID: 1, color: 16777215, intensity: 0, period: 100, ramp: 0, speed: 0}
+  rgb_control: 0
+  rgb_idle_effect: !LEDEffectSetting {ID: 128, intensity: 50}
+  rgb_idle_timeout: 60
+  rgb_sleep_timeout: 300
+  rgb_zone_1: !LEDEffectSetting {ID: 1, color: 0xffffff, intensity: 0, period: 100, ramp: 0, speed: 0}
+  rgb_zone_2: !LEDEffectSetting {ID: 1, color: 0xffffff, intensity: 0, period: 100, ramp: 0, speed: 0}

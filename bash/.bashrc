@@ -691,3 +691,8 @@ export GPG_TTY=$(tty)
 # Claude Code Router Configuration
 export ANTHROPIC_BASE_URL="http://127.0.0.1:3456"
 export ANTHROPIC_API_KEY="dummy-key"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/oliver/.lmstudio/bin"
+# End of LM Studio CLI section
+

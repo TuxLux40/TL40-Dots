@@ -12,4 +12,5 @@ FirstRun=false
 
 [Window]
 DynamicTabTitles=true
+ShowSystrayIcon=false
 Width=50
