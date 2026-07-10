@@ -10,7 +10,7 @@
     logivoice-ng-state, logivoice-comp-state, logivoice-deesser-state, logivoice-depopper-state, logivoice-limiter-state, logivoice-hpf-state, rgb_startup_animation,
     rgb_shutdown_animation, reprogrammable-keys]
   _battery: 4097
-  _config_cookie: [75, 142]
+  _config_cookie: [75, 145]
   _modelId: B354407CC33E
   _sensitive: {change-host: false, divert-gkeys: false, divert-keys: false, onboard_profiles: true, report_rate: false, rgb_control: true, rgb_zone_1: true,
     rgb_zone_2: true}
