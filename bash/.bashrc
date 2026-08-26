@@ -696,3 +696,7 @@ export ANTHROPIC_API_KEY="dummy-key"
 export PATH="$PATH:/home/oliver/.lmstudio/bin"
 # End of LM Studio CLI section
 
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/oliver/.local/bin:$PATH"

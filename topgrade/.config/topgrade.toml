@@ -16,13 +16,13 @@
 # Run `sudo -v` to cache credentials at the start of the run
 # This avoids a blocking password prompt in the middle of an unattended run
 # (default: false)
-# pre_sudo = false
+pre_sudo = true
 
 # Periodically runs `sudo -v` or `please -w` to avoid password re-prompts during updates (default: false)
 # WARNING: This is a potential security risk; if you walk away from the computer while topgrade is running,
 # another person can come by, CTRL+C, and gain access to a sudo session.
-# sudo_loop = true
-# sudo_loop_interval = 240 # 4 minutes (240s); default if sudo_loop enabled
+sudo_loop = true
+sudo_loop_interval = 240 # 4 minutes (240s); default if sudo_loop enabled
 
 # Sudo command to be used
 # sudo_command = "sudo"
@@ -255,7 +255,9 @@ show_skipped = true
 # Enable the mandb step (to update manual entries).
 # Mandb is updated in the background by a service on most systems by default.
 # (default: false)
-enable = true
+# Disabled: man-db.timer already regenerates the database, and this step
+# re-prompts for YubiKey mid-run after sudo's timestamp expires.
+enable = false
 
 
 [pkgfile]
@@ -408,7 +410,11 @@ upgrade = true
 # containers = ["archlinux-latest"]
 [containers]
 # Specify the containers to ignore while updating (Wildcard supported)
-# ignored_containers = ["ghcr.io/rancher-sandbox/rancher-desktop/rdx-proxy:latest", "docker.io*"]
+# Local-only images (not on Docker Hub). Topgrade otherwise tries `docker pull <name>:latest`.
+ignored_containers = [
+    "redamon-*",
+    "ghost-osint-*",
+]
 # Specify the runtime to use for containers (default: "docker", allowed values: "docker", "podman")
 # runtime = "podman"
 

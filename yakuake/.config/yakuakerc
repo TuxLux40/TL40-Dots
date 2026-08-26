@@ -10,6 +10,9 @@ FocusFollowsMouse=true
 [Dialogs]
 FirstRun=false
 
+[Notification Messages]
+ShowPasteHugeTextWarning=false
+
 [Window]
 DynamicTabTitles=true
 ShowSystrayIcon=false

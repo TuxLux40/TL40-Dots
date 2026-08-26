@@ -5,7 +5,7 @@
         "enabled": true,
         "host": "0.0.0.0",
         "port": "6742",
-        "profile": "",
+        "profile": "white",
         "setclient": false,
         "setcustom": false,
         "setminimized": true,
@@ -2079,16 +2079,16 @@
     "UserInterface": {
         "autoload_profiles": {
             "exit_profile": {
-                "enabled": false,
-                "name": ""
+                "enabled": true,
+                "name": "white"
             },
             "resume_profile": {
-                "enabled": false,
-                "name": ""
+                "enabled": true,
+                "name": "white"
             },
             "suspend_profile": {
-                "enabled": false,
-                "name": ""
+                "enabled": true,
+                "name": "white"
             }
         },
         "geometry": {

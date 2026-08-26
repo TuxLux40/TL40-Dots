@@ -202,3 +202,7 @@ end
 set -gx PATH $PATH /home/oliver/.lmstudio/bin
 # End of LM Studio CLI section
 
+
+
+# Added by Antigravity CLI installer
+set -gx PATH "/home/oliver/.local/bin" $PATH
